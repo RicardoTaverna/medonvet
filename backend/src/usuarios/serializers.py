@@ -1,6 +1,7 @@
+from dataclasses import fields
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Cliente
+from .models import Cliente, Endereco
 
 
 class ClienteSerializer(serializers.ModelSerializer):
@@ -26,3 +27,14 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class EnderecoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Endereco
+        fields = '__all__'
+
+        def create(self, validate_data):
+            user = validate_data.pop('user')
+            endereco = Endereco.objects.create(user=user, **validate_data)
+            return endereco
