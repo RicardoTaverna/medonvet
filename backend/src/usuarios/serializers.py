@@ -1,5 +1,5 @@
 from dataclasses import fields
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 from .models import Cliente, Endereco
 
@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'cliente')
+        fields = ('username', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

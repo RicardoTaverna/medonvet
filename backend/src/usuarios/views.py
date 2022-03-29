@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.http import Http404
 
 from rest_framework.views import APIView
@@ -21,26 +21,29 @@ class UserList(APIView):
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            cliente=Group.objects.get(name=request.data['groupname'])
+            cliente.user_set.add(user)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserDetail(APIView):
 
-    def __get_object(self, pk):
+    def _get_object(self, pk):
         try:
             return User.objects.get(pk=pk)
         except User.DoesNotExist:
             raise Http404
     
     def get(self, request, pk, format=None):
-        user = self.__get_object(pk=pk)
+        user = self._get_object(pk=pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
-        user = self.__get_object(pk=pk)
+        user = self._get_object(pk=pk)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -48,7 +51,7 @@ class UserDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk, format=None):
-        user = self.__get_object(pk=pk)
+        user = self._get_object(pk=pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
