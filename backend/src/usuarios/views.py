@@ -5,14 +5,16 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Cliente, Endereco
-from .serializers import UserSerializer, ClienteSerializer, EnderecoSerializer
+from .models import Endereco
+from .serializers import UserSerializer, EnderecoSerializer
+
+from clientes.models import Cliente
 
 # Create your views here.
 
 
 class UserList(APIView):
-    
+    """Class based function para controlar get e post do objeto Usuario."""
     def get(self, request, format=None):
         user = User.objects.all()
         serializer = UserSerializer(user, many=True)
@@ -22,15 +24,17 @@ class UserList(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            cliente=Group.objects.get(name=request.data['groupname'])
-            cliente.user_set.add(user)
+            grupo=Group.objects.get(name=request.data['groupname'])
+            grupo.user_set.add(user)
+            Cliente.objects.create(user=user)
+            Endereco.objects.create(user=user)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserDetail(APIView):
-
+    """Class based function para retornar, alterar e deletar u objeto Usuario."""
     def _get_object(self, pk):
         try:
             return User.objects.get(pk=pk)
@@ -56,21 +60,8 @@ class UserDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CLienteList(APIView):
-    def get(self, request, format=None):
-        cliente = Cliente.objects.all()
-        serializer = ClienteSerializer(cliente, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = ClienteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class EnderecoList(APIView):
+    """Class based function para controlar get e post do objeto Endereco."""
     def get(self, request, format=None):
         endereco = Endereco.objects.all()
         serializer = EnderecoSerializer(endereco, many=True)
@@ -82,3 +73,29 @@ class EnderecoList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class EnderecoDetail(APIView):
+    """Class based function para retornar, alterar e deletar u objeto Endereco."""
+    def _get_endereco(self, pk):
+        try:
+            return Endereco.objects.get(pk=pk)
+        except Endereco.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, pk, format=None):
+        endereco = self._get_endereco(pk=pk)
+        serializer = EnderecoSerializer(endereco)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        endereco = self._get_endereco(pk=pk)
+        serializer = EnderecoSerializer(endereco, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk, format=None):
+        endereco = self._get_endereco(pk=pk)
+        endereco.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
