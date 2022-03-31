@@ -17,14 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from rest_framework.authtoken import views
 
 router = routers.DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('login/', views.obtain_auth_token),
     path('usuarios/', include('usuarios.urls')),
     path('clientes/', include('clientes.urls')),
 ]
