@@ -11,3 +11,16 @@ class Cliente(models.Model):
 
     def __str__(self) -> str:
         return self.user.username
+
+
+class Pet(models.Model):
+    idCliente = models.OneToOneField(Cliente, on_delete=models.CASCADE)
+    nome = models.CharField(max_length=100, blank=True, null=True)
+    peso = models.FloatField(blank=True, null=True)
+    raca = models.CharField(max_length=32, blank=True, null=True)
+    idade_anos = models.IntegerField(blank=True, null=True)
+    idade_meses = models.IntegerField(blank=True, null=True)
+    sexo = models.CharField(max_length=30, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.name
