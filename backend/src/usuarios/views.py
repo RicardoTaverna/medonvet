@@ -13,14 +13,6 @@ from .serializers import UserSerializer, EnderecoSerializer
 from clientes.models import Cliente
 
 # Create your views here.
-class LogoutView(APIView):
-    """Classe para controlar logout dos usuários."""
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format=None):
-        request.user.auth_token.delete()
-        logout(request)
-        return Response('User Logged out successfully')
 
 
 class UserList(APIView):
@@ -109,3 +101,13 @@ class EnderecoDetail(APIView):
         endereco = self._get_endereco(pk=pk)
         endereco.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class LogoutView(APIView):
+    """Classe para controlar logout dos usuários."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        request.user.auth_token.delete()
+        logout(request)
+        return Response('User Logged out successfully')
