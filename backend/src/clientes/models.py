@@ -14,7 +14,7 @@ class Cliente(models.Model):
 
 
 class Pet(models.Model):
-    idCliente = models.OneToOneField(Cliente, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     nome = models.CharField(max_length=100, blank=True, null=True)
     peso = models.FloatField(blank=True, null=True)
     raca = models.CharField(max_length=32, blank=True, null=True)
@@ -23,4 +23,4 @@ class Pet(models.Model):
     sexo = models.CharField(max_length=30, blank=True, null=True)
 
     def __str__(self) -> str:
-        return self.name
+        return self.nome + " " + str(self.cliente.id)
