@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group, User
 from django.http import Http404
 
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -55,12 +56,19 @@ class ClienteDetail(APIView):
 
 class PetList(APIView):
     "Função para controlar o get e  post dos Pets"
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
-        pet = Pet.objects.all()
+        user = request.user
+        cliente = Cliente.objects.get(user=user.id)
+        pet = Pet.objects.filter(cliente=cliente.id)
         serializer = PetSerializer(pet, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        user = request.user
+        cliente = Cliente.objects.get(user=user.id)
+        request.data["cliente"] = cliente.id
         serializer = PetSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -69,13 +77,14 @@ class PetList(APIView):
 
 
 class PetDetail(APIView):
+    permission_classes = [IsAuthenticated]
 
     def _get_pet(self,idPets):
         try:
             return Pet.objects.get(idPets=idPets)
         except Pet.DoesNotExist:
             raise Http404
-
+    #get 1 pet do usuario 1
     def get(self, request, idPets, format=None):      
         pet = Pet.objects.get(idPets=idPets)
         serializer = PetSerializer(pet)
