@@ -79,19 +79,26 @@ class PetList(APIView):
 class PetDetail(APIView):
     permission_classes = [IsAuthenticated]
 
-    def _get_pet(self,idPets):
+    def _get_pet(self,idPets,cliente):
         try:
-            return Pet.objects.get(idPets=idPets)
+            return Pet.objects.get(id=idPets,cliente=cliente)
         except Pet.DoesNotExist:
             raise Http404
-    #get 1 pet do usuario 1
+            
+    def _get_cliente(self,request):
+        user = request.user
+        cliente = Cliente.objects.get(user=user.id)
+        return cliente.id
+
     def get(self, request, idPets, format=None):      
-        pet = Pet.objects.get(idPets=idPets)
+        pet = self._get_pet(idPets=idPets,cliente=self._get_cliente(request))
         serializer = PetSerializer(pet)
         return Response(serializer.data)
 
     def put(self, request, idPets, format=None):
-        pet = self._get_pet(idPets=idPets)
+        cliente = cliente=self._get_cliente(request)
+        pet = self._get_pet(idPets=idPets,cliente=cliente)
+        request.data["cliente"] = cliente
         serializer = PetSerializer(pet,data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -99,7 +106,8 @@ class PetDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, idPets, format=None):
-        pet = self._get_pet(idPets=idPets)
+        pet = self._get_pet(idPets=idPets,cliente=self._get_cliente(request))
         pet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
