@@ -1,9 +1,11 @@
 from django.contrib.auth.models import Group, User
+from django.contrib.auth import logout
 from django.http import Http404
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Endereco
 from .serializers import UserSerializer, EnderecoSerializer
@@ -99,3 +101,13 @@ class EnderecoDetail(APIView):
         endereco = self._get_endereco(pk=pk)
         endereco.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class LogoutView(APIView):
+    """Classe para controlar logout dos usuários."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        request.user.auth_token.delete()
+        logout(request)
+        return Response('User Logged out successfully')
