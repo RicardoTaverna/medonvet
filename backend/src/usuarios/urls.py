@@ -8,8 +8,8 @@ from .views import UserList, UserDetail, EnderecoList, EnderecoDetail, LogoutVie
 # Additionally, we include login URLs for the browsable API.
 
 urlpatterns = format_suffix_patterns([
-    path('cliente/', UserList.as_view()),
-    path('cliente/<int:pk>/', UserDetail.as_view()),
+    path('clientes/', UserList.as_view()),
+    path('cliente/', UserDetail.as_view()),
     path('endereco/', EnderecoList.as_view()),
     path('endereco/<int:pk>', EnderecoDetail.as_view()),
     path('login/', views.obtain_auth_token),
