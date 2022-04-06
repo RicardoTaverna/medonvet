@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="MedOnVet" title="MedOnVet" src="./images/MedOnVet-escuro.png"/>
+    <img alt="MedOnVet" title="MedOnVet" src="./images/medonvet_escuro.png"/>
     
 </h1>
 <h2 align="center">MedOnVet</h2>
