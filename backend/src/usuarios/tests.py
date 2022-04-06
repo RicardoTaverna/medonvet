@@ -6,12 +6,13 @@ from rest_framework.test import APITestCase
 class AccountTests(APITestCase):
     def setUp(self):
         Group.objects.create(name="cliente")
+        Group.objects.create(name="prestador")
 
     def test_create_account(self):
         """
         Ensure we can create a new account object.
         """
-        url = '/usuarios/cliente/'
+        url = '/usuarios/clientes/'
         data = {
             'username':'gnomoteste',
             'first_name':'Gnomo',
@@ -22,5 +23,19 @@ class AccountTests(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(User.objects.count(), 1)
-        self.assertEqual(User.objects.get().username, 'gnomoteste')
+
+    def test_create_prestador(self):
+        """
+        Ensure we can create a new prestador account object.
+        """
+        url = '/usuarios/prestadores/'
+        data = {
+            'username':'gnomoPrestador',
+            'first_name':'GnomoP',
+            'last_name':'Teste',
+            'email':'prestador@teste.com',
+            'password':'senhadognomo1234',
+            'groupname': 'prestador'           
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
