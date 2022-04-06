@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'emailer',
     'usuarios',
     'clientes',
 ]
@@ -143,3 +144,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Email
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_API_KEY = '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'
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
