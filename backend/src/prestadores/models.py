@@ -1,11 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Planos
 
 # Create your models here.
 class Prestador(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    planos = models.OneToOneField(Planos, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     crmv = models.CharField(max_length=10, blank=True, null=True)
     avatar = models.CharField(max_length=100, blank=True, null=True)
     descricao = models.CharField(max_length=255, blank=True, null=True)
@@ -13,3 +11,5 @@ class Prestador(models.Model):
     cpf_cnpj = models.CharField(max_length=14, blank=True, null=True)
     inicioAtendimento = models.TimeField(blank=True, null=True)
     fimAtendimento = models.TimeField(blank=True, null=True)
+
+

@@ -8,6 +8,6 @@ from .views import PrestadorList, PrestadorDetail
 # Additionally, we include login URLs for the browsable API.
 
 urlpatterns = format_suffix_patterns([
-    path('', PrestadorList.as_views()),
-    path('<int:pk>/', PrestadorDetail.as_views()),
+    path('', PrestadorList.as_view()),
+    path('<int:pk>/', PrestadorDetail.as_view()),
 ])

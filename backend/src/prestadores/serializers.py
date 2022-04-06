@@ -11,6 +11,6 @@ class PrestadorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        user = validated_data('user')
+        user = validated_data.pop('user')
         prestador = Prestador.objects.create(user=user, **validated_data)
         return prestador
