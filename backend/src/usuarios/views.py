@@ -15,7 +15,7 @@ from clientes.models import Cliente
 # Create your views here.
 
 
-class UserList(APIView):
+class UserClienteList(APIView):
     """Class based function para controlar get e post do objeto Usuario."""
     def get(self, request, format=None):
         user = User.objects.all()
@@ -35,7 +35,7 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserDetail(APIView):
+class UserClienteDetail(APIView):
     """Class based function para retornar, alterar e deletar u objeto Usuario."""
     def _get_object(self, pk):
         try:
