@@ -27,12 +27,8 @@ export class Footer extends Component {
             </div>
         );
 
-        return (
-            <div>
-                <div className="card">
-                    <Menubar start={start} end={end} />
-                </div>
-            </div>
+        return (    
+            <Menubar start={start} end={end} />
         );
     }
 }

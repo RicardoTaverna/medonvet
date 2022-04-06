@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { api } from './../../services/api';
+import { login } from './../../services/auth'
 
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
@@ -35,8 +36,8 @@ class Login extends React.Component {
             try {
                 const response = await api.post("/usuarios/login/", { username, password });
                 console.log(response)
-                // login(response.data.token);
-                // this.props.history.push("/app");
+                login(response.data.token);
+                this.props.history.push("/app");
                 
             } catch (err) {
                 this.setState(
@@ -75,7 +76,7 @@ class Login extends React.Component {
                                         </span>
 
                                         <span className="p-float-label">
-                                            <Password id="password" className="mb-3" value={this.state.password} onChange={(e) => this.setState({password: e.target.value})} toggleMask feedback={false} />
+                                            <InputText id="password" type="password" className="w-full mb-3" value={this.state.password} onChange={(e) => this.setState({password: e.target.value})} toggleMask feedback={false} />
                                             <label htmlFor="password" className="font-medium mb-2">Password</label>
                                         </span>
 

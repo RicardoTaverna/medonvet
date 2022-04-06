@@ -37,27 +37,29 @@ class UserList(APIView):
 
 class UserDetail(APIView):
     """Class based function para retornar, alterar e deletar u objeto Usuario."""
-    def _get_object(self, pk):
+    permission_classes = [IsAuthenticated]
+    
+    def _get_object(self, request):
         try:
-            return User.objects.get(pk=pk)
+            return User.objects.get(id=request.user.id)
         except User.DoesNotExist:
             raise Http404
     
-    def get(self, request, pk, format=None):
-        user = self._get_object(pk=pk)
+    def get(self, request, format=None):
+        user = self._get_object(request=request)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        user = self._get_object(pk=pk)
+    def put(self, request, format=None):
+        user = self._get_object(request=request)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self, request, pk, format=None):
-        user = self._get_object(pk=pk)
+    def delete(self, request, format=None):
+        user = self._get_object(request=request)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

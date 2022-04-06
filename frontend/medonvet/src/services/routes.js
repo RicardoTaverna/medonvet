@@ -1,13 +1,45 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+
+import { isAuthenticated } from './../services/auth';
+
+import { BrowserRouter, Route, Switch, Redirect  } from "react-router-dom";
+import AppPage from "../pages/AppPage";
 import HomePage from "../pages/HomePage";
 import Login from "../pages/Login";
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+    <Route
+        {...rest}
+        render={props => isAuthenticated() ? (
+                <Component {...props} />
+            ) : (
+                <Redirect to={{ pathname: "/", state: { from: props.location } }} />
+            )
+        }
+    />
+
+);
+
+const AutorizedRoute = ({ component: Component, ...rest }) => (
+    <Route
+        {...rest}
+        render={props => isAuthenticated() ? (
+                <Redirect to={{ pathname: "/app", state: { from: props.location } }} />
+                
+            ) : (
+                <Component {...props} />
+            )
+        }
+    />
+
+);
 
 const Routes = () => (
     <BrowserRouter>
         <Switch>
             <Route exact path="/" component={HomePage}/>
-            <Route exact path="/login" component={Login}/>
+            <AutorizedRoute exact path="/login" component={Login}/>
+            <PrivateRoute exact path="/app" component={AppPage} />
         </Switch>
     </BrowserRouter>
 )
