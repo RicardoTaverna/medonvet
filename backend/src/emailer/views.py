@@ -22,14 +22,32 @@ from usuarios.models import ResetPassword
 
 class ForgetPasswordSendMail(APIView):
     """Classe para enviar emails quando o ususário esquecer a senha."""
-    def __get_user(self, email):
+    def __get_user(self, email: str):
+        """Método privado para retornar um usuário passando um email.
+
+        Args:
+            email (str): email do usuário.
+
+        Raises:
+            Http404: se o usuário não existir.
+
+        Returns:
+            User: retorna um usuário.
+        """
         try:
             return User.objects.get(email=email)
-        
         except User.DoesNotExist:
             raise Http404
     
-    def __create_token(self, user):
+    def __create_token(self, user: User):
+        """Método privado para criar um token único com os dados do usuário.
+
+        Args:
+            user (User): usuário
+
+        Returns:
+            str: token único
+        """
         salt = secrets.token_hex(8) + user.username
         return hashlib.sha256(salt.encode('utf-8')).hexdigest()
 
@@ -58,18 +76,4 @@ class ForgetPasswordSendMail(APIView):
             }
 
             return Response(context)
-
-class SendResetPasswordMail(APIView):
-    """Classe para controlar logout dos usuários."""
-    def post(self, request, format=None):
-
-        # Send Email
-        send_mail(
-            'Subject - Django Email Testing', 
-            'Hello Ricardo' + ',\n' 'Teste de envio de email', 
-            'medonvet.contato@protonmail.com',
-            ['taverna.ricardo@gmail.com'],
-            fail_silently=False,
-        ) 
-        
-        return Response(request.data)
+    

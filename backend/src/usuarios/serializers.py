@@ -28,3 +28,8 @@ class EnderecoSerializer(serializers.ModelSerializer):
             user = validate_data.pop('user')
             endereco = Endereco.objects.create(user=user, **validate_data)
             return endereco
+
+
+class ForgetPasswordFormSerializer(serializers.Serializer):
+    """Serializador para enviar email quando esquecer a senha."""
+    password = serializers.CharField(required=True)
