@@ -34,6 +34,10 @@ export class CadastroPrestador extends Component {
             );
         } else {
             console.log(`username: ${username}| passsword: ${password}`)
+
+            const user = {
+                "username": username,
+            }
             try {
                 const response = await api.post("/usuarios/prestadores/", { username,first_name,last_name ,password, email, groupname });
                 console.log(response)

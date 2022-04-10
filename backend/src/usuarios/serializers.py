@@ -1,7 +1,8 @@
-from dataclasses import fields
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 from .models import Endereco
+
+from prestadores.models import Prestador
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,6 +18,26 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class UserPrestadorSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Prestador
+        fields = ('crmv', 'cpf_cnpj', 'user')
+
+    def create(self, validated_data):
+        user_payload = validated_data.pop('user')
+        password = user_payload.pop('password')
+        user = User(**user_payload)
+        user.set_password(password)
+        user.save()
+
+        prestador = Prestador.objects.create(user=user, **validated_data)
+        Endereco.objects.create(user=user)
+
+        return prestador
 
 
 class EnderecoSerializer(serializers.ModelSerializer):

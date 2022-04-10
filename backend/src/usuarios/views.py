@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Endereco
-from .serializers import UserSerializer, EnderecoSerializer
+from .serializers import UserSerializer, EnderecoSerializer, UserPrestadorSerializer
 
 from clientes.models import Cliente
 from prestadores.models import Prestador
@@ -73,13 +73,13 @@ class UserPrestadorList(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = UserSerializer(data=request.data)
+        serializer = UserPrestadorSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()
+            prestador = serializer.save()
+            user = prestador.user.id
             grupo=Group.objects.get(name=request.data['groupname'])
             grupo.user_set.add(user)
-            Prestador.objects.create(user=user)
-            Endereco.objects.create(user=user)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
