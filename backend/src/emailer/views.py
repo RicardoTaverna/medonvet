@@ -39,8 +39,9 @@ class ForgetPasswordSendMail(APIView):
         except User.DoesNotExist:
             raise Http404
     
-    def __create_token(self, user: User):
-        """Método privado para criar um token único com os dados do usuário.
+    @staticmethod
+    def create_token(user: User):
+        """Método para criar um token único com os dados do usuário.
 
         Args:
             user (User): usuário
@@ -57,7 +58,7 @@ class ForgetPasswordSendMail(APIView):
         if serializer.is_valid():
             email = serializer.data.get('email')
             user = self.__get_user(email=email)
-            token = self.__create_token(user=user)
+            token = self.create_token(user=user)
             reset = ResetPassword.objects.create(user=user, token=token)
             reset.save()
             

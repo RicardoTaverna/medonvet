@@ -2,6 +2,7 @@ from os import name
 from django.contrib.auth.models import User, Group
 from rest_framework import status
 from rest_framework.test import APITestCase
+from emailer.views import ForgetPasswordSendMail
 
 class AccountTests(APITestCase):
     def setUp(self):
@@ -39,3 +40,4 @@ class AccountTests(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
