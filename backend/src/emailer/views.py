@@ -58,7 +58,14 @@ class ForgetPasswordSendMail(APIView):
             email = serializer.data.get('email')
             user = self.__get_user(email=email)
             token = self.__create_token(user=user)
-            ResetPassword.objects.create(user=user, token=token)
+            reset = ResetPassword.objects.create(user=user, token=token)
+            reset.save()
+            
+            context = {
+                "user": user,
+                "token": token,
+                "reset": reset
+            }
 
             send_mail(
                 subject='Reset de Senha MedOnVet',
@@ -66,14 +73,14 @@ class ForgetPasswordSendMail(APIView):
                 from_email='medonvet.contato@protonmail.com',
                 recipient_list=[email],
                 fail_silently=False,
-                html_message=render_to_string('reset_password.html')
+                html_message=render_to_string('reset_password.html', context)
             ) 
 
-            context = {
+            response = {
                 'status': 'success',
                 'code': status.HTTP_200_OK,
                 'message': f'Email enviado com sucesso para {email}'
             }
 
-            return Response(context)
+            return Response(response)
     
