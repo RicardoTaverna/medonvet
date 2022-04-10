@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'emailer',
     'usuarios',
     'clientes',
+    'prestadores',
 ]
 
 MIDDLEWARE = [
