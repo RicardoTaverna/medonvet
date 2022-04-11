@@ -1,14 +1,17 @@
+from datetime import datetime, tzinfo
+from email import message
+
 from django.contrib.auth.models import Group, User
 from django.contrib.auth import logout
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Endereco
-from .serializers import UserSerializer, EnderecoSerializer, UserPrestadorSerializer
+from .models import Endereco, ResetPassword
+from .serializers import UserSerializer, EnderecoSerializer, UserPrestadorSerializer, ForgetPasswordFormSerializer
 
 from clientes.models import Cliente
 from prestadores.models import Prestador
@@ -160,3 +163,41 @@ class LogoutView(APIView):
         request.user.auth_token.delete()
         logout(request)
         return Response('User Logged out successfully')
+
+
+class ForgetPasswordValidateToken(APIView):
+    """Classe para fazer a validação do token para reset da senha."""
+
+    def __get_token(self, token: str):
+        try:
+            object_token = ResetPassword.objects.get(token=token)
+            timediff = (datetime.now() - object_token.data_solicitacao.replace(tzinfo=None))
+            if timediff.total_seconds() > 180:
+                return status.HTTP_403_FORBIDDEN
+
+            return object_token.token
+
+        except ResetPassword.DoesNotExist:
+            raise Http404
+
+    def get(self, request, token: str, format=None):
+        valid_token = self.__get_token(token=token)
+
+        if isinstance(valid_token, int):
+            return Response('Token expirado', status=status.HTTP_403_FORBIDDEN)
+
+        return Response('token válido', status.HTTP_200_OK)
+    
+    def put(self, request, token: str, format=None):
+        valid_token = self.__get_token(token=token)
+        if isinstance(valid_token, int):
+            return Response('Token expirado', status=status.HTTP_403_FORBIDDEN)
+            
+        user_id = ResetPassword.objects.get(token=valid_token).user.id
+        serializer = ForgetPasswordFormSerializer(data=request.data)
+        if serializer.is_valid():
+            user = User.objects.get(id=user_id)
+            user.set_password(serializer.data.get("password"))
+            user.save()
+            return Response(f"Usuário {user.username} atualizado", status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
