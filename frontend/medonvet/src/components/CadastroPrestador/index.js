@@ -16,7 +16,10 @@ export class CadastroPrestador extends Component {
             first_name: "",
             last_name: "",
             email: "",
+            cpf_cnpj: "",
+            crmv:"",
             password: "",
+            passwordconfirm: "",
             groupname: "prestador",
             messageError: "",
          }
@@ -26,10 +29,15 @@ export class CadastroPrestador extends Component {
     onCadastro = async e => {
         
         
-        const { username,first_name, last_name, email,password, groupname } = this.state
-        if (!username || !password) {
+        const { username,first_name, last_name,email,cpf_cnpj,crmv,password,passwordconfirm, groupname } = this.state
+        if (!username || !first_name || !last_name || !email || !cpf_cnpj || !crmv || !password || !passwordconfirm) {
             this.setState(
-                {messageError: "Preencha username e senha para continuar!"},
+                {messageError: "Preencha todos os campos para conlcuir seu cadastro!"},
+                () => this.showError()
+            );
+        }else if (password !== passwordconfirm) {
+            this.setState(
+                {messageError: "As senhas não coincidem!"},
                 () => this.showError()
             );
         } else {
@@ -37,9 +45,13 @@ export class CadastroPrestador extends Component {
 
             const user = {
                 "username": username,
+                "first_name": first_name,
+                "last_name": last_name,
+                "email": email,
+                "password": password,
             }
             try {
-                const response = await api.post("/usuarios/prestadores/", { username,first_name,last_name ,password, email, groupname });
+                const response = await api.post("/usuarios/prestadores/", { cpf_cnpj,crmv, groupname, user });
                 console.log(response)
                 this.props.history.push('/login')
                 
@@ -61,33 +73,67 @@ export class CadastroPrestador extends Component {
         return (
             
             <div>
-                <Toast ref={(el) => this.toast = el} />
-                <span className="p-float-label">
-                    <InputText id="username" type="text" className="w-full mb-3" value={this.state.username} onChange={(e) => this.setState({username: e.target.value})} />
-                    <label htmlFor="username" className="font-medium mb-2">Username</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText id="first_name" type="text" className="w-full mb-3" value={this.state.first_name} onChange={(e) => this.setState({first_name: e.target.value})} />
-                    <label htmlFor="first_name" className="font-medium mb-2">Nome</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText id="last_name" type="text" className="w-full mb-3" value={this.state.last_name} onChange={(e) => this.setState({last_name: e.target.value})} />
-                    <label htmlFor="last_name" className="font-medium mb-2">Sobrenome</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText id="email" type="email" className="w-full mb-3" value={this.state.email} onChange={(e) => this.setState({email: e.target.value})} />
-                    <label htmlFor="email" className="font-medium mb-2">E-mail</label>
-                </span>
-                <span className="p-float-label">
-                    <InputText id="password" type="password" className="w-full mb-3" value={this.state.password} onChange={(e) => this.setState({password: e.target.value})} toggleMask feedback={false} />
-                    <label htmlFor="password" className="font-medium mb-2">Password</label>
-                </span>
+                <div className="content-section implementation">
+                    <div className="card">
+                        <div className="p-fluid grid">
+                            <Toast ref={(el) => this.toast = el} />
+                            <div className="field col-12 md:col-6">
+                                <span className="p-float-label">
+                                    <InputText id="username" type="text" className="w-full mb-3" value={this.state.username} onChange={(e) => this.setState({username: e.target.value})} />
+                                    <label htmlFor="username" className="font-medium mb-2">Username</label>
+                                </span>
+                            </div>
+                            <div className="field col-12 md:col-6">                                 
+                                <span className="p-float-label">
+                                    <InputText id="email" type="email" className="w-full mb-3" value={this.state.email} onChange={(e) => this.setState({email: e.target.value})} />
+                                    <label htmlFor="email" className="font-medium mb-2">E-mail</label>
+                                </span>
+                            </div>
+                            <div className="field col-12 md:col-6">
+                                <span className="p-float-label">
+                                        <InputText id="first_name" type="text" className="w-full mb-3" value={this.state.first_name} onChange={(e) => this.setState({first_name: e.target.value})} />
+                                        <label htmlFor="first_name" className="font-medium mb-2">Nome</label>
+                                </span>
+                            </div>
+                            <div className="field col-12 md:col-6">
+                                <span className="p-float-label">
+                                    <InputText id="last_name" type="text" className="w-full mb-3" value={this.state.last_name} onChange={(e) => this.setState({last_name: e.target.value})} />
+                                    <label htmlFor="last_name" className="font-medium mb-2">Sobrenome</label>
+                                </span>
+                            </div>
+                            <div className="field col-12 md:col-6">
+                                <span className="p-float-label">
+                                    <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: e.target.value})} toggleMask feedback={false} />
+                                    <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
+                                </span>
+                            </div>
+                            <div className="field col-12 md:col-6">
+                                <span className="p-float-label">
+                                    <InputText id="crmv" type="text" className="w-full mb-3" value={this.state.crmv} onChange={(e) => this.setState({crmv: e.target.value})} toggleMask feedback={false} />
+                                    <label htmlFor="crmv" className="font-medium mb-2">CRMV</label>
+                                </span>
+                            </div>
+                            <div className="field col-12 md:col-6">
+                                <span className="p-float-label">
+                                    <InputText id="password" type="password" className="w-full mb-3" value={this.state.password} onChange={(e) => this.setState({password: e.target.value})} toggleMask feedback={false} />
+                                    <label htmlFor="password" className="font-medium mb-2">Senha</label>
+                                </span>
+                            </div>
+                            <div className="field col-12 md:col-6">
+                                <span className="p-float-label">
+                                    <InputText id="passwordconfirm" type="password" className="w-full mb-3" value={this.state.passwordconfirm} onChange={(e) => this.setState({passwordconfirm: e.target.value})} toggleMask feedback={false} />
+                                    <label htmlFor="passwordconfirm" className="font-medium mb-2">Confirmar Senha</label>
+                                </span>
+                            </div>
 
-                <div className="flex align-items-center justify-content-between mb-6">
-                    <a href="/cadastro" className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Esqueceu sua senha?</a>
+                            <div className="flex align-items-center justify-content-between mb-6">
+                                <a href="/cadastro" className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Esqueceu sua senha?</a>
+                            </div>
+
+                            <Button label="Sign In" icon="pi pi-user" className="w-full" onClick={this.onCadastro} />
+                        </div>
+                    </div>
                 </div>
-
-                <Button label="Sign In" icon="pi pi-user" className="w-full" onClick={this.onCadastro} />
             </div>
         );
     }
