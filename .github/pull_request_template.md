@@ -10,13 +10,14 @@
 - [ ] Essa modificação necessita modificar a documentação
 
 
-
 # Checklist:
 
 - [ ] O código está seguindo o estilo do projeto
 - [ ] Fiz um auto review do código
 - [ ] Fiz comentários (Docstrings e Javadocs), principalmente nas partes mais complicadas
-- [ ] Foi realizada as modificações nas áreas correspondetes da documentação
+- [ ] Foi realizada as modificações nas áreas correspondentes da documentação
+- [ ] As novas modificações causaram mudanças no banco de dados
+- [ ] As novas modificações precisam da instalações de novos pacotes/ bibliotecas
 - [ ] As novas modificações causaram novos Warnings
-- [ ] Foram adicionaos testes que provam que as modificações são efetivas e as features funcionam como esperado
+- [ ] Foram adicionados testes que provam que as modificações são efetivas e as features funcionam como esperado
 - [ ] Novos testes unitários passaram localmente com as novas modificações

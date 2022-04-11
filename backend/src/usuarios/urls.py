@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.authtoken import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import UserClienteList, UserClienteDetail, UserPrestadorList, UserPrestadorDetail, EnderecoList, EnderecoDetail, LogoutView
+from .views import UserClienteList, UserClienteDetail, UserPrestadorList, UserPrestadorDetail, EnderecoList, EnderecoDetail, LogoutView, ForgetPasswordValidateToken
 
 
 # Wire up our API using automatic URL routing.
@@ -16,4 +16,5 @@ urlpatterns = format_suffix_patterns([
     path('endereco/<int:pk>', EnderecoDetail.as_view()),
     path('login/', views.obtain_auth_token),
     path('logout/', LogoutView.as_view()),
+    path('reset-password/<str:token>/', ForgetPasswordValidateToken.as_view()),
 ])
