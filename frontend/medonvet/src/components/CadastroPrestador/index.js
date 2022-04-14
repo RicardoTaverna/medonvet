@@ -5,6 +5,8 @@ import { InputText } from 'primereact/inputtext';
 import { api } from './../../services/api';
 import { Toast } from 'primereact/toast';
 import { withRouter } from "react-router-dom";
+import { mask, unMask} from "remask";
+
 
 
 export class CadastroPrestador extends Component {
@@ -24,6 +26,7 @@ export class CadastroPrestador extends Component {
             messageError: "",
          }
          this.onCadastro = this.onCadastro.bind(this);
+         this.onMask = this.onMask.bind(this);
          this.showError = this.showError.bind(this);
     }
     onCadastro = async e => {
@@ -64,6 +67,15 @@ export class CadastroPrestador extends Component {
         }
     }
 
+    onMask = (event) => {
+        const valorOriginal = unMask(event.target.value)
+        const valorMascarado = mask(valorOriginal,[
+            '999.999.999-99', 
+            '99.999.999/9999-99'
+        ]);
+        return valorMascarado;
+    };
+
 
     showError() {
         this.toast.show({severity:'error', summary: 'Error', detail: this.state.messageError , life: 3000});
@@ -103,7 +115,7 @@ export class CadastroPrestador extends Component {
                             </div>
                             <div className="field col-12 md:col-6">
                                 <span className="p-float-label">
-                                    <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: e.target.value})} toggleMask feedback={false} />
+                                    <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onMask(e)})} toggleMask feedback={false} />
                                     <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
                                 </span>
                             </div>
