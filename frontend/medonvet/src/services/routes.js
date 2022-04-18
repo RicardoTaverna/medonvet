@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Switch, Redirect  } from "react-router-dom";
 import AppPage from "../pages/AppPage";
 import HomePage from "../pages/HomePage";
 import Login from "../pages/Login";
+import Cadastro from "../pages/Cadastro";
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route
@@ -38,6 +39,7 @@ const Routes = () => (
     <BrowserRouter>
         <Switch>
             <Route exact path="/" component={HomePage}/>
+            <Route exact path="/cadastro" component={Cadastro}/>
             <AutorizedRoute exact path="/login" component={Login}/>
             <PrivateRoute exact path="/app" component={AppPage} />
         </Switch>

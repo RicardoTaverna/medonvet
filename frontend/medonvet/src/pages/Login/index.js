@@ -66,7 +66,7 @@ class Login extends React.Component {
                                         <img src={logo} alt="hyper" height={100} className="mb-3" />
                                         <div className="text-300 text-3xl font-medium mb-3">Bem vindo!</div>
                                         <span className="text-200 font-medium line-height-3">Ainda não possui uma conta?</span>
-                                        <a href="/login" className="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Crie agora!</a>
+                                        <a href="/cadastro" className="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Crie agora!</a>
                                     </div>
 
                                     <div>
