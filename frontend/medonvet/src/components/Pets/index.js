@@ -23,14 +23,12 @@ export class Pets extends React.Component {
 
     emptyPet = {
         id: null,
-        imagem: '',
         nome: '',
         peso: 0,
         raca: '',
         idade_anos: 0,
         idade_meses: 0,
-        sexo: '',
-        data_nascimento: ''
+        sexo: ''
     };
 
     constructor(props) {
@@ -113,10 +111,11 @@ export class Pets extends React.Component {
 
             } else {
                 try {
-                    api.post('/clientes/pet/', pet).then(response => console.log(response))
+                    api.post('/clientes/pet/', pet).then(response => console.log(response, pet))
                     this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet adicionado', life: 3000 });
                 } catch (err) {
                     console.log(`Erro: ${err}`)
+                    console.log(`Pet: ${pet}`)
                 }
             }
 
@@ -320,7 +319,7 @@ export class Pets extends React.Component {
                 </div>
 
                 <Dialog visible={this.state.petDialog} style={{ width: '750px' }} header="Product Details" modal className="p-fluid" footer={petDialogFooter} onHide={this.hideDialog}>
-                    {this.state.pet.imagem && <img src={`http://127.0.0.1:8000${this.state.pet.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image block m-auto pb-3" />}
+                    {/* {this.state.pet.imagem && <img src={`http://127.0.0.1:8000${this.state.pet.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image block m-auto pb-3" />} */}
                     
                     <div className="field">
                         <label htmlFor="nome">Nome</label>
