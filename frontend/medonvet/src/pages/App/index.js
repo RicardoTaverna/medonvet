@@ -8,6 +8,8 @@ import 'primereact/resources/primereact.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css';
 
+import './app.css';
+
 PrimeReact.ripple = true;
 
 class App extends React.Component {

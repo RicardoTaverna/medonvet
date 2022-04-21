@@ -1,15 +1,13 @@
 import React from 'react';
 import './ClientApp.css';
 
-import { Button } from 'primereact/button';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
 import { Skeleton } from 'primereact/skeleton';
 import { TabMenu } from 'primereact/tabmenu';
 
 import { api } from './../../services/api';
-import NavbarApp from '../NavbarApp';
-import Footer from '../Footer';
+import NavbarApp from './../../components/NavbarApp';
+import Footer from './../../components/Footer';
+import Pets from '../../components/Pets';
 
 
 class ClientApp extends React.Component {
@@ -35,6 +33,10 @@ class ClientApp extends React.Component {
 
     componentDidMount(){
         this.onLogin();
+    }
+
+    componentWillUnmount() {
+        
     }
     
     onLogin = async e => {
@@ -62,23 +64,27 @@ class ClientApp extends React.Component {
     render(){
 
         const perfil = (
-            <div className="card-container p-d-flex p-6">
-                <div className="surface-0">
-                    <ul className="list-none p-0 m-0 flex align-items-center font-medium mb-3">
-                        <li>
-                            <a className="text-500 no-underline line-height-3 cursor-pointer">Perfil Cliente</a>
-                        </li>
-                    </ul>
-                    <div className="flex align-items-start flex-column lg:justify-content-between lg:flex-row">
-                        <div>
-                            <div className="font-medium text-3xl text-900">{this.state.username}</div>
-                        </div>
-                        <div className="mt-3 lg:mt-0">
-                            
+        
+            <div>
+                <div className="card-container p-d-flex p-6">
+                    <div className="surface-0">
+                        <ul className="list-none p-0 m-0 flex align-items-center font-medium mb-3">
+                            <li>
+                                <a className="text-500 no-underline line-height-3 cursor-pointer">Perfil Cliente</a>
+                            </li>
+                        </ul>
+                        <div className="flex align-items-start flex-column lg:justify-content-between lg:flex-row">
+                            <div>
+                                <div className="font-medium text-3xl text-900">{this.state.username}</div>
+                            </div>
+                            <div className="mt-3 lg:mt-0">
+                                
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
         )
 
         const servicos = (
@@ -163,17 +169,8 @@ class ClientApp extends React.Component {
         ) 
         
         const pets = (
-            <div className='p-6'>
-                <h4>Pets</h4>
-                <DataTable value={this.products} className="p-datatable-striped">
-                    <Column field="codigo" header="Código" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-                    <Column field="nome" header="Nome" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-                    <Column field="peso" header="Peso" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-                    <Column field="raca" header="Raça" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-                    <Column field="idade" header="Idade" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-                    <Column field="sexo" header="Sexo" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-                </DataTable>
-            </div>
+            <Pets></Pets>
+            
         )
 
         const calendario = (
@@ -182,7 +179,7 @@ class ClientApp extends React.Component {
 
         const configuracoes = (
             <div className='p-6'>
-                <div className="card">
+                <div className="card p-container">
                     <div className="grid formgrid">
                         <div className="field col-12 md:col-6">
                             <h3>Configurações</h3>
@@ -225,21 +222,22 @@ class ClientApp extends React.Component {
         return(
             <React.Fragment>
             <NavbarApp></NavbarApp>
-            <section className="perfil-background">
-                <div className="p-text-center px-6 text-200">   
-                    <h1 className="p-mb-5">Bem Vindo {this.state.first_name} {this.state.last_name} </h1>
-                    <p>Essa é sua home do app <b>MedOnVet</b></p>
-                </div>
-            </section>
             <div>
+                <section className="perfil-background">
+                    <div className="p-text-center px-6 text-200">   
+                        <h1 className="p-mb-5">Bem Vindo {this.state.first_name} {this.state.last_name} </h1>
+                        <p>Essa é sua home do app <b>MedOnVet</b></p>
+                    </div>
+                </section>
                 <div className="card">
-                    <TabMenu model={this.menuItens} activeIndex={this.state.activeMenuIndex} onTabChange={(e) => this.setState({ activeMenuIndex: e.index })}/>
+                    <TabMenu 
+                        model={this.menuItens} 
+                        activeIndex={this.state.activeMenuIndex}
+                        onTabChange={(e) => this.setState({ activeMenuIndex: e.index })}
+                    />
                 </div>
             </div>
-            {render}
-            
-                
-            
+            {render}            
             </React.Fragment>
         )
     }
