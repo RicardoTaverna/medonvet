@@ -5,14 +5,13 @@ import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
-import { Rating } from 'primereact/rating';
+import { Tag } from 'primereact/tag';
 import { Toolbar } from 'primereact/toolbar';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { RadioButton } from 'primereact/radiobutton';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Skeleton } from 'primereact/skeleton';
+import { ProgressBar } from 'primereact/progressbar';
 
 import './pets.css'
 
@@ -24,12 +23,14 @@ export class Pets extends React.Component {
 
     emptyPet = {
         id: null,
+        imagem: '',
         nome: '',
         peso: 0,
         raca: '',
         idade_anos: 0,
         idade_meses: 0,
-        sexo: ''
+        sexo: '',
+        data_nascimento: ''
     };
 
     constructor(props) {
@@ -39,26 +40,27 @@ export class Pets extends React.Component {
             pets: null,
             petDialog: false,
             deletePetDialog: false,
-            deletePetsDialog: false,
             pet: this.emptyPet,
             selectedPets: null,
             submitted: false,
             globalFilter: null,
-            loading: true
+            loading: true,
+            totalSize: 0
         };
         this.onLoad = this.onLoad.bind(this);
         this.openNew = this.openNew.bind(this);
         this.savePet = this.savePet.bind(this);
         this.editPet = this.editPet.bind(this);
-        this.deletePet = this.deletePet.bind(this);
         this.confirmDeletePet = this.confirmDeletePet.bind(this);
+        this.deletePet = this.deletePet.bind(this);
         this.findIndexById = this.findIndexById.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.onInputNumberChange = this.onInputNumberChange.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
-        this.hideDeleteProductDialog = this.hideDeleteProductDialog.bind(this);
+        this.hideDeletePetDialog = this.hideDeletePetDialog.bind(this);
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
+        this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
     }     
 
     componentDidMount() {
@@ -140,13 +142,26 @@ export class Pets extends React.Component {
     }
 
     confirmDeletePet(pet) {
+        this.setState({
+            pet,
+            deletePetDialog: true
+        });
+    }
+
+    deletePet() {
         if(this._isMounted){
+            let pets = this.state.pets.filter(val => val.id !== this.state.pet.id);
+    
+            api.delete(`/clientes/pet/${this.state.pet.id}/`)
             this.setState({
-                pet,
-                deletePetDialog: true
+                pets,
+                deletePetDialog: false,
+                pet: this.emptyPet
             });
+            this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet deletado', life: 3000 });
         }
     }
+
 
     findIndexById(id) {
         let index = -1;
@@ -158,33 +173,6 @@ export class Pets extends React.Component {
         }
 
         return index;
-    }
-
-    deletePet = async e => {
-        if(this._isMounted){
-            let pets = this.state.pets.filter(val => val.id !== this.state.pet.id);
-    
-            console.log(`=== DEBUG ===
-            pets: ${pets}
-            pet_id: ${this.state.pet.id} 
-            dialog do erro: ${this.state.petDialog}
-            `)
-            
-            try {
-                api.delete(`/clientes/pet/${this.state.pet.id}/`)
-                this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet excluido', life: 3000 });
-            } catch (err) {
-                console.log(`Erro: ${err}`)
-            }
-            
-            this.setState({
-                pets,
-                deletePetDialog: false,
-                pet: this.emptyProduct
-            });
-            this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet foi deletado com sucesso', life: 3000 });
-        }
-
     }
     
     openNew() {
@@ -202,8 +190,8 @@ export class Pets extends React.Component {
         });
     }
 
-    hideDeleteProductDialog() {
-        this.setState({ deleteProductDialog: false });
+    hideDeletePetDialog() {
+        this.setState({ deletePetDialog: false });
     }
 
     onInputChange(e, name) {
@@ -225,7 +213,7 @@ export class Pets extends React.Component {
     leftToolbarTemplate() {
         return (
             <React.Fragment>
-                <Button label="Adicionar" icon="pi pi-plus" className="p-button-success mr-2" onClick={this.openNew} />
+                <Button label="Adicionar" icon="pi pi-plus" className="button-primary mr-2" onClick={this.openNew} />
             </React.Fragment>
         )
     }
@@ -233,10 +221,14 @@ export class Pets extends React.Component {
     actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => this.editPet(rowData)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => this.confirmDeletePet(rowData)} />
+                <Button icon="pi pi-pencil" className="p-button-rounded button-primary mr-2" onClick={() => this.editPet(rowData)} />
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-secondary" onClick={() => this.confirmDeletePet(rowData)} />
             </React.Fragment>
         );
+    }
+
+    imageBodyTemplate(rowData) {
+        return <img src={`http://127.0.0.1:8000${rowData.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.imagem} className="product-image" />
     }
 
     render() {
@@ -264,12 +256,12 @@ export class Pets extends React.Component {
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
                     // globalFilter={this.state.globalFilter} header={header} responsiveLayout="scroll"
                     >
-                    <Column field="imagem" header="Imagem" ></Column>
+                    <Column field="imagem" header="Imagem" body={this.imageBodyTemplate} ></Column>
                     <Column field="id" header="Código" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="nome" header="Nome" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="peso" header="Peso" sortable style={{ minWidth: '8rem' }}></Column>
                     <Column field="raca" header="Raça" sortable style={{ minWidth: '10rem' }}></Column>
-                    <Column field="idade" header="Idade" sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="data_nascimento" header="Idade" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="sexo" header="Sexo" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column body={this.actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
@@ -327,8 +319,9 @@ export class Pets extends React.Component {
                     </div>
                 </div>
 
-                <Dialog visible={this.state.petDialog} style={{ width: '450px' }} header="Product Details" modal className="p-fluid" footer={petDialogFooter} onHide={this.hideDialog}>
-                    {this.state.pet.image && <img src={`images/product/${this.state.product.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.product.image} className="product-image block m-auto pb-3" />}
+                <Dialog visible={this.state.petDialog} style={{ width: '750px' }} header="Product Details" modal className="p-fluid" footer={petDialogFooter} onHide={this.hideDialog}>
+                    {this.state.pet.imagem && <img src={`http://127.0.0.1:8000${this.state.pet.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image block m-auto pb-3" />}
+                    
                     <div className="field">
                         <label htmlFor="nome">Nome</label>
                         <InputText id="nome" value={this.state.pet.nome} onChange={(e) => this.onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.nome })} />
