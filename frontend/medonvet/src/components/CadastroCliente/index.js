@@ -5,12 +5,11 @@ import { InputText } from 'primereact/inputtext';
 import { api } from './../../services/api';
 import { Toast } from 'primereact/toast';
 import { withRouter } from "react-router-dom";
-import { mask, unMask} from "remask";
 
 
 
-export class CadastroPrestador extends Component {
 
+export class CadastroCliente extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,22 +17,19 @@ export class CadastroPrestador extends Component {
             first_name: "",
             last_name: "",
             email: "",
-            cpf_cnpj: "",
-            crmv:"",
             password: "",
             passwordconfirm: "",
-            groupname: "prestador",
+            groupname: "cliente",
             messageError: "",
          }
          this.onCadastro = this.onCadastro.bind(this);
-         this.onMask = this.onMask.bind(this);
          this.showError = this.showError.bind(this);
     }
     onCadastro = async e => {
         
         
-        const { username,first_name, last_name,email,cpf_cnpj,crmv,password,passwordconfirm, groupname } = this.state
-        if (!username || !first_name || !last_name || !email || !cpf_cnpj || !crmv || !password || !passwordconfirm) {
+        const { username,first_name, last_name,email,password,passwordconfirm, groupname } = this.state
+        if (!username || !first_name || !last_name || !email || !password || !passwordconfirm) {
             this.setState(
                 {messageError: "Preencha todos os campos para conlcuir seu cadastro!"},
                 () => this.showError()
@@ -46,15 +42,8 @@ export class CadastroPrestador extends Component {
         } else {
             console.log(`username: ${username}| passsword: ${password}`)
 
-            const user = {
-                "username": username,
-                "first_name": first_name,
-                "last_name": last_name,
-                "email": email,
-                "password": password,
-            }
             try {
-                const response = await api.post("/usuarios/prestadores/", { cpf_cnpj,crmv, groupname, user });
+                const response = await api.post("/usuarios/clientes/", {  groupname, username, first_name, last_name, email, password });
                 console.log(response)
                 this.props.history.push('/login')
                 
@@ -66,16 +55,6 @@ export class CadastroPrestador extends Component {
             }
         }
     }
-
-    onMask = (event) => {
-        const valorOriginal = unMask(event.target.value)
-        const valorMascarado = mask(valorOriginal,[
-            '999.999.999-99', 
-            '99.999.999/9999-99'
-        ]);
-        return valorMascarado;
-    };
-
 
     showError() {
         this.toast.show({severity:'error', summary: 'Error', detail: this.state.messageError , life: 3000});
@@ -115,18 +94,6 @@ export class CadastroPrestador extends Component {
                             </div>
                             <div className="field col-12 md:col-6">
                                 <span className="p-float-label">
-                                    <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onMask(e)})} toggleMask feedback={false} />
-                                    <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
-                                </span>
-                            </div>
-                            <div className="field col-12 md:col-6">
-                                <span className="p-float-label">
-                                    <InputText id="crmv" type="text" className="w-full mb-3" value={this.state.crmv} onChange={(e) => this.setState({crmv: e.target.value})} toggleMask feedback={false} />
-                                    <label htmlFor="crmv" className="font-medium mb-2">CRMV</label>
-                                </span>
-                            </div>
-                            <div className="field col-12 md:col-6">
-                                <span className="p-float-label">
                                     <InputText id="password" type="password" className="w-full mb-3" value={this.state.password} onChange={(e) => this.setState({password: e.target.value})} toggleMask feedback={false} />
                                     <label htmlFor="password" className="font-medium mb-2">Senha</label>
                                 </span>
@@ -150,5 +117,4 @@ export class CadastroPrestador extends Component {
         );
     }
 }
-
-export default withRouter(CadastroPrestador);
+export default withRouter(CadastroCliente);
