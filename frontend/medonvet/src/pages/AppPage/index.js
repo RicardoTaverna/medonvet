@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ClientApp from '../../components/ClientApp';
+import ClientApp from '../../pages/ClientApp';
 
 class AppPage extends React.Component{
 
