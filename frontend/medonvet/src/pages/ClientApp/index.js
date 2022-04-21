@@ -1,9 +1,6 @@
 import React from 'react';
 import './ClientApp.css';
 
-import { Button } from 'primereact/button';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
 import { Skeleton } from 'primereact/skeleton';
 import { TabMenu } from 'primereact/tabmenu';
 
@@ -36,6 +33,10 @@ class ClientApp extends React.Component {
 
     componentDidMount(){
         this.onLogin();
+    }
+
+    componentWillUnmount() {
+        
     }
     
     onLogin = async e => {
@@ -169,17 +170,7 @@ class ClientApp extends React.Component {
         
         const pets = (
             <Pets></Pets>
-            // <div className='p-6'>
-            //     <h4>Pets</h4>
-            //     <DataTable value={this.products} className="p-datatable-striped">
-            //         <Column field="codigo" header="Código" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-            //         <Column field="nome" header="Nome" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-            //         <Column field="peso" header="Peso" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-            //         <Column field="raca" header="Raça" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-            //         <Column field="idade" header="Idade" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-            //         <Column field="sexo" header="Sexo" style={{ width: '25%' }} body={this.bodyTemplate}></Column>
-            //     </DataTable>
-            // </div>
+            
         )
 
         const calendario = (
