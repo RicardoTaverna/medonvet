@@ -81,10 +81,10 @@ class Login extends React.Component {
                                         </span>
 
                                         <div className="flex align-items-center justify-content-between mb-6">
-                                            <a href="/login" className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Esqueceu sua senha?</a>
+                                            <a href="/recuperar-senha" className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Esqueceu sua senha?</a>
                                         </div>
 
-                                        <Button label="Sign In" icon="pi pi-user" className="w-full" onClick={this.onLogin} />
+                                        <Button label="Acessar" icon="pi pi-user" className="w-full" onClick={this.onLogin} />
                                     </div>
                                 </section>
                             </div>

@@ -98,35 +98,43 @@ export class Pets extends React.Component {
             let state = { submitted: true };
             let pets = [...this.state.pets];
             let pet = {...this.state.pet};
-
-            if(this.state.pet.id){
-                const index = this.findIndexById(this.state.pet.id);
-                pets[index] = pet;
-                try {
-                    api.put(`/clientes/pet/${this.state.pet.id}/`, pet).then(response => console.log(response))
-                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet atualizado', life: 3000 });
-                } catch (err) {
-                    console.log(`Erro: ${err}`)
-                }
-
+            
+            if ( !pet.nome ) {
+                this.setState(
+                    {messageError: "O Nome do pet é obrigatório para realizar o cadastro. W.W"}
+                );
+                this.toast.show({ severity: 'error', summary: 'Erro', detail: 'O campo nome é obrigatório para o cadastro do pet.', life: 3000 });
             } else {
-                try {
-                    api.post('/clientes/pet/', pet).then(response => console.log(response, pet))
-                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet adicionado', life: 3000 });
-                } catch (err) {
-                    console.log(`Erro: ${err}`)
-                    console.log(`Pet: ${pet}`)
-                }
-            }
 
-            state = {
-                ...state,
-                pets,
-                petDialog: false,
-                pet: this.emptyPet
-            };
-    
-            this.setState(state);
+                if(this.state.pet.id){
+                    const index = this.findIndexById(this.state.pet.id);
+                    pets[index] = pet;
+                    try {
+                        api.put(`/clientes/pet/${this.state.pet.id}/`, pet).then(response => console.log(response))
+                        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet atualizado', life: 3000 });
+                    } catch (err) {
+                        console.log(`Erro: ${err}`)
+                    }
+
+                } else {
+                    try {
+                        api.post('/clientes/pet/', pet).then(response => console.log(response, pet))
+                        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet adicionado', life: 3000 });
+                    } catch (err) {
+                        console.log(`Erro: ${err}`)
+                        console.log(`Pet: ${pet}`)
+                    }
+                }
+
+                state = {
+                    ...state,
+                    pets,
+                    petDialog: false,
+                    pet: this.emptyPet
+                };
+        
+                this.setState(state);
+            }
         }
 
     }
