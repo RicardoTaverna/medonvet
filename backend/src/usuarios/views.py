@@ -44,19 +44,19 @@ class UserClienteDetail(APIView):
     """Class based function para retornar, alterar e deletar u objeto Usuario."""
     permission_classes = [IsAuthenticated]
     
-    def _get_object(self, request):
+    def __get_object(self, request):
         try:
             return User.objects.get(id=request.user.id)
         except User.DoesNotExist:
             raise Http404
     
     def get(self, request, format=None):
-        user = self._get_object(request=request)
+        user = self.__get_object(request=request)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, format=None):
-        user = self._get_object(request=request)
+        user = self.__get_object(request=request)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -64,7 +64,7 @@ class UserClienteDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, format=None):
-        user = self._get_object(request=request)
+        user = self.__get_object(request=request)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -90,19 +90,19 @@ class UserPrestadorList(APIView):
 
 class UserPrestadorDetail(APIView):
 
-    def _get_object(self, pk):
+    def __get_object(self, pk):
         try:
             return User.objects.get(pk=pk)
         except User.DoesNotExist:
             raise Http404
 
     def get(self, request, pk, format=None):
-        user = self._get_object(pk=pk)
+        user = self.__get_object(pk=pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
-        user = self._get_object(pk=pk)
+        user = self.__get_object(pk=pk)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -110,7 +110,7 @@ class UserPrestadorDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        user = self._get_object(pk=pk)
+        user = self.__get_object(pk=pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -203,3 +203,21 @@ class ForgetPasswordValidateToken(APIView):
             user.save()
             return Response(f"Usuário {user.username} atualizado", status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserGroupDetail(APIView):
+    """Class based function para retornar, alterar e deletar u objeto Usuario."""
+    permission_classes = [IsAuthenticated]
+    
+    def __get_object(self, request):
+        try:
+            return User.objects.get(id=request.user.id)
+        except User.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, format=None):
+        user = self.__get_object(request=request)
+        grupo=user.groups.values_list('name',flat = True).first()
+        serializer = UserSerializer(user)
+        new_serializer_data = {'grupo': grupo}
+        new_serializer_data.update(serializer.data)
+        return Response(new_serializer_data)
