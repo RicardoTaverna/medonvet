@@ -9,7 +9,7 @@ from rest_framework import status
 
 from .models import User
 from .models import Prestador
-from .serializers import PrestadorSerializer
+from .serializers import PrestadorSerializer, PrestadorNestedSerializer
 
 # Create your views here.
 class PrestadorList(APIView):
@@ -38,7 +38,7 @@ class PrestadorDetail(APIView):
     
     def get(self, request, format=None):
         prestador = self._get_prestador(request)
-        serializer = PrestadorSerializer(prestador)
+        serializer = PrestadorNestedSerializer(prestador)
         return Response(serializer.data)
 
     def put(self, request, format=None):
