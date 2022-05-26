@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import PrestadorList, PrestadorDetail
+from .views import PrestadorList, PrestadorDetail, VeterinarioList, VeterinarioDetail
 
 
 # Wire up our API using automatic URL routing.
@@ -9,4 +9,6 @@ from .views import PrestadorList, PrestadorDetail
 urlpatterns = format_suffix_patterns([
     path('', PrestadorList.as_view()),
     path('detalhe/', PrestadorDetail.as_view()),
+    path('veterinario/', VeterinarioList.as_view()),
+    path('veterinario/<int:id_vet>/', VeterinarioDetail.as_view())
 ])
