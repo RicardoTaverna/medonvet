@@ -19,6 +19,7 @@ export class CadastroPrestador extends Component {
             last_name: "",
             email: "",
             cpf_cnpj: "",
+            cpf_cnpj2: "",
             crmv:"",
             password: "",
             passwordconfirm: "",
@@ -33,6 +34,8 @@ export class CadastroPrestador extends Component {
         
         
         const { username,first_name, last_name,email,cpf_cnpj,crmv,password,passwordconfirm, groupname } = this.state
+
+    
         if (!username || !first_name || !last_name || !email || !cpf_cnpj || !crmv || !password || !passwordconfirm) {
             this.setState(
                 {messageError: "Preencha todos os campos para conlcuir seu cadastro!"},
@@ -56,9 +59,11 @@ export class CadastroPrestador extends Component {
             try {
                 const response = await api.post("/usuarios/prestadores/", { cpf_cnpj,crmv, groupname, user });
                 console.log(response)
+                console.log(cpf_cnpj)
                 this.props.history.push('/login')
                 
             } catch (err) {
+                console.log(cpf_cnpj)
                 this.setState(
                     {messageError: "Houve um problema com o cadastro, verifique suas credenciais. T.T"},
                     () => this.showError()
@@ -73,6 +78,7 @@ export class CadastroPrestador extends Component {
             '999.999.999-99', 
             '99.999.999/9999-99'
         ]);
+        this.setState({cpf_cnpj: valorOriginal})
         return valorMascarado;
     };
 
@@ -115,7 +121,7 @@ export class CadastroPrestador extends Component {
                             </div>
                             <div className="field col-12 md:col-6">
                                 <span className="p-float-label">
-                                    <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onMask(e)})} toggleMask feedback={false} />
+                                    <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj2} onChange={(e) => this.setState({cpf_cnpj2: this.onMask(e)})} toggleMask feedback={false} />
                                     <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
                                 </span>
                             </div>
