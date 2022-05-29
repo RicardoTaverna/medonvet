@@ -48,6 +48,7 @@ class PetAuthTests(APITestCase):
 	            'nome':'Muska2',
 	            'peso':4.00,
 	            'raca':'Shitzu',
+                'tipo':'cachorro',
 	            'idade_anos':1,
 	            'idade_meses':12,
 	            'sexo':'Macho'

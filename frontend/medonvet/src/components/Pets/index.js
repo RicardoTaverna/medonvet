@@ -26,6 +26,7 @@ export class Pets extends React.Component {
         nome: '',
         peso: 0,
         raca: '',
+        tipo: '',
         idade_anos: 0,
         idade_meses: 0,
         sexo: ''
@@ -268,6 +269,7 @@ export class Pets extends React.Component {
                     <Column field="nome" header="Nome" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="peso" header="Peso" sortable style={{ minWidth: '8rem' }}></Column>
                     <Column field="raca" header="Raça" sortable style={{ minWidth: '10rem' }}></Column>
+                    <Column field="tipo" header="Tipo" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="data_nascimento" header="Idade" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="sexo" header="Sexo" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column body={this.actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
@@ -326,7 +328,7 @@ export class Pets extends React.Component {
                     </div>
                 </div>
 
-                <Dialog visible={this.state.petDialog} style={{ width: '750px' }} header="Product Details" modal className="p-fluid" footer={petDialogFooter} onHide={this.hideDialog}>
+                <Dialog visible={this.state.petDialog} style={{ width: '750px' }} header="Pet Detalhes" modal className="p-fluid" footer={petDialogFooter} onHide={this.hideDialog}>
                     {/* {this.state.pet.imagem && <img src={`http://127.0.0.1:8000${this.state.pet.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image block m-auto pb-3" />} */}
                     
                     <div className="field">
@@ -334,11 +336,17 @@ export class Pets extends React.Component {
                         <InputText id="nome" value={this.state.pet.nome} onChange={(e) => this.onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.nome })} />
                         {this.state.submitted && !this.state.pet.nome && <small className="p-error">Nome é obrigatório.</small>}
                     </div>
-
-                    <div className="field">
-                        <label htmlFor="raca">Raça</label>
-                        <InputText id="raca" value={this.state.pet.raca} onChange={(e) => this.onInputChange(e, 'raca')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.raca })} />
-                        {this.state.submitted && !this.state.pet.raca && <small className="p-error">Raça é obrigatória.</small>}
+                    <div className="formgrid grid">
+                        <div className="field col">
+                            <label htmlFor="raca">Raça</label>
+                            <InputText id="raca" value={this.state.pet.raca} onChange={(e) => this.onInputChange(e, 'raca')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.raca })} />
+                            {this.state.submitted && !this.state.pet.raca && <small className="p-error">Raça é obrigatória.</small>}
+                        </div>
+                        <div className="field col">
+                            <label htmlFor="tipo">Tipo</label>
+                            <InputText id="tipo" value={this.state.pet.tipo} onChange={(e) => this.onInputChange(e, 'tipo')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.tipo })} />
+                            {this.state.submitted && !this.state.pet.tipo && <small className="p-error">Tipo do pet é obrigatório (Cachorro, gato...).</small>}
+                        </div>
                     </div>
 
                     <div className="formgrid grid">
