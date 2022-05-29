@@ -19,7 +19,7 @@ export class CadastroPrestador extends Component {
             last_name: "",
             email: "",
             cpf_cnpj: "",
-            cpf_cnpj2: "",
+            cpf_cnpjMascarado: "",
             crmv:"",
             password: "",
             passwordconfirm: "",
@@ -78,7 +78,7 @@ export class CadastroPrestador extends Component {
             '999.999.999-99', 
             '99.999.999/9999-99'
         ]);
-        this.setState({cpf_cnpj: valorOriginal})
+        this.setState({cpf_cnpj: unMask(valorMascarado)})
         return valorMascarado;
     };
 
@@ -121,7 +121,7 @@ export class CadastroPrestador extends Component {
                             </div>
                             <div className="field col-12 md:col-6">
                                 <span className="p-float-label">
-                                    <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj2} onChange={(e) => this.setState({cpf_cnpj2: this.onMask(e)})} toggleMask feedback={false} />
+                                    <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onMask(e)})} toggleMask feedback={false} />
                                     <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
                                 </span>
                             </div>
