@@ -32,5 +32,5 @@ class Pet(models.Model):
         return self.nome + " " + str(self.cliente.id)
     
     def save(self, *args, **kwargs):
-        self.data_nascimento = datetime.now() - relativedelta(years=self.idade_anos) - relativedelta(months=self.idade_meses)
+        self.data_nascimento = datetime.date(datetime.now() - relativedelta(years=self.idade_anos) - relativedelta(months=self.idade_meses))
         super(Pet, self).save(*args, **kwargs)
