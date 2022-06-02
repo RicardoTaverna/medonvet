@@ -4,9 +4,11 @@ import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Rating } from 'primereact/rating';
+import { Sidebar } from 'primereact/sidebar';
 
 import VeterinariosCard from '../VeterinariosCard';
 import { api } from './../../services/api';
+import CadastroVeterinario from '../CadastroVeterinario';
 
 class PrestadorHome extends Component {
 
@@ -14,7 +16,15 @@ class PrestadorHome extends Component {
         super(props);
         this.state = {
             veterinarios: [],
+            visibleLeft: false,
         }
+        this.teamItens = [
+            {   
+                label: 'Adicionar Veterinário',
+                icon: 'pi pi-fw pi-cog',
+                command:()=>{ this.setState({ visibleLeft: true });}
+            }
+        ];
         this.onLoad = this.onLoad.bind(this)
     }
 
@@ -37,6 +47,10 @@ class PrestadorHome extends Component {
         let { veterinarios } = this.state 
         return (
             <React.Fragment>
+                <Sidebar visible={this.state.visibleLeft} className="p-sidebar-lg" onHide={() => this.setState({ visibleLeft: false })}>
+                        <CadastroVeterinario></CadastroVeterinario>
+                </Sidebar>
+
                 <div className="grid px-6 py-3">
                     <div className="col-12 md:col-6 lg:col-3">
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
