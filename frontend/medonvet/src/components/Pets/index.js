@@ -44,7 +44,8 @@ export class Pets extends React.Component {
             submitted: false,
             globalFilter: null,
             loading: true,
-            totalSize: 0
+            totalSize: 0,
+            id: 0
         };
         this.onLoad = this.onLoad.bind(this);
         this.openNew = this.openNew.bind(this);
@@ -60,27 +61,22 @@ export class Pets extends React.Component {
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
+        
     }     
 
     componentDidMount() {
-        this._isMounted = true;
-        if(this._isMounted){
-            this.onLoad();
-        }
+        this.onLoad();
     }
 
-    componentDidUpdate() {
-        this._isMounted = true;
-        if(this._isMounted){
+    componentDidUpdate(prevProps, prevState) {
+
+        if(this.state.id !== prevState.id) {
             this.onLoad();
         }
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
     }
 
     onLoad = async e => {
+        
         try {
             api.get("/clientes/pet/").then((response) => {
                 this.setState({
@@ -95,10 +91,10 @@ export class Pets extends React.Component {
     }
 
     savePet = async e => {
-        if(this._isMounted){
             let state = { submitted: true };
             let pets = [...this.state.pets];
             let pet = {...this.state.pet};
+            
             
             if ( !pet.nome ) {
                 this.setState(
@@ -109,6 +105,7 @@ export class Pets extends React.Component {
 
                 if(this.state.pet.id){
                     const index = this.findIndexById(this.state.pet.id);
+                   
                     pets[index] = pet;
                     try {
                         api.put(`/clientes/pet/${this.state.pet.id}/`, pet).then(response => console.log(response))
@@ -119,7 +116,10 @@ export class Pets extends React.Component {
 
                 } else {
                     try {
-                        api.post('/clientes/pet/', pet).then(response => console.log(response, pet))
+                        api.post('/clientes/pet/', pet).then(response  => {
+                            console.log(response, pet)
+                            this.setState(prevState => ({id: prevState.id + 1}))
+                     })
                         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet adicionado', life: 3000 });
                     } catch (err) {
                         console.log(`Erro: ${err}`)
@@ -136,17 +136,13 @@ export class Pets extends React.Component {
         
                 this.setState(state);
             }
-        }
-
     }
 
     editPet(pet) {
-        if(this._isMounted){
             this.setState({
                 pet: { ...pet },
                 petDialog: true
             });
-        }
     }
 
     confirmDeletePet(pet) {
@@ -157,7 +153,7 @@ export class Pets extends React.Component {
     }
 
     deletePet() {
-        if(this._isMounted){
+
             let pets = this.state.pets.filter(val => val.id !== this.state.pet.id);
     
             api.delete(`/clientes/pet/${this.state.pet.id}/`)
@@ -167,7 +163,6 @@ export class Pets extends React.Component {
                 pet: this.emptyPet
             });
             this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet deletado', life: 3000 });
-        }
     }
 
 
