@@ -9,8 +9,9 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Skeleton } from 'primereact/skeleton';
+import VeterinariosCard from '../VeterinariosCard';
 
-import './pets.css'
+import './veterinario.css'
 
 import { api } from '../../services/api';
 
@@ -33,6 +34,7 @@ export class Veterinario extends React.Component {
         super(props);
 
         this.state = {
+            veterinarios: [],
             vets: null,
             vetDialog: false,
             deleteVetDialog: false,
@@ -60,28 +62,19 @@ export class Veterinario extends React.Component {
     }     
 
     componentDidMount() {
-        this._isMounted = true;
-        if(this._isMounted){
             this.onLoad();
-        }
     }
 
     componentDidUpdate() {
-        this._isMounted = true;
-        if(this._isMounted){
             this.onLoad();
-        }
     }
 
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
 
     onLoad = async e => {
         try {
-            api.get("/clientes/pet/").then((response) => {
+            api.get("/prestadores/veterinario/").then((response) => {
                 this.setState({
-                    pets: response.data,
+                    vets: response.data,
                     loading: false
                 })
             });
@@ -97,7 +90,7 @@ export class Veterinario extends React.Component {
             let vets = [...this.state.vets];
             let vet = {...this.state.vet};
             
-            if ( !vet.nome ) {
+            if ( !vet.username ) {
                 this.setState(
                     {messageError: "O Nome do pet é obrigatório para realizar o cadastro. W.W"}
                 );
@@ -108,7 +101,7 @@ export class Veterinario extends React.Component {
                     const index = this.findIndexById(this.state.pet.id);
                     vets[index] = vet;
                     try {
-                        api.put(`/clientes/pet/${this.state.pet.id}/`, vet).then(response => console.log(response))
+                        api.put(`/prestadores/veterinario/${this.state.pet.id}/`, vet).then(response => console.log(response))
                         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet atualizado', life: 3000 });
                     } catch (err) {
                         console.log(`Erro: ${err}`)
@@ -116,7 +109,7 @@ export class Veterinario extends React.Component {
 
                 } else {
                     try {
-                        api.post('/clientes/pet/', vet).then(response => console.log(response, vet))
+                        api.post('/prestadores/veterinario/', vet).then(response => console.log(response, vet))
                         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet adicionado', life: 3000 });
                     } catch (err) {
                         console.log(`Erro: ${err}`)
@@ -157,7 +150,7 @@ export class Veterinario extends React.Component {
         if(this._isMounted){
             let vets = this.state.vets.filter(val => val.id !== this.state.vet.id);
     
-            api.delete(`/clientes/pet/${this.state.vet.id}/`)
+            api.delete(`/prestadores/veterinario/${this.state.vet.id}/`)
             this.setState({
                 vets,
                 deletePetDialog: false,
@@ -237,7 +230,7 @@ export class Veterinario extends React.Component {
     }
 
     render() {
-
+        let { veterinarios } = this.state 
         const vetDialogFooter = (
             <React.Fragment>
                 <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={this.hideDialog} />
@@ -323,44 +316,41 @@ export class Veterinario extends React.Component {
                         </div>
                     </div>
                 </div>
-
+                { veterinarios.map(
+                                veterinario =><VeterinariosCard
+                                    key={veterinario.id}
+                                    id={veterinario.id}
+                                    first_name={veterinario.user.first_name}
+                                    last_name={veterinario.user.last_name}>
+                                </VeterinariosCard>
+                            )}
                 <Dialog visible={this.state.vetialog} style={{ width: '750px' }} header="Product Details" modal className="p-fluid" footer={vetDialogFooter} onHide={this.hideDialog}>
                     {/* {this.state.pet.imagem && <img src={`http://127.0.0.1:8000${this.state.pet.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image block m-auto pb-3" />} */}
                     
                     <div className="field">
                         <label htmlFor="nome">Nome</label>
-                        <InputText id="nome" value={this.state.pet.nome} onChange={(e) => this.onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.nome })} />
-                        {this.state.submitted && !this.state.pet.nome && <small className="p-error">Nome é obrigatório.</small>}
+                        <InputText id="nome" value={this.state.vets.first_name} onChange={(e) => this.onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vets.first_name })} />
+                        {this.state.submitted && !this.state.vets.first_name && <small className="p-error">Nome é obrigatório.</small>}
                     </div>
 
                     <div className="field">
                         <label htmlFor="raca">Raça</label>
-                        <InputText id="raca" value={this.state.pet.raca} onChange={(e) => this.onInputChange(e, 'raca')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.raca })} />
-                        {this.state.submitted && !this.state.pet.raca && <small className="p-error">Raça é obrigatória.</small>}
+                        <InputText id="raca" value={this.state.vet.last_name} onChange={(e) => this.onInputChange(e, 'raca')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.last_name })} />
+                        {this.state.submitted && !this.state.vet.last_name && <small className="p-error">Raça é obrigatória.</small>}
                     </div>
 
                     <div className="formgrid grid">
                         <div className="field col">
                             <label htmlFor="peso">Peso</label>
-                            <InputNumber id="peso" value={this.state.pet.peso} onValueChange={(e) => this.onInputNumberChange(e, 'peso')} />
+                            <InputNumber id="peso" value={this.state.vet.email} onValueChange={(e) => this.onInputNumberChange(e, 'peso')} />
                         </div>
                         <div className="field col">
                             <label htmlFor="sexo">Sexo</label>
-                            <InputText id="sexo" value={this.state.pet.sexo} onChange={(e) => this.onInputChange(e, 'sexo')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.sexo })} />
-                            {this.state.submitted && !this.state.pet.sexo && <small className="p-error">Sexo é obrigatório.</small>}
+                            <InputText id="sexo" value={this.state.vet.username} onValueonChange={(e) => this.onInputChange(e, 'sexo')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.username })} />
+                            {this.state.submitted && !this.state.vet.username && <small className="p-error">Sexo é obrigatório.</small>}
                         </div>
                     </div>
 
-                    <div className="formgrid grid">
-                        <div className="field col">
-                            <label htmlFor="idade_anos">Idade Anos</label>
-                            <InputNumber id="idade_anos" value={this.state.pet.idade_anos} onValueChange={(e) => this.onInputNumberChange(e, 'idade_anos')} integeronly/>
-                        </div>
-                        <div className="field col">
-                            <label htmlFor="idade_meses">Idade Meses</label>
-                            <InputNumber id="idade_meses" value={this.state.pet.idade_meses} onValueChange={(e) => this.onInputNumberChange(e, 'idade_meses')} integeronly />
-                        </div>
-                    </div>
                 </Dialog>
 
                 <Dialog visible={this.state.deleteVetDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteVetDialogFooter} onHide={this.hideDeleteVetDialog}>
