@@ -10,6 +10,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Skeleton } from 'primereact/skeleton';
 import VeterinariosCard from '../VeterinariosCard';
+import { mask, unMask} from "remask";
 
 import './veterinario.css'
 
@@ -47,6 +48,7 @@ export class Veterinario extends React.Component {
             loading: true,
             totalSize: 0,
             idAux: 0,
+            cpf_cnpjMascarado: '',
         };
         this.onLoad = this.onLoad.bind(this);
         this.openNew = this.openNew.bind(this);
@@ -63,6 +65,7 @@ export class Veterinario extends React.Component {
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
         this.onInputUserChange = this.onInputUserChange.bind(this);
+        this.onMask = this.onMask.bind(this);
     }     
 
     componentDidMount() {
@@ -83,7 +86,6 @@ export class Veterinario extends React.Component {
                     vets: response.data,
                     loading: false
                 })
-                console.log(this.state.vets)
             });
 
         } catch (err){
@@ -119,6 +121,7 @@ export class Veterinario extends React.Component {
                             console.log(response, vet)
                             this.setState(prevState => ({idAux: prevState.idAux +1}))
                         })
+                        this.setState({cpf_cnpjMascarado: ""})
                         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario adicionado', life: 3000 });
                     } catch (err) {
                         console.log(`Erro: ${err}`)
@@ -153,7 +156,7 @@ export class Veterinario extends React.Component {
 
     deleteVet() {
         let vets = this.state.vets.filter(val => val.id !== this.state.vet.id);
-
+        console.log(this.state.vets.id)
         api.delete(`/prestadores/veterinario/${this.state.vet.id}/`)
         this.setState({
             vets,
@@ -198,9 +201,21 @@ export class Veterinario extends React.Component {
     onInputChange(e, name) {
         const val = (e.target && e.target.value) || '';
         let vet = {...this.state.vet};
-        vet[`${name}`] = val;
+        if( name === "cpf_cnpj"){
+            const valorOriginal = unMask(e.target.value)
+            const valorMascarado = mask(valorOriginal,[
+                '999.999.999-99', 
+                '99.999.999/9999-99'
+            ]);
+            vet[`${name}`] = unMask(valorMascarado);
+            this.setState({ vet });
+            return valorMascarado;
 
-        this.setState({ vet });
+        }else{
+            vet[`${name}`] = val;
+
+            this.setState({ vet });
+        }
     }
 
     onInputUserChange(e, name) {
@@ -241,6 +256,16 @@ export class Veterinario extends React.Component {
     imageBodyTemplate(rowData) {
         return <img src={`http://127.0.0.1:8000${rowData.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.imagem} className="product-image" />
     }
+
+
+    onMask = (event) => {
+        const valorOriginal = unMask(event.target.value)
+        const valorMascarado = mask(valorOriginal,[
+            '999.999.999-99', 
+            '99.999.999/9999-99'
+        ]);
+        return valorMascarado;
+    };
 
     render() {
         let { veterinarios } = this.state 
@@ -369,7 +394,7 @@ export class Veterinario extends React.Component {
                         </div>
                         <div className="field col">
                             <label htmlFor="cpf_cnpj">CPF-CNPJ</label>
-                            <InputText id="cpf_cnpj" value={this.state.vet.cpf_cnpj} onChange={(e) => this.onInputChange(e, 'cpf_cnpj')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.cpf_cnpj })} />
+                            <InputText id="cpf_cnpj" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.cpf_cnpj })} />
                             {this.state.submitted && !this.state.vet.cpf_cnpj && <small className="p-error">CPF-CNPJ é obrigatório.</small>}
                         </div>
                     </div>
@@ -391,7 +416,7 @@ export class Veterinario extends React.Component {
                 <Dialog visible={this.state.deleteVetDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteVetDialogFooter} onHide={this.hideDeleteVetDialog}>
                     <div className="confirmation-content">
                         <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
-                        {this.state.vet && <span>Você tem certeza que deseja deletar esse Veterinario? <b>{this.state.vet.nome}</b>?</span>}
+                        {this.state.vet && <span>Você tem certeza que deseja deletar esse Veterinario? <b>{this.state.vet.user.first_name}</b>?</span>}
                     </div>
                 </Dialog>
 
