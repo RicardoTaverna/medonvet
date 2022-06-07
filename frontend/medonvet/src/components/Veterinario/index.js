@@ -22,8 +22,9 @@ export class Veterinario extends React.Component {
         user: {
             username: '',
             first_name: '',
-            lastname: '',
+            last_name: '',
             email: '',
+            password: '',
         },
         id: null,
         cpf_cnpj: '',
@@ -61,6 +62,7 @@ export class Veterinario extends React.Component {
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
+        this.onInputUserChange = this.onInputUserChange.bind(this);
     }     
 
     componentDidMount() {
@@ -201,6 +203,16 @@ export class Veterinario extends React.Component {
         this.setState({ vet });
     }
 
+    onInputUserChange(e, name) {
+        const val = (e.target && e.target.value) || '';
+        let vet = {...this.state.vet};
+        let user = { ...this.state.vet.user}
+        user[`${name}`] = val;
+        vet['user'] = user;
+        console.log(vet)
+        this.setState({ vet });
+    }
+
     onInputNumberChange(e, name) {
         const val = e.value || 0;
         let vet = {...this.state.vet};
@@ -326,26 +338,26 @@ export class Veterinario extends React.Component {
                     
                     <div className="field">
                         <label htmlFor="first_name">Nome</label>
-                        <InputText id="first_name" value={this.state.vet.user.first_name} onChange={(e) => this.onInputChange(e, 'first_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.first_name })} />
+                        <InputText id="first_name" value={this.state.vet.user.first_name} onChange={(e) => this.onInputUserChange(e, 'first_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.first_name })} />
                         {this.state.submitted && !this.state.vet.user.first_name && <small className="p-error">Nome é obrigatório.</small>}
                     </div>
 
                     <div className="field">
                         <label htmlFor="last_name">Sobrenome</label>
-                        <InputText id="last_name" value={this.state.vet.last_name} onChange={(e) => this.onInputChange(e, 'sobrenome')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.last_name })} />
-                        {this.state.submitted && !this.state.vet.last_name && <small className="p-error">Sobrenome é obrigatória.</small>}
+                        <InputText id="last_name" value={this.state.vet.user.last_name} onChange={(e) => this.onInputUserChange(e, 'last_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.last_name })} />
+                        {this.state.submitted && !this.state.vet.user.last_name && <small className="p-error">Sobrenome é obrigatória.</small>}
                     </div>
 
                     <div className="formgrid grid">
                         <div className="field col">
                             <label htmlFor="email">E-mail</label>
-                            <InputText id="email" value={this.state.vet.email} onChange={(e) => this.onInputChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.email })} />
-                            {this.state.submitted && !this.state.vet.email && <small className="p-error">E-mail é obrigatória.</small>}
+                            <InputText id="email" value={this.state.vet.user.email} onChange={(e) => this.onInputUserChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.email })} />
+                            {this.state.submitted && !this.state.vet.user.email && <small className="p-error">E-mail é obrigatória.</small>}
                         </div>
                         <div className="field col">
                             <label htmlFor="username">Username</label>
-                            <InputText id="username" value={this.state.vet.username} onChange={(e) => this.onInputChange(e, 'username')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.username })} />
-                            {this.state.submitted && !this.state.vet.username && <small className="p-error">Username é obrigatório.</small>}
+                            <InputText id="username" value={this.state.vet.user.username} onChange={(e) => this.onInputUserChange(e, 'username')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.username })} />
+                            {this.state.submitted && !this.state.vet.user.username && <small className="p-error">Username é obrigatório.</small>}
                         </div>
                     </div>
 
@@ -364,8 +376,8 @@ export class Veterinario extends React.Component {
                     <div className="formgrid grid">
                         <div className="field col">
                             <label htmlFor="password">Senha</label>
-                            <InputText id="password" type="password" value={this.state.vet.password} onChange={(e) => this.onInputChange(e, 'password')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.password })} />
-                            {this.state.submitted && !this.state.vet.password && <small className="p-error">Senha é obrigatória.</small>}
+                            <InputText id="password" type="password" value={this.state.vet.user.password} onChange={(e) => this.onInputUserChange(e, 'password')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.password })} />
+                            {this.state.submitted && !this.state.vet.user.password && <small className="p-error">Senha é obrigatória.</small>}
                         </div>
                         <div className="field col">
                             <label htmlFor="passwordconfirm">Senha</label>
