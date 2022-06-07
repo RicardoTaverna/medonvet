@@ -96,7 +96,7 @@ export class Veterinario extends React.Component {
             let vets = [...this.state.vets];
             let vet = {...this.state.vet};
         
-            if ( !vet.first_name ) {
+            if ( !vet.user.first_name ) {
                 this.setState(
                     {messageError: "O Nome do Vet é obrigatório para realizar o cadastro. W.W"}
                 );
@@ -210,7 +210,7 @@ export class Veterinario extends React.Component {
         user[`${name}`] = val;
         vet['user'] = user;
         console.log(vet)
-        this.setState({ vet });
+        this.setState({ vet: vet });
     }
 
     onInputNumberChange(e, name) {
