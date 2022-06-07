@@ -19,11 +19,13 @@ export class Veterinario extends React.Component {
 
 
     emptyVet = {
+        user: {
+            username: '',
+            first_name: '',
+            lastname: '',
+            email: '',
+        },
         id: null,
-        username: '',
-        first_name: '',
-        lastname: '',
-        email: '',
         cpf_cnpj: '',
         crmv: '',
         descricao: '',
@@ -79,6 +81,7 @@ export class Veterinario extends React.Component {
                     vets: response.data,
                     loading: false
                 })
+                console.log(this.state.vets)
             });
 
         } catch (err){
@@ -251,12 +254,12 @@ export class Veterinario extends React.Component {
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
                     // globalFilter={this.state.globalFilter} header={header} responsiveLayout="scroll"
-                     w >
+                    >
                     <Column field="imagem" header="Imagem" body={this.imageBodyTemplate} ></Column>
                     <Column field="id" header="Código" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="first_name" header="Nome" sortable style={{ minWidth: '16rem' }}></Column>
-                    <Column field="last_name" header="Sobrenome" sortable style={{ minWidth: '8rem' }}></Column>
-                    <Column field="username" header="Usuario" sortable style={{ minWidth: '10rem' }}></Column>
+                    <Column field="user.first_name" header="Nome" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="user.last_name" header="Sobrenome" sortable style={{ minWidth: '8rem' }}></Column>
+                    <Column field="user.username" header="Usuario" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="crmv" header="CRMV" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="cpf_cnpj" header="CPF-CNPJ" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column body={this.actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
@@ -323,8 +326,8 @@ export class Veterinario extends React.Component {
                     
                     <div className="field">
                         <label htmlFor="first_name">Nome</label>
-                        <InputText id="first_name" value={this.state.vet.first_name} onChange={(e) => this.onInputChange(e, 'first_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.first_name })} />
-                        {this.state.submitted && !this.state.vet.first_name && <small className="p-error">Nome é obrigatório.</small>}
+                        <InputText id="first_name" value={this.state.vet.user.first_name} onChange={(e) => this.onInputChange(e, 'first_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.first_name })} />
+                        {this.state.submitted && !this.state.vet.user.first_name && <small className="p-error">Nome é obrigatório.</small>}
                     </div>
 
                     <div className="field">
