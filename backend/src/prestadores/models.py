@@ -8,7 +8,7 @@ class Prestador(models.Model):
     avatar = models.CharField(max_length=100, blank=True, null=True)
     descricao = models.CharField(max_length=255, blank=True, null=True)
     capa = models.CharField(max_length=255, blank=True, null=True)
-    cpf_cnpj = models.CharField(max_length=14, blank=True, null=True)
+    cpf_cnpj = models.CharField(max_length=18, blank=True, null=True)
     inicioAtendimento = models.TimeField(blank=True, null=True)
     fimAtendimento = models.TimeField(blank=True, null=True)
 
@@ -22,7 +22,7 @@ class Veterinario(models.Model):
     avatar = models.CharField(max_length=100, blank=True, null=True)
     descricao = models.CharField(max_length=255, blank=True, null=True)
     capa = models.CharField(max_length=255, blank=True, null=True)
-    cpf_cnpj = models.CharField(max_length=14, blank=True, null=True)
+    cpf_cnpj = models.CharField(max_length=18, blank=True, null=True)
     inicioAtendimento = models.TimeField(blank=True, null=True)
     fimAtendimento = models.TimeField(blank=True, null=True)
 

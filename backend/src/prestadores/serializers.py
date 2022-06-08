@@ -25,7 +25,7 @@ class VeterinarioSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = Veterinario
-        fields = ['user', 'prestador', 'crmv', 'avatar', 'descricao', 'capa', 'cpf_cnpj', 'inicioAtendimento', 'fimAtendimento']
+        fields = ['id', 'user', 'prestador', 'crmv', 'avatar', 'descricao', 'capa', 'cpf_cnpj', 'inicioAtendimento', 'fimAtendimento']
 
     def create(self, validated_data):
         user_payload = validated_data.pop('user')

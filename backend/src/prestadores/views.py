@@ -101,6 +101,7 @@ class VeterinarioDetail(APIView):
         veterinario = self.__get_veterinario(id_vet=id_vet, prestador=prestador)
         request.data['prestador'] = prestador
         serializer = PrestadorSerializer(veterinario, data=request.data)
+        print(request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

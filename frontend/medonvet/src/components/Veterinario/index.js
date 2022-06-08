@@ -48,7 +48,7 @@ export class Veterinario extends React.Component {
             loading: true,
             totalSize: 0,
             idAux: 0,
-            cpf_cnpjMascarado: '',
+            passwordconfirm: '',
         };
         this.onLoad = this.onLoad.bind(this);
         this.openNew = this.openNew.bind(this);
@@ -65,7 +65,6 @@ export class Veterinario extends React.Component {
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
         this.onInputUserChange = this.onInputUserChange.bind(this);
-        this.onMask = this.onMask.bind(this);
     }     
 
     componentDidMount() {
@@ -103,6 +102,8 @@ export class Veterinario extends React.Component {
                     {messageError: "O Nome do Vet é obrigatório para realizar o cadastro. W.W"}
                 );
                 this.toast.show({ severity: 'error', summary: 'Erro', detail: 'O campo nome é obrigatório para o cadastro do vet.', life: 3000 });
+            }else if (vet.user.password !== this.state.passwordconfirm) {
+                this.toast.show({ severity: 'error', summary: 'Erro', detail: "As senhas não coincidem!", life: 3000 });
             } else {
 
                 if(this.state.vet.id){
@@ -111,6 +112,7 @@ export class Veterinario extends React.Component {
                     try {
                         api.put(`/prestadores/veterinario/${this.state.vet.id}/`, vet).then(response => console.log(response))
                         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario atualizado', life: 3000 });
+                        this.setState({passwordconfirm: ''})
                     } catch (err) {
                         console.log(`Erro: ${err}`)
                     }
@@ -121,7 +123,7 @@ export class Veterinario extends React.Component {
                             console.log(response, vet)
                             this.setState(prevState => ({idAux: prevState.idAux +1}))
                         })
-                        this.setState({cpf_cnpjMascarado: ""})
+                        this.setState({passwordconfirm: ''})
                         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario adicionado', life: 3000 });
                     } catch (err) {
                         console.log(`Erro: ${err}`)
@@ -207,7 +209,7 @@ export class Veterinario extends React.Component {
                 '999.999.999-99', 
                 '99.999.999/9999-99'
             ]);
-            vet[`${name}`] = unMask(valorMascarado);
+            vet[`${name}`] = valorMascarado;
             this.setState({ vet });
             return valorMascarado;
 
@@ -256,16 +258,6 @@ export class Veterinario extends React.Component {
     imageBodyTemplate(rowData) {
         return <img src={`http://127.0.0.1:8000${rowData.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.imagem} className="product-image" />
     }
-
-
-    onMask = (event) => {
-        const valorOriginal = unMask(event.target.value)
-        const valorMascarado = mask(valorOriginal,[
-            '999.999.999-99', 
-            '99.999.999/9999-99'
-        ]);
-        return valorMascarado;
-    };
 
     render() {
         let { veterinarios } = this.state 
@@ -394,7 +386,7 @@ export class Veterinario extends React.Component {
                         </div>
                         <div className="field col">
                             <label htmlFor="cpf_cnpj">CPF-CNPJ</label>
-                            <InputText id="cpf_cnpj" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.cpf_cnpj })} />
+                            <InputText id="cpf_cnpj" value={this.state.vet.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.cpf_cnpj })} />
                             {this.state.submitted && !this.state.vet.cpf_cnpj && <small className="p-error">CPF-CNPJ é obrigatório.</small>}
                         </div>
                     </div>
@@ -405,9 +397,9 @@ export class Veterinario extends React.Component {
                             {this.state.submitted && !this.state.vet.user.password && <small className="p-error">Senha é obrigatória.</small>}
                         </div>
                         <div className="field col">
-                            <label htmlFor="passwordconfirm">Senha</label>
-                            <InputText id="passwordconfirm" type="password" value={this.state.vet.passwordconfirm} onChange={(e) => this.onInputChange(e, 'passwordconfirm')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.passwordconfirm })} />
-                            {this.state.submitted && !this.state.vet.passwordconfirm && <small className="p-error">Senha é obrigatório.</small>}
+                            <label htmlFor="passwordconfirm">Confirmação de Senha</label>
+                            <InputText id="passwordconfirm" type="password" value={this.state.passwordconfirm} onChange={(e) => this.setState({passwordconfirm: e.target.value})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.passwordconfirm })} />
+                            {this.state.submitted && !this.state.passwordconfirm && <small className="p-error">Senha é obrigatório.</small>}
                         </div>
                     </div>
 
