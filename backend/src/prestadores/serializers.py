@@ -37,3 +37,13 @@ class VeterinarioSerializer(serializers.ModelSerializer):
         veterinario = Veterinario.objects.create(user=user, **validated_data)
 
         return veterinario
+
+class VeterinarioUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Veterinario
+        fields = '__all__'
+
+        def create(self, validated_data):
+            user = validated_data.pop('user')
+            veterinario = Veterinario.objects.create(user=user, **validated_data)
+            return veterinario

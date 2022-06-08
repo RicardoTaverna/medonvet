@@ -5,9 +5,9 @@ import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
-import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
 import { Skeleton } from 'primereact/skeleton';
 import VeterinariosCard from '../VeterinariosCard';
 import { mask, unMask} from "remask";
@@ -21,6 +21,7 @@ export class Veterinario extends React.Component {
 
     emptyVet = {
         user: {
+            id: '',
             username: '',
             first_name: '',
             last_name: '',
@@ -39,7 +40,9 @@ export class Veterinario extends React.Component {
         this.state = {
             veterinarios: [],
             vets: null,
+            vetUpdate: null,
             vetDialog: false,
+            isVetUpdate: false,
             deleteVetDialog: false,
             vet: this.emptyVet,
             selectedVets: null,
@@ -65,7 +68,7 @@ export class Veterinario extends React.Component {
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
         this.onInputUserChange = this.onInputUserChange.bind(this);
-    }     
+    }
 
     componentDidMount() {
             this.onLoad();
@@ -96,28 +99,30 @@ export class Veterinario extends React.Component {
             let state = { submitted: true };
             let vets = [...this.state.vets];
             let vet = {...this.state.vet};
-        
-            if ( !vet.user.first_name ) {
-                this.setState(
-                    {messageError: "O Nome do Vet é obrigatório para realizar o cadastro. W.W"}
-                );
-                this.toast.show({ severity: 'error', summary: 'Erro', detail: 'O campo nome é obrigatório para o cadastro do vet.', life: 3000 });
-            }else if (vet.user.password !== this.state.passwordconfirm) {
-                this.toast.show({ severity: 'error', summary: 'Erro', detail: "As senhas não coincidem!", life: 3000 });
+            let vetUpdate = { ...this.state.vet};
+            vetUpdate['user'] = vetUpdate.user.id
+
+            if(this.state.vet.id){
+                const index = this.findIndexById(this.state.vet.id);
+                vets[index] = vet;
+                try {
+                    api.put(`/prestadores/veterinario/${this.state.vet.id}/`, vet).then(response => console.log(response))
+                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario atualizado', life: 3000 });
+                    this.setState({passwordconfirm: ''})
+                } catch (err) {
+                    console.log(`Erro: ${err}`)
+                }
+
             } else {
-
-                if(this.state.vet.id){
-                    const index = this.findIndexById(this.state.vet.id);
-                    vets[index] = vet;
-                    try {
-                        api.put(`/prestadores/veterinario/${this.state.vet.id}/`, vet).then(response => console.log(response))
-                        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario atualizado', life: 3000 });
-                        this.setState({passwordconfirm: ''})
-                    } catch (err) {
-                        console.log(`Erro: ${err}`)
-                    }
-
+                if ( !vet.user.first_name ) {
+                    this.setState(
+                        {messageError: "O Nome do Vet é obrigatório para realizar o cadastro. W.W"}
+                    );
+                    this.toast.show({ severity: 'error', summary: 'Erro', detail: 'O campo nome é obrigatório para o cadastro do vet.', life: 3000 });
+                }else if (vet.user.password !== this.state.passwordconfirm) {
+                    this.toast.show({ severity: 'error', summary: 'Erro', detail: "As senhas não coincidem!", life: 3000 });
                 } else {
+
                     try {
                         api.post('/prestadores/veterinario/', vet).then(response => {
                             console.log(response, vet)
@@ -130,22 +135,24 @@ export class Veterinario extends React.Component {
                         console.log(`Veterinario: ${vet}`)
                     }
                 }
-
-                state = {
-                    ...state,
-                    vets,
-                    vetDialog: false,
-                    vet: this.emptyVet
-                };
-        
-                this.setState(state);
             }
+
+            state = {
+                ...state,
+                vets,
+                vetDialog: false,
+                vet: this.emptyVet,
+                vetUpdate: null
+            };
+
+            this.setState(state);
     }
 
     editVet(vet) {
             this.setState({
                 vet: { ...vet },
-                vetDialog: true
+                vetDialog: true,
+                isVetUpdate: true
             });
     }
 
@@ -180,12 +187,13 @@ export class Veterinario extends React.Component {
 
         return index;
     }
-    
+
     openNew() {
         this.setState({
             vet: this.emptyVet,
             submitted: false,
-            vetDialog: true
+            vetDialog: true,
+            isVetUpdate: false
         });
     }
 
@@ -206,7 +214,7 @@ export class Veterinario extends React.Component {
         if( name === "cpf_cnpj"){
             const valorOriginal = unMask(e.target.value)
             const valorMascarado = mask(valorOriginal,[
-                '999.999.999-99', 
+                '999.999.999-99',
                 '99.999.999/9999-99'
             ]);
             vet[`${name}`] = valorMascarado;
@@ -260,7 +268,7 @@ export class Veterinario extends React.Component {
     }
 
     render() {
-        let { veterinarios } = this.state 
+        let { veterinarios } = this.state
         const vetDialogFooter = (
             <React.Fragment>
                 <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={this.hideDialog} />
@@ -274,7 +282,7 @@ export class Veterinario extends React.Component {
                 <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteVet} />
             </React.Fragment>
         );
-        
+
         const table = (
             <React.Fragment>
                 <Toolbar className="mb-4" left={this.leftToolbarTemplate}></Toolbar>
@@ -330,7 +338,7 @@ export class Veterinario extends React.Component {
         }
 
         return(
-            
+
             <React.Fragment>
                 <div className="p-6">
                     <div className="datatable-crud-demo">
@@ -352,29 +360,42 @@ export class Veterinario extends React.Component {
                             )}
                 <Dialog visible={this.state.vetDialog} style={{ width: '750px' }} header="Veterinario Details" modal className="p-fluid" footer={vetDialogFooter} onHide={this.hideDialog}>
                     {/* {this.state.pet.imagem && <img src={`http://127.0.0.1:8000${this.state.pet.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image block m-auto pb-3" />} */}
-                    
+
                     <div className="field">
                         <label htmlFor="first_name">Nome</label>
-                        <InputText id="first_name" value={this.state.vet.user.first_name} onChange={(e) => this.onInputUserChange(e, 'first_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.first_name })} />
+                        <InputText id="first_name" value={this.state.vet.user.first_name} onChange={(e) => this.onInputUserChange(e, 'first_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.first_name })} disabled={this.state.isVetUpdate}  />
                         {this.state.submitted && !this.state.vet.user.first_name && <small className="p-error">Nome é obrigatório.</small>}
                     </div>
 
                     <div className="field">
                         <label htmlFor="last_name">Sobrenome</label>
-                        <InputText id="last_name" value={this.state.vet.user.last_name} onChange={(e) => this.onInputUserChange(e, 'last_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.last_name })} />
+                        <InputText  id="last_name" value={this.state.vet.user.last_name} onChange={(e) => this.onInputUserChange(e, 'last_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.last_name })} disabled={this.state.isVetUpdate}  />
                         {this.state.submitted && !this.state.vet.user.last_name && <small className="p-error">Sobrenome é obrigatória.</small>}
                     </div>
 
                     <div className="formgrid grid">
                         <div className="field col">
                             <label htmlFor="email">E-mail</label>
-                            <InputText id="email" value={this.state.vet.user.email} onChange={(e) => this.onInputUserChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.email })} />
+                            <InputText id="email" value={this.state.vet.user.email} onChange={(e) => this.onInputUserChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.email })} disabled={this.state.isVetUpdate} />
                             {this.state.submitted && !this.state.vet.user.email && <small className="p-error">E-mail é obrigatória.</small>}
                         </div>
                         <div className="field col">
                             <label htmlFor="username">Username</label>
-                            <InputText id="username" value={this.state.vet.user.username} onChange={(e) => this.onInputUserChange(e, 'username')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.username })} />
+                            <InputText id="username" value={this.state.vet.user.username} onChange={(e) => this.onInputUserChange(e, 'username')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.username })} disabled={this.state.isVetUpdate}  />
                             {this.state.submitted && !this.state.vet.user.username && <small className="p-error">Username é obrigatório.</small>}
+                        </div>
+                    </div>
+
+                    <div className="formgrid grid" >
+                        <div className="field col" hidden={this.state.isVetUpdate}>
+                            <label htmlFor="password">Senha</label>
+                            <InputText id="password" type="password" value={this.state.vet.user.password} onChange={(e) => this.onInputUserChange(e, 'password')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.password })}/>
+                            {this.state.submitted && !this.state.vet.user.password && <small className="p-error">Senha é obrigatória.</small>}
+                        </div>
+                        <div className="field col" hidden={this.state.isVetUpdate}>
+                            <label htmlFor="passwordconfirm">Confirmação de Senha</label>
+                            <InputText id="passwordconfirm" type="password" value={this.state.passwordconfirm} onChange={(e) => this.setState({passwordconfirm: e.target.value})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.passwordconfirm })} />
+                            {this.state.submitted && !this.state.passwordconfirm && <small className="p-error">Senha é obrigatório.</small>}
                         </div>
                     </div>
 
@@ -390,17 +411,10 @@ export class Veterinario extends React.Component {
                             {this.state.submitted && !this.state.vet.cpf_cnpj && <small className="p-error">CPF-CNPJ é obrigatório.</small>}
                         </div>
                     </div>
-                    <div className="formgrid grid">
-                        <div className="field col">
-                            <label htmlFor="password">Senha</label>
-                            <InputText id="password" type="password" value={this.state.vet.user.password} onChange={(e) => this.onInputUserChange(e, 'password')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.password })} />
-                            {this.state.submitted && !this.state.vet.user.password && <small className="p-error">Senha é obrigatória.</small>}
-                        </div>
-                        <div className="field col">
-                            <label htmlFor="passwordconfirm">Confirmação de Senha</label>
-                            <InputText id="passwordconfirm" type="password" value={this.state.passwordconfirm} onChange={(e) => this.setState({passwordconfirm: e.target.value})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.passwordconfirm })} />
-                            {this.state.submitted && !this.state.passwordconfirm && <small className="p-error">Senha é obrigatório.</small>}
-                        </div>
+
+                    <div className="field col-12 md:col-12" hidden={!this.state.isVetUpdate}>
+                        <label htmlFor="descricao" className="font-medium mb-2">Biografia</label>
+                        <InputTextarea  id="descricao" rows={5} value={this.state.descricao} className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.descricao })} onChange={(e) => this.setState({descricao: e.target.value})} />
                     </div>
 
                 </Dialog>

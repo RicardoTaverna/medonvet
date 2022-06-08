@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Prestador, Veterinario
-from .serializers import PrestadorSerializer, PrestadorNestedSerializer, VeterinarioSerializer
+from .serializers import PrestadorSerializer, PrestadorNestedSerializer, VeterinarioSerializer, VeterinarioUpdateSerializer
 
 # Create your views here.
 class PrestadorList(APIView):
@@ -100,7 +100,7 @@ class VeterinarioDetail(APIView):
         prestador = self.__get_prestador(request=request)
         veterinario = self.__get_veterinario(id_vet=id_vet, prestador=prestador)
         request.data['prestador'] = prestador
-        serializer = PrestadorSerializer(veterinario, data=request.data)
+        serializer = VeterinarioUpdateSerializer(veterinario, data=request.data)
         print(request.data)
         if serializer.is_valid():
             serializer.save()
