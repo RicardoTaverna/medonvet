@@ -5,6 +5,7 @@ import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Rating } from 'primereact/rating';
 import { Sidebar } from 'primereact/sidebar';
+import { ScrollPanel } from 'primereact/scrollpanel';
 
 import VeterinariosCard from '../VeterinariosCard';
 import { api } from './../../services/api';
@@ -126,16 +127,17 @@ class PrestadorHome extends Component {
                                     <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-text p-button-plain" aria-label="Filter" onClick={(event) => this.menu.toggle(event)} aria-controls="popup_menu" aria-haspopup />
                                 </div>
                             </div>
+                            <ScrollPanel style={{width: '100%', height: '400px'}}>
 
-                            { veterinarios.map(
-                                veterinario =><VeterinariosCard
-                                    key={veterinario.id}
-                                    id={veterinario.id}
-                                    first_name={veterinario.user.first_name}
-                                    last_name={veterinario.user.last_name}>
-                                </VeterinariosCard>
-                            )}
-                            
+                                { veterinarios.map(
+                                    veterinario =><VeterinariosCard
+                                        key={veterinario.id}
+                                        id={veterinario.id}
+                                        first_name={veterinario.user.first_name}
+                                        last_name={veterinario.user.last_name}>
+                                    </VeterinariosCard>
+                                )}
+                            </ScrollPanel>
 
                         </div>
                     </div>
