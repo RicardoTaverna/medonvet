@@ -26,6 +26,7 @@ export class Pets extends React.Component {
         nome: '',
         peso: 0,
         raca: '',
+        tipo: '',
         idade_anos: 0,
         idade_meses: 0,
         sexo: ''
@@ -43,7 +44,8 @@ export class Pets extends React.Component {
             submitted: false,
             globalFilter: null,
             loading: true,
-            totalSize: 0
+            totalSize: 0,
+            id: 0
         };
         this.onLoad = this.onLoad.bind(this);
         this.openNew = this.openNew.bind(this);
@@ -59,27 +61,22 @@ export class Pets extends React.Component {
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
+        
     }     
 
     componentDidMount() {
-        this._isMounted = true;
-        if(this._isMounted){
-            this.onLoad();
-        }
+        this.onLoad();
     }
 
-    componentDidUpdate() {
-        this._isMounted = true;
-        if(this._isMounted){
+    componentDidUpdate(prevProps, prevState) {
+
+        if(this.state.id !== prevState.id) {
             this.onLoad();
         }
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
     }
 
     onLoad = async e => {
+        
         try {
             api.get("/clientes/pet/").then((response) => {
                 this.setState({
@@ -94,10 +91,10 @@ export class Pets extends React.Component {
     }
 
     savePet = async e => {
-        if(this._isMounted){
             let state = { submitted: true };
             let pets = [...this.state.pets];
             let pet = {...this.state.pet};
+            
             
             if ( !pet.nome ) {
                 this.setState(
@@ -108,6 +105,7 @@ export class Pets extends React.Component {
 
                 if(this.state.pet.id){
                     const index = this.findIndexById(this.state.pet.id);
+                   
                     pets[index] = pet;
                     try {
                         api.put(`/clientes/pet/${this.state.pet.id}/`, pet).then(response => console.log(response))
@@ -118,7 +116,10 @@ export class Pets extends React.Component {
 
                 } else {
                     try {
-                        api.post('/clientes/pet/', pet).then(response => console.log(response, pet))
+                        api.post('/clientes/pet/', pet).then(response  => {
+                            console.log(response, pet)
+                            this.setState(prevState => ({id: prevState.id + 1}))
+                     })
                         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet adicionado', life: 3000 });
                     } catch (err) {
                         console.log(`Erro: ${err}`)
@@ -135,17 +136,13 @@ export class Pets extends React.Component {
         
                 this.setState(state);
             }
-        }
-
     }
 
     editPet(pet) {
-        if(this._isMounted){
             this.setState({
                 pet: { ...pet },
                 petDialog: true
             });
-        }
     }
 
     confirmDeletePet(pet) {
@@ -156,7 +153,7 @@ export class Pets extends React.Component {
     }
 
     deletePet() {
-        if(this._isMounted){
+
             let pets = this.state.pets.filter(val => val.id !== this.state.pet.id);
     
             api.delete(`/clientes/pet/${this.state.pet.id}/`)
@@ -166,7 +163,6 @@ export class Pets extends React.Component {
                 pet: this.emptyPet
             });
             this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet deletado', life: 3000 });
-        }
     }
 
 
@@ -268,6 +264,7 @@ export class Pets extends React.Component {
                     <Column field="nome" header="Nome" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="peso" header="Peso" sortable style={{ minWidth: '8rem' }}></Column>
                     <Column field="raca" header="Raça" sortable style={{ minWidth: '10rem' }}></Column>
+                    <Column field="tipo" header="Tipo" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="data_nascimento" header="Idade" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="sexo" header="Sexo" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column body={this.actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
@@ -326,7 +323,7 @@ export class Pets extends React.Component {
                     </div>
                 </div>
 
-                <Dialog visible={this.state.petDialog} style={{ width: '750px' }} header="Product Details" modal className="p-fluid" footer={petDialogFooter} onHide={this.hideDialog}>
+                <Dialog visible={this.state.petDialog} style={{ width: '750px' }} header="Pet Detalhes" modal className="p-fluid" footer={petDialogFooter} onHide={this.hideDialog}>
                     {/* {this.state.pet.imagem && <img src={`http://127.0.0.1:8000${this.state.pet.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image block m-auto pb-3" />} */}
                     
                     <div className="field">
@@ -334,11 +331,17 @@ export class Pets extends React.Component {
                         <InputText id="nome" value={this.state.pet.nome} onChange={(e) => this.onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.nome })} />
                         {this.state.submitted && !this.state.pet.nome && <small className="p-error">Nome é obrigatório.</small>}
                     </div>
-
-                    <div className="field">
-                        <label htmlFor="raca">Raça</label>
-                        <InputText id="raca" value={this.state.pet.raca} onChange={(e) => this.onInputChange(e, 'raca')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.raca })} />
-                        {this.state.submitted && !this.state.pet.raca && <small className="p-error">Raça é obrigatória.</small>}
+                    <div className="formgrid grid">
+                        <div className="field col">
+                            <label htmlFor="raca">Raça</label>
+                            <InputText id="raca" value={this.state.pet.raca} onChange={(e) => this.onInputChange(e, 'raca')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.raca })} />
+                            {this.state.submitted && !this.state.pet.raca && <small className="p-error">Raça é obrigatória.</small>}
+                        </div>
+                        <div className="field col">
+                            <label htmlFor="tipo">Tipo</label>
+                            <InputText id="tipo" value={this.state.pet.tipo} onChange={(e) => this.onInputChange(e, 'tipo')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.tipo })} />
+                            {this.state.submitted && !this.state.pet.tipo && <small className="p-error">Tipo do pet é obrigatório (Cachorro, gato...).</small>}
+                        </div>
                     </div>
 
                     <div className="formgrid grid">
