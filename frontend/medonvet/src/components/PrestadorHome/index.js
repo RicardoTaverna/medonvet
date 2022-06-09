@@ -4,12 +4,54 @@ import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Rating } from 'primereact/rating';
+import { Sidebar } from 'primereact/sidebar';
+import { ScrollPanel } from 'primereact/scrollpanel';
+
+import VeterinariosCard from '../VeterinariosCard';
+import { api } from './../../services/api';
+import CadastroVeterinario from '../CadastroVeterinario';
 
 class PrestadorHome extends Component {
 
+    constructor(props){
+        super(props);
+        this.state = {
+            veterinarios: [],
+            visibleLeft: false,
+        }
+        this.teamItens = [
+            {   
+                label: 'Adicionar Veterinário',
+                icon: 'pi pi-fw pi-cog',
+                command:()=>{ this.setState({ visibleLeft: true });}
+            }
+        ];
+        this.onLoad = this.onLoad.bind(this)
+    }
+
+    componentDidMount(){
+        this.onLoad();
+    }
+
+    onLoad = async e => {
+        try {
+            api.get('/prestadores/veterinario/').then((response) => {
+                console.log(response);
+                this.setState({ veterinarios: response.data })
+            });
+        } catch (err) {
+            console.log(`Erro: ${err}`)
+        }
+    }
+
     render(){
+        let { veterinarios } = this.state 
         return (
             <React.Fragment>
+                <Sidebar visible={this.state.visibleLeft} className="p-sidebar-lg" onHide={() => this.setState({ visibleLeft: false })}>
+                        <CadastroVeterinario></CadastroVeterinario>
+                </Sidebar>
+
                 <div className="grid px-6 py-3">
                     <div className="col-12 md:col-6 lg:col-3">
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
@@ -85,27 +127,18 @@ class PrestadorHome extends Component {
                                     <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-text p-button-plain" aria-label="Filter" onClick={(event) => this.menu.toggle(event)} aria-controls="popup_menu" aria-haspopup />
                                 </div>
                             </div>
-                            <div class="card">
-                                <div class="flex card-container blue-container overflow-hidden">
-                                    <div class="flex-none flex align-items-center justify-content-center border-round">
-                                        <Avatar label="V" className="mr-2" size="large" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
-                                    </div>
-                                    <div class="flex-grow-1 flex align-items-right justify-content-right m-2 px-5 py-3 border-round">
-                                        <div>
-                                            <div className="font-medium text-xl text-900">Ygor Stengrat</div>
-                                                <div className="flex align-items-center text-700 flex-wrap">
-                                                    <div className="mr-5">
-                                                        <small>Clinico Geral</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <div class="flex-none flex align-items-center justify-content-center m-2 px-5 py-3 border-round">
-                                        <Button icon="pi pi-facebook" className="p-button-rounded p-button-text p-button-plain"/>
-                                        <Button icon="pi pi-linkedin" className="p-button-rounded p-button-text p-button-plain"/>
-                                    </div>
-                                </div>
-                            </div>
+                            <ScrollPanel style={{width: '100%', height: '400px'}}>
+
+                                { veterinarios.map(
+                                    veterinario =><VeterinariosCard
+                                        key={veterinario.id}
+                                        id={veterinario.id}
+                                        first_name={veterinario.user.first_name}
+                                        last_name={veterinario.user.last_name}>
+                                    </VeterinariosCard>
+                                )}
+                            </ScrollPanel>
+
                         </div>
                     </div>
 

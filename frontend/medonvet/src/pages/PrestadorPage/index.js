@@ -9,6 +9,7 @@ import { api } from './../../services/api';
 import { logout } from './../../services/auth'
 import PrestadorHome from '../../components/PrestadorHome';
 import PrestadorConfig from '../../components/PrestadorConfig';
+import Veterinario from '../../components/Veterinario';
 
 class PrestadorPage extends Component {
     constructor(props) {
@@ -26,6 +27,13 @@ class PrestadorPage extends Component {
                 icon: 'pi pi-fw pi-home',
                 command: () => {
                     this.setState({childComponent: 'home'})
+                }
+            },
+            {   
+                label: 'Veterinários',
+                icon: 'pi pi-fw pi-users',
+                command: () => {
+                    this.setState({childComponent: 'vet'})
                 }
             },
             {   
@@ -85,6 +93,8 @@ class PrestadorPage extends Component {
             renderChild = (<PrestadorHome></PrestadorHome>)
         } else if(this.state.childComponent === 'config'){
             renderChild = (<PrestadorConfig></PrestadorConfig>)
+        } else if(this.state.childComponent === 'vet'){
+            renderChild = (<Veterinario></Veterinario>)
         }
 
         return (
