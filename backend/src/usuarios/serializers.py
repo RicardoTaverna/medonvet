@@ -25,7 +25,7 @@ class UserPrestadorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prestador
-        fields = ('crmv', 'cpf_cnpj', 'user')
+        fields = ('crmv', 'cpf_cnpj', 'user', 'descricao')
 
     def create(self, validated_data):
         user_payload = validated_data.pop('user')
