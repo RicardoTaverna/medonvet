@@ -226,6 +226,9 @@ class UserGroupDetail(APIView):
         user = self.__get_object(request)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if user.check_password(request.data['password']):
+                serializer.save()
+                user.set_password(request.data['password'])
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
