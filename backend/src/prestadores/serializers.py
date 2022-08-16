@@ -47,3 +47,10 @@ class VeterinarioUpdateSerializer(serializers.ModelSerializer):
             user = validated_data.pop('user')
             veterinario = Veterinario.objects.create(user=user, **validated_data)
             return veterinario
+
+
+class VeterinarioFindSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = Veterinario
+        fields = ['id', 'user', 'crmv', 'avatar', 'descricao', 'capa', 'cpf_cnpj', 'inicioAtendimento', 'fimAtendimento']

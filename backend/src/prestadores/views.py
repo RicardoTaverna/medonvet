@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Prestador, Veterinario
-from .serializers import PrestadorSerializer, PrestadorNestedSerializer, VeterinarioSerializer, VeterinarioUpdateSerializer
+from .serializers import PrestadorSerializer, PrestadorNestedSerializer, VeterinarioFindSerializer, VeterinarioSerializer, VeterinarioUpdateSerializer
 
 # Create your views here.
 class PrestadorList(APIView):
@@ -111,3 +111,19 @@ class VeterinarioDetail(APIView):
         veterinario = self.__get_veterinario(id_vet=id_vet, prestador=self.__get_prestador(request=request))
         veterinario.delete()
         return Response(status.HTTP_204_NO_CONTENT)
+
+
+class VeterinarioFind(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def __get_veterinario(self, cpf_cnpj):
+        try:
+            return Veterinario.objects.get(cpf_cnpj=cpf_cnpj)
+        except Prestador.DoesNotExist:
+            raise Http404
+
+    def get(self, request, cpf_cnpj, format=None):
+        veterinario = self.__get_veterinario(cpf_cnpj=cpf_cnpj)
+        serializer = VeterinarioFindSerializer(veterinario)
+        return Response(serializer.data)
+
