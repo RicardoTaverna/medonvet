@@ -19,6 +19,21 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+    def update(self, instance, validated_data):
+        user = instance
+        password = validated_data.pop('password')
+        if not user.check_password(password):
+            raise serializers.ValidationError({"password": "A senha enviada não corresponde ao usuário."})
+
+        instance.first_name = validated_data['first_name']
+        instance.last_name = validated_data['last_name']
+        instance.email = validated_data['email']
+        instance.username = validated_data['username']
+
+        instance.save()
+
+        return instance
+
 
 class UserPrestadorSerializer(serializers.ModelSerializer):
     user = UserSerializer()

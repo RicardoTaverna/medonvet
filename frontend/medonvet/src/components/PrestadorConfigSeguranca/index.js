@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
-import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { Divider } from 'primereact/divider';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 
@@ -17,16 +18,19 @@ class PrestadorConfigSeguranca extends Component {
             last_name: "",
             email: "",
             password: "",
-            passwordconfirm: "",
+            password2: "",
+            oldpassword: "",
             groupname: "prestador",
             messageError: "",
             displayBasic: false,
+            displayChangePassword: false,
             position: 'center'
         }
         this.onEnter = this.onEnter.bind(this);
         this.onUpdate = this.onUpdate.bind(this);
         this.onClick = this.onClick.bind(this);
         this.onHide = this.onHide.bind(this);
+        this.onCloseModal = this.onCloseModal.bind(this);
     }
 
     componentDidMount(){
@@ -42,7 +46,7 @@ class PrestadorConfigSeguranca extends Component {
                     username: response.data.username,
                     first_name: response.data.first_name,
                     last_name: response.data.last_name,
-                    email: response.data.email,
+                    email: response.data.email
                 });
             });
         } catch (err) {
@@ -53,6 +57,7 @@ class PrestadorConfigSeguranca extends Component {
 
     onUpdate = async e => {
         const { username, first_name, last_name, email, password } = this.state
+        console.log(password)
         try {
             const response = await api.put("/usuarios/detalhe/", { username, first_name, last_name, email, password });
             console.log(response)    
@@ -62,6 +67,8 @@ class PrestadorConfigSeguranca extends Component {
             this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
             
         }
+        
+
     }
 
     onClick(name, position) {
@@ -79,6 +86,12 @@ class PrestadorConfigSeguranca extends Component {
         this.setState(state);
     }
 
+    onCloseModal(name) {
+        this.setState({
+            [`${name}`]: false
+        });
+    }
+
     onHide(name) {
         this.setState({
             [`${name}`]: false
@@ -89,7 +102,7 @@ class PrestadorConfigSeguranca extends Component {
     renderFooter(name) {
         return (
             <div>
-                <Button label="No" icon="pi pi-times" onClick={() => this.onHide(name)} className="p-button-text" />
+                <Button label="No" icon="pi pi-times" onClick={() => this.onCloseModal(name)} className="p-button-text" />
                 <Button label="Yes" icon="pi pi-check" onClick={() => this.onHide(name)} autoFocus />
             </div>
         );
@@ -135,12 +148,34 @@ class PrestadorConfigSeguranca extends Component {
 
                 <Button label="Atualizar" onClick={() => this.onClick('displayBasic')}  />    
 
-                <Dialog header="Confirmação" visible={this.state.displayBasic} style={{ width: '30vw' }} footer={this.renderFooter('displayBasic')} onHide={() => this.onHide('displayBasic')}>
+                <Divider></Divider>
+
+                <Button label="Alterar Senha" className="p-button-text p-button-plain" onClick={() => this.onClick('displayChangePassword')} />
+
+                <Dialog header="Confirmação" visible={this.state.displayBasic} style={{ width: '30vw' }} footer={this.renderFooter('displayBasic')} onHide={() => this.onCloseModal('displayBasic')}>
                     <p>Digite sua senha para confirmar essa ação.</p>
  
                     <span className="p-float-label">
                         <InputText id="password" type="password" className="w-full mb-3" value={this.state.password} onChange={(e) => this.setState({password: e.target.value})} toggleMask feedback={false} />
                         <label htmlFor="password" className="font-medium mb-2">Senha</label>
+                    </span>
+                            
+                </Dialog>
+
+                <Dialog header="Alteração de senha" visible={this.state.displayChangePassword} style={{ width: '30vw' }} footer={this.renderFooter('displayChangePassword')} onHide={() => this.onCloseModal('displayChangePassword')}>
+                    <p>Digite sua senha antiga e a nova senha e confirmação da nova senha para realizar a alteração.</p>
+ 
+                    <span className="p-float-label">
+                        <InputText id="newpassword" type="password" className="w-full mb-3" value={this.state.password} onChange={(e) => this.setState({password: e.target.value})} toggleMask feedback={false} />
+                        <label htmlFor="newpassword" className="font-medium mb-2">Nova Senha</label>
+                    </span>
+                    <span className="p-float-label">
+                        <InputText id="password2" type="password" className="w-full mb-3" value={this.state.password2} onChange={(e) => this.setState({password2: e.target.value})} toggleMask feedback={false} />
+                        <label htmlFor="password2" className="font-medium mb-2">Confirmação Nova Senha</label>
+                    </span>
+                    <span className="p-float-label">
+                        <InputText id="oldpassword" type="password" className="w-full mb-3" value={this.state.oldpassword} onChange={(e) => this.setState({oldpassword: e.target.value})} toggleMask feedback={false} />
+                        <label htmlFor="oldpassword" className="font-medium mb-2">Senha Antiga</label>
                     </span>
                             
                 </Dialog>

@@ -1,13 +1,7 @@
 import React, { Component } from 'react';
 
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Divider } from 'primereact/divider';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
-import { mask, unMask} from "remask";
 
-import { api } from './../../services/api';
 import PrestadorConfigSeguranca from '../PrestadorConfigSeguranca';
 import PrestadorConfigCadastro from '../PrestadorConfigCadastro';
 
