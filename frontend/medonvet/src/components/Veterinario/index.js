@@ -68,6 +68,7 @@ export class Veterinario extends React.Component {
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
         this.onInputUserChange = this.onInputUserChange.bind(this);
+        this.showError = this.showError.bind(this);
     }
 
     componentDidMount() {
@@ -100,6 +101,7 @@ export class Veterinario extends React.Component {
             let vets = [...this.state.vets];
             let vet = {...this.state.vet};
             let vetUpdate = { ...this.state.vet};
+            const cpfOrCnpj = require('js-cpf-cnpj-validation'); 
             vetUpdate['user'] = vetUpdate.user.id
 
             if(this.state.vet.id){
@@ -121,7 +123,7 @@ export class Veterinario extends React.Component {
                     this.toast.show({ severity: 'error', summary: 'Erro', detail: 'O campo nome é obrigatório para o cadastro do vet.', life: 3000 });
                 }else if (vet.user.password !== this.state.passwordconfirm) {
                     this.toast.show({ severity: 'error', summary: 'Erro', detail: "As senhas não coincidem!", life: 3000 });
-                } else {
+                } else if(cpfOrCnpj.isCPForCNPJ(this.state.vet.cpf_cnpj)) {
 
                     try {
                         api.post('/prestadores/veterinario/', vet).then(response => {
@@ -134,6 +136,11 @@ export class Veterinario extends React.Component {
                         console.log(`Erro: ${err}`)
                         console.log(`Veterinario: ${vet}`)
                     }
+                }else{
+                    this.setState(
+                        {messageError: "CPF ou CNPJ não é valido"},
+                        () => this.showError()
+                    );
                 }
             }
 
@@ -267,6 +274,9 @@ export class Veterinario extends React.Component {
         return <img src={`http://127.0.0.1:8000${rowData.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.imagem} className="product-image" />
     }
 
+    showError() {
+        this.toast.show({severity:'error', summary: 'Error', detail: this.state.messageError , life: 3000});
+    }
     render() {
         let { veterinarios } = this.state
         const vetDialogFooter = (
