@@ -81,6 +81,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'medonvet.wsgi.application'
 
 
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -127,11 +128,13 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]
 
-CSRF_COOKIE_DOMAIN = 'localhost:3000'
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
+    'http://localhost:8000',
+    'https://localhost:8000',
 ]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -151,6 +154,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_ROOT = 'media/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
