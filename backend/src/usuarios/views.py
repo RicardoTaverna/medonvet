@@ -90,26 +90,26 @@ class UserPrestadorList(APIView):
 
 class UserPrestadorDetail(APIView):
 
-    def __get_object(self, pk):
+    def __get_prestador(self, request):
         try:
-            return User.objects.get(pk=pk)
-        except User.DoesNotExist:
+            return Prestador.objects.get(user=request.user.id)
+        except Prestador.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
-        user = self.__get_object(pk=pk)
-        serializer = UserSerializer(user)
+    def get(self, request, format=None):
+        prestador = self.__get_prestador(request)
+        serializer = UserPrestadorSerializer(prestador)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        user = self.__get_object(pk=pk)
-        serializer = UserSerializer(user, data=request.data)
+    def put(self, request, format=None):
+        prestador = self.__get_prestador(request)
+        serializer = UserPrestadorSerializer(prestador, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
+    def delete(self, request, format=None):
         user = self.__get_object(pk=pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -221,3 +221,14 @@ class UserGroupDetail(APIView):
         new_serializer_data = {'grupo': grupo}
         new_serializer_data.update(serializer.data)
         return Response(new_serializer_data)
+
+    def put(self, request, format=None):
+        user = self.__get_object(request)
+        serializer = UserSerializer(request.user, data=request.data)
+        if serializer.is_valid():
+            
+            serializer.save()
+            
+            return Response(serializer.data)
+            
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
