@@ -53,11 +53,11 @@ export class Veterinario extends React.Component {
             idAux: 0,
             passwordconfirm: '',
             showFindVet: true,
+            isVetFind: false,
         };
         this.onLoad = this.onLoad.bind(this);
         this.openNew = this.openNew.bind(this);
         this.saveVet = this.saveVet.bind(this);
-        this.editVet = this.editVet.bind(this);
         this.confirmDeleteVet = this.confirmDeleteVet.bind(this);
         this.deleteVet = this.deleteVet.bind(this);
         this.findIndexById = this.findIndexById.bind(this);
@@ -70,6 +70,7 @@ export class Veterinario extends React.Component {
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
         this.onInputUserChange = this.onInputUserChange.bind(this);
         this.findVet = this.findVet.bind(this);
+        this.showError = this.showError.bind(this);
     }
 
     componentDidMount() {
@@ -83,12 +84,24 @@ export class Veterinario extends React.Component {
     }
 
     findVet = async e => {
+        let cpf_cnpj = this.state.vet.cpf_cnpj
         try {
             api.get(`/prestadores/veterinario/${this.state.vet.cpf_cnpj}/`).then((response) => {
-                this.setState({
-                    vet: response.data,
-                    showFindVet: false
-                })
+                console.log(response.data)
+                
+                if(Object.keys(response.data).length !== 0){
+                    this.setState({
+                        vet: response.data,
+                        showFindVet: false,
+                        isVetFind: true
+                    })
+                } else {
+                    this.emptyVet.cpf_cnpj = cpf_cnpj
+                    this.setState({
+                        showFindVet: false,
+                        vet: this.emptyVet,
+                    })
+                }
             })
         } catch (err){
             console.log("erro: ", err);
@@ -98,7 +111,7 @@ export class Veterinario extends React.Component {
 
     onLoad = async e => {
         try {
-            api.get("/prestadores/veterinario/").then((response) => {
+            api.get("/prestadores/veterinarios/").then((response) => {
                 this.setState({
                     vets: response.data,
                     loading: false
@@ -111,67 +124,78 @@ export class Veterinario extends React.Component {
     }
 
     saveVet = async e => {
-            let state = { submitted: true };
-            let vets = [...this.state.vets];
-            let vet = {...this.state.vet};
-            let vetUpdate = { ...this.state.vet};
-            vetUpdate['user'] = vetUpdate.user.id
+        let state = { submitted: true };
+        let vets = [...this.state.vets];
+        let vet = {...this.state.vet};
+        let vetUpdate = { ...this.state.vet};
+        const cpfOrCnpj = require('js-cpf-cnpj-validation'); 
+        vetUpdate['user'] = vetUpdate.user.id
 
-            if(this.state.vet.id){
-                const index = this.findIndexById(this.state.vet.id);
-                vets[index] = vet;
-                try {
-                    api.put(`/prestadores/veterinario/${this.state.vet.id}/`, vet).then(response => console.log(response))
-                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario atualizado', life: 3000 });
-                    this.setState({
-                        passwordconfirm: '',
-                        showFindVet: true
-                    })
-                } catch (err) {
-                    console.log(`Erro: ${err}`)
-                }
-
-            } else {
-                if ( !vet.user.first_name ) {
-                    this.setState(
-                        {messageError: "O Nome do Vet é obrigatório para realizar o cadastro. W.W"}
-                    );
-                    this.toast.show({ severity: 'error', summary: 'Erro', detail: 'O campo nome é obrigatório para o cadastro do vet.', life: 3000 });
-                }else if (vet.user.password !== this.state.passwordconfirm) {
-                    this.toast.show({ severity: 'error', summary: 'Erro', detail: "As senhas não coincidem!", life: 3000 });
-                } else {
-
-                    try {
-                        api.post('/prestadores/veterinario/', vet).then(response => {
-                            console.log(response, vet)
-                            this.setState(prevState => ({idAux: prevState.idAux +1}))
-                        })
-                        this.setState({passwordconfirm: ''})
-                        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario adicionado', life: 3000 });
-                    } catch (err) {
-                        console.log(`Erro: ${err}`)
-                        console.log(`Veterinario: ${vet}`)
-                    }
-                }
+        if(this.state.vet.id){
+            const index = this.findIndexById(this.state.vet.id);
+            vets[index] = vet;
+            try {
+                api.post(`/prestadores/prestadorveterinario/`, {"veterinario": this.state.vet.id}).then(response => console.log(response))
+                this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario atualizado', life: 3000 });
+                this.setState({
+                    passwordconfirm: ''
+                })
+                console.log(vets)
+                
+            } catch (err) {
+                console.log(`Erro: ${err}`)
             }
 
-            state = {
-                ...state,
-                vets,
-                vetDialog: false,
-                vet: this.emptyVet,
-                vetUpdate: null
-            };
+        } else {
+            if ( !vet.user.first_name ) {
+                this.setState(
+                    {messageError: "O Nome do Vet é obrigatório para realizar o cadastro. W.W"}
+                );
+                this.toast.show({ severity: 'error', summary: 'Erro', detail: 'O campo nome é obrigatório para o cadastro do vet.', life: 3000 });
+            }else if (vet.user.password !== this.state.passwordconfirm) {
+                this.toast.show({ severity: 'error', summary: 'Erro', detail: "As senhas não coincidem!", life: 3000 });
+            } else if(cpfOrCnpj.isCPForCNPJ(this.state.vet.cpf_cnpj)) {
 
-            this.setState(state);
-    }
+                try {
+                    api.post('/prestadores/veterinarios/', vet).then(response => {
+                        console.log(response, vet)
+                        this.setState(prevState => ({idAux: prevState.idAux +1}))
+                        api.get(`/prestadores/veterinario/${this.state.vet.cpf_cnpj}/`).then((response) => {
+                            this.setState({
+                                vet: response.data
+                            })
+                            api.post(`/prestadores/prestadorveterinario/`, {"veterinario": this.state.vet.id})
+                        })
+                    })
+                    this.setState({passwordconfirm: ''})
+                    this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario adicionado', life: 3000 });
+                } catch (err) {
+                    console.log(`Erro: ${err}`)
+                    console.log(`Veterinario: ${vet}`)
+                    this.setState(
+                        {messageError: `Erro: ${err} \n Veterinario: ${vet}`},
+                        () => this.showError()
+                    );
+                }
+            }else{
+                this.setState(
+                    {messageError: "CPF ou CNPJ não é valido"},
+                    () => this.showError()
+                );
+            }
+        }
 
-    editVet(vet) {
-            this.setState({
-                vet: { ...vet },
-                vetDialog: true,
-                isVetUpdate: true
-            });
+        state = {
+            ...state,
+            vets,
+            vetDialog: false,
+            vet: this.emptyVet,
+            vetUpdate: null,
+            showFindVet: true,
+            isVetFind: false
+        };
+
+        this.setState(state);
     }
 
     confirmDeleteVet(vet) {
@@ -184,7 +208,7 @@ export class Veterinario extends React.Component {
     deleteVet() {
         let vets = this.state.vets.filter(val => val.id !== this.state.vet.id);
         console.log(this.state.vets.id)
-        api.delete(`/prestadores/veterinario/${this.state.vet.id}/`)
+        api.delete(`/prestadores/prestadorveterinario/${this.state.vet.id}/`)
         this.setState({
             vets,
             deleteVetDialog: false,
@@ -218,7 +242,9 @@ export class Veterinario extends React.Component {
     hideDialog() {
         this.setState({
             submitted: false,
-            vetDialog: false
+            vetDialog: false,
+            showFindVet: true,
+            isVetFind: false
         });
     }
 
@@ -275,7 +301,6 @@ export class Veterinario extends React.Component {
     actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded button-primary mr-2" onClick={() => this.editVet(rowData)} />
                 <Button icon="pi pi-trash" className="p-button-rounded p-button-secondary" onClick={() => this.confirmDeleteVet(rowData)} />
             </React.Fragment>
         );
@@ -285,6 +310,9 @@ export class Veterinario extends React.Component {
         return <img src={`http://127.0.0.1:8000${rowData.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.imagem} className="product-image" />
     }
 
+    showError() {
+        this.toast.show({severity:'error', summary: 'Error', detail: this.state.messageError , life: 3000});
+    }
     render() {
         let { veterinarios } = this.state
 
@@ -374,42 +402,43 @@ export class Veterinario extends React.Component {
             </Dialog>
 
         )
+        
 
         let vetForm = (
             <Dialog visible={this.state.vetDialog} style={{ width: '750px' }} header="Cadastrar Novo Veterinário" modal className="p-fluid" footer={vetDialogFooter} onHide={this.hideDialog}>
 
                 <div className="field">
                     <label htmlFor="first_name">Nome</label>
-                    <InputText id="first_name" value={this.state.vet.user.first_name} onChange={(e) => this.onInputUserChange(e, 'first_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.first_name })} disabled={this.state.isVetUpdate}  />
+                    <InputText id="first_name" value={this.state.vet.user.first_name} onChange={(e) => this.onInputUserChange(e, 'first_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.first_name })} disabled={this.state.isVetFind}/>
                     {this.state.submitted && !this.state.vet.user.first_name && <small className="p-error">Nome é obrigatório.</small>}
                 </div>
 
                 <div className="field">
                     <label htmlFor="last_name">Sobrenome</label>
-                    <InputText  id="last_name" value={this.state.vet.user.last_name} onChange={(e) => this.onInputUserChange(e, 'last_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.last_name })} disabled={this.state.isVetUpdate}  />
+                    <InputText  id="last_name" value={this.state.vet.user.last_name} onChange={(e) => this.onInputUserChange(e, 'last_name')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.last_name })} disabled={this.state.isVetFind}  />
                     {this.state.submitted && !this.state.vet.user.last_name && <small className="p-error">Sobrenome é obrigatória.</small>}
                 </div>
 
                 <div className="formgrid grid">
                     <div className="field col">
                         <label htmlFor="email">E-mail</label>
-                        <InputText id="email" value={this.state.vet.user.email} onChange={(e) => this.onInputUserChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.email })} disabled={this.state.isVetUpdate} />
+                        <InputText id="email" value={this.state.vet.user.email} onChange={(e) => this.onInputUserChange(e, 'email')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.email })} disabled={this.state.isVetFind} />
                         {this.state.submitted && !this.state.vet.user.email && <small className="p-error">E-mail é obrigatória.</small>}
                     </div>
                     <div className="field col">
                         <label htmlFor="username">Username</label>
-                        <InputText id="username" value={this.state.vet.user.username} onChange={(e) => this.onInputUserChange(e, 'username')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.username })} disabled={this.state.isVetUpdate}  />
+                        <InputText id="username" value={this.state.vet.user.username} onChange={(e) => this.onInputUserChange(e, 'username')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.username })} disabled={this.state.isVetFind}  />
                         {this.state.submitted && !this.state.vet.user.username && <small className="p-error">Username é obrigatório.</small>}
                     </div>
                 </div>
 
                 <div className="formgrid grid" >
-                    <div className="field col" hidden={this.state.isVetUpdate}>
+                    <div className="field col" hidden={this.state.isVetFind}>
                         <label htmlFor="password">Senha</label>
                         <InputText id="password" type="password" value={this.state.vet.user.password} onChange={(e) => this.onInputUserChange(e, 'password')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.user.password })}/>
                         {this.state.submitted && !this.state.vet.user.password && <small className="p-error">Senha é obrigatória.</small>}
                     </div>
-                    <div className="field col" hidden={this.state.isVetUpdate}>
+                    <div className="field col" hidden={this.state.isVetFind}>
                         <label htmlFor="passwordconfirm">Confirmação de Senha</label>
                         <InputText id="passwordconfirm" type="password" value={this.state.passwordconfirm} onChange={(e) => this.setState({passwordconfirm: e.target.value})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.passwordconfirm })} />
                         {this.state.submitted && !this.state.passwordconfirm && <small className="p-error">Senha é obrigatório.</small>}
@@ -419,19 +448,19 @@ export class Veterinario extends React.Component {
                 <div className="formgrid grid">
                     <div className="field col">
                         <label htmlFor="crmv">CRMV</label>
-                        <InputText id="crmv" value={this.state.vet.crmv} onChange={(e) => this.onInputChange(e, 'crmv')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.crmv })} />
+                        <InputText id="crmv" value={this.state.vet.crmv} onChange={(e) => this.onInputChange(e, 'crmv')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.crmv })} disabled={this.state.isVetFind}/>
                         {this.state.submitted && !this.state.vet.crmv && <small className="p-error">CRMV é obrigatória.</small>}
                     </div>
                     <div className="field col">
                         <label htmlFor="cpf_cnpj">CPF-CNPJ</label>
-                        <InputText id="cpf_cnpj" value={this.state.vet.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.cpf_cnpj })} />
+                        <InputText id="cpf_cnpj" value={this.state.vet.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.cpf_cnpj })} disabled={this.state.isVetFind}/>
                         {this.state.submitted && !this.state.vet.cpf_cnpj && <small className="p-error">CPF-CNPJ é obrigatório.</small>}
                     </div>
                 </div>
 
-                <div className="field col-12 md:col-12" hidden={!this.state.isVetUpdate}>
+                <div className="field col-12 md:col-12" hidden={this.state.isVetFind}>
                     <label htmlFor="descricao" className="font-medium mb-2">Biografia</label>
-                    <InputTextarea  id="descricao" rows={5} value={this.state.descricao} className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.descricao })} onChange={(e) => this.setState({descricao: e.target.value})} />
+                    <InputTextarea  id="descricao" rows={5} value={this.state.descricao} className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.descricao })} onChange={(e) => this.setState({descricao: e.target.value})}/>
                 </div>
             </Dialog>
                     

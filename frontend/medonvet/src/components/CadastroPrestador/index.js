@@ -34,7 +34,7 @@ export class CadastroPrestador extends Component {
         
         
         const { username,first_name, last_name,email,cpf_cnpj,crmv,password,passwordconfirm, groupname } = this.state
-
+        const cpfOrCnpj = require('js-cpf-cnpj-validation');  
     
         if (!username || !first_name || !last_name || !email || !cpf_cnpj || !crmv || !password || !passwordconfirm) {
             this.setState(
@@ -46,7 +46,7 @@ export class CadastroPrestador extends Component {
                 {messageError: "As senhas não coincidem!"},
                 () => this.showError()
             );
-        } else {
+        } else if(cpfOrCnpj.isCPForCNPJ(cpf_cnpj)) {
             console.log(`username: ${username}| passsword: ${password}`)
 
             const user = {
@@ -69,6 +69,11 @@ export class CadastroPrestador extends Component {
                     () => this.showError()
                 );
             }
+        }else{
+            this.setState(
+                {messageError: "CPF ou CNPJ não é valido"},
+                () => this.showError()
+            );
         }
     }
 

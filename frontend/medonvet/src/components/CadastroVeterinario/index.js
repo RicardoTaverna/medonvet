@@ -28,6 +28,7 @@ class CadastroVeterinario extends Component {
         }
         this.onMask = this.onMask.bind(this);
         this.onEnter = this.onEnter.bind(this);
+        this.showError = this.showError.bind(this);
     }
 
 
@@ -53,6 +54,7 @@ class CadastroVeterinario extends Component {
 
     onUpdate = async e => {
         const { username, first_name, last_name, email, cpf_cnpj, crmv, descricao, password,passwordconfirm } = this.state
+        const cpfOrCnpj = require('js-cpf-cnpj-validation'); 
         const user = {
             "username": username,
             "first_name": first_name,
@@ -62,7 +64,7 @@ class CadastroVeterinario extends Component {
         }
         if (password !== passwordconfirm) {
             this.toast.show({ severity: 'error', summary: 'Erro', detail: "As senhas não coincidem!", life: 3000 });
-        }else{
+        }else if(cpfOrCnpj.isCPForCNPJ(cpf_cnpj)){
             try {
                 const response = await api.post("/prestadores/veterinario/", { cpf_cnpj, crmv, descricao, user });
                 console.log(response)    
@@ -72,6 +74,11 @@ class CadastroVeterinario extends Component {
                 this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
                 
             }
+        }else{
+            this.setState(
+                {messageError: "CPF ou CNPJ não é valido"},
+                () => this.showError()
+            );
         }
     }
 
@@ -84,6 +91,9 @@ class CadastroVeterinario extends Component {
         return valorMascarado;
     };
 
+    showError() {
+        this.toast.show({severity:'error', summary: 'Error', detail: this.state.messageError , life: 3000});
+    }
 
     render(){
         return(

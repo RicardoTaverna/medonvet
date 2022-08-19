@@ -15,6 +15,7 @@
     "chart.js": "3.3.2",
     "classnames": "^2.2.6",
     "cors": "^2.8.5",
+    "js-cpf-cnpj-validation": "^1.0.0",
     "primeflex": "3.1.0",
     "primeicons": "^5.0.0",
     "primereact": "7.2.0",

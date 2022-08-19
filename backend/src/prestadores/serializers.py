@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Prestador, Veterinario
+from .models import Prestador, Veterinario, PrestadorVeterinario
 from usuarios.serializers import UserSerializer
 
 class PrestadorSerializer(serializers.ModelSerializer):
@@ -25,7 +25,7 @@ class VeterinarioSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = Veterinario
-        fields = ['id', 'user', 'prestador', 'crmv', 'avatar', 'descricao', 'capa', 'cpf_cnpj', 'inicioAtendimento', 'fimAtendimento']
+        fields = ['id', 'user', 'crmv', 'avatar', 'descricao', 'capa', 'cpf_cnpj', 'inicioAtendimento', 'fimAtendimento']
 
     def create(self, validated_data):
         user_payload = validated_data.pop('user')
@@ -54,3 +54,9 @@ class VeterinarioFindSerializer(serializers.ModelSerializer):
     class Meta:
         model = Veterinario
         fields = ['id', 'user', 'crmv', 'avatar', 'descricao', 'capa', 'cpf_cnpj', 'inicioAtendimento', 'fimAtendimento']
+
+
+class PrestadorVeterinarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrestadorVeterinario
+        fields = '__all__'
