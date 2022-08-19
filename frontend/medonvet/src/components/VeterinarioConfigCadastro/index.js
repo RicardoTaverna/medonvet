@@ -10,9 +10,9 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
 import { mask, unMask} from "remask";
 
-import { api } from './../../services/api';
+import { api } from '../../services/api';
 
-class PrestadorConfigCadastro extends Component {
+class VeterinarioConfigCadastro extends Component {
 
     constructor(props) {
         super(props);
@@ -22,10 +22,9 @@ class PrestadorConfigCadastro extends Component {
             descricao: "",
             capaa: "",
             cpf_cnpj: "",
-            cpf_cnpjMascarado: "",
             inicioAtendimento: "",
             fimAtendimento: "",
-            groupname: "prestador",
+            groupname: "veterinario",
             messageError: "",
         }
         this.onMask = this.onMask.bind(this);
@@ -39,7 +38,7 @@ class PrestadorConfigCadastro extends Component {
 
     onEnter = async e => {
         try {
-            api.get('/prestadores/detalhe/').then((response) => {
+            api.get('/prestadores/veterinario/d/').then((response) => {
                 console.log(response);
                 this.setState({
                     cpf_cnpj: response.data.cpf_cnpj,
@@ -61,7 +60,7 @@ class PrestadorConfigCadastro extends Component {
         const { cpf_cnpj, crmv, descricao } = this.state
         
         try {
-            const response = await api.put("/prestadores/detalhe/", { cpf_cnpj, crmv, descricao });
+            const response = await api.put("/prestadores/veterinario/d/", { cpf_cnpj, crmv, descricao });
             console.log(response)    
             this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
         } catch (err) {
@@ -110,7 +109,7 @@ class PrestadorConfigCadastro extends Component {
                         </div>
                         <div className="field col-12 md:col-6">
                             <span className="p-float-label">
-                                <InputText id="cpf_cnpj" type="text"  className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onMask(e)})}/>
+                                <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onMask(e)})}/>
                                 <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
                             </span>
                         </div>
@@ -148,4 +147,4 @@ class PrestadorConfigCadastro extends Component {
     }
 }
 
-export default PrestadorConfigCadastro;
+export default VeterinarioConfigCadastro;

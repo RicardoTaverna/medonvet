@@ -10,5 +10,6 @@ urlpatterns = format_suffix_patterns([
     path('', PrestadorList.as_view()),
     path('detalhe/', PrestadorDetail.as_view()),
     path('veterinario/', VeterinarioList.as_view()),
-    path('veterinario/<int:id_vet>/', VeterinarioDetail.as_view())
+    path('veterinario/d/', VeterinarioDetail.as_view())
+    
 ])

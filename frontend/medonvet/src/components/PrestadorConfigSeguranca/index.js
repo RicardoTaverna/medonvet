@@ -20,7 +20,7 @@ class PrestadorConfigSeguranca extends Component {
             password: "",
             password2: "",
             oldpassword: "",
-            groupname: "prestador",
+            groupname: "",
             messageError: "",
             displayBasic: false,
             displayChangePassword: false,
