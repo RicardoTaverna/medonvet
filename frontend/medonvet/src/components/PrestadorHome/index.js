@@ -35,7 +35,7 @@ class PrestadorHome extends Component {
 
     onLoad = async e => {
         try {
-            api.get('/prestadores/veterinario/').then((response) => {
+            api.get('/prestadores/veterinarios/').then((response) => {
                 console.log(response);
                 this.setState({ veterinarios: response.data })
             });
