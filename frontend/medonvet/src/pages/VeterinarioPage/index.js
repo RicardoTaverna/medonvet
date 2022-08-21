@@ -60,7 +60,7 @@ class VeterinarioPage extends Component {
 
     onLogin = async e => {
         try {
-            api.get('/prestadores/veterinario/d/').then((response) => {
+            api.get('/prestadores/veterinario/').then((response) => {
                 console.log(response);
                 this.setState({
                     username: response.data.user.username,
