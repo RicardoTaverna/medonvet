@@ -4,6 +4,7 @@ import { api } from './../../services/api';
 
 import ClientApp from '../../pages/ClientApp';
 import PrestadorPage from '../PrestadorPage';
+import VeterinarioPage from '../VeterinarioPage'
 
 class AppPage extends React.Component{
 
@@ -53,6 +54,8 @@ class AppPage extends React.Component{
             page = (<ClientApp></ClientApp>)
         } else if (this.state.groupname === 'prestador'){
             page = (<PrestadorPage></PrestadorPage>)
+        } else if (this.state.groupname === 'veterinario'){
+            page = (<VeterinarioPage></VeterinarioPage>)
         }
 
         return(

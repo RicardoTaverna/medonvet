@@ -50,12 +50,13 @@ export class Veterinario extends React.Component {
             globalFilter: null,
             loading: true,
             totalSize: 0,
-            idAux: 0,
+            id: 0,
             passwordconfirm: '',
             showFindVet: true,
             isVetFind: false,
+            cpf_cnpjMascarado: '',
         };
-        this.onLoad = this.onLoad.bind(this);
+        this.onLoad = this.onLoad.bind(this); 
         this.openNew = this.openNew.bind(this);
         this.saveVet = this.saveVet.bind(this);
         this.confirmDeleteVet = this.confirmDeleteVet.bind(this);
@@ -78,7 +79,8 @@ export class Veterinario extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if(this.state.idAux !== prevState.idAux){
+
+        if(this.state.id !== prevState.id) {
             this.onLoad();
         }
     }
@@ -112,8 +114,10 @@ export class Veterinario extends React.Component {
     onLoad = async e => {
         try {
             api.get("/prestadores/veterinarios/").then((response) => {
+                console.log(response)
                 this.setState({
                     vets: response.data,
+                    cpf_cnpj: response.data.cpf_cnpj,
                     loading: false
                 })
             });
@@ -135,11 +139,16 @@ export class Veterinario extends React.Component {
             const index = this.findIndexById(this.state.vet.id);
             vets[index] = vet;
             try {
-                api.post(`/prestadores/prestadorveterinario/`, {"veterinario": this.state.vet.id}).then(response => console.log(response))
+                api.post(`/prestadores/prestadorveterinario/`, {"veterinario": this.state.vet.id}).then(response =>{
+                    console.log(response)
+                    this.setState(prevState => ({id: prevState.id + 1}))
+                })
+                
                 this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario atualizado', life: 3000 });
                 this.setState({
                     passwordconfirm: ''
                 })
+                
                 console.log(vets)
                 
             } catch (err) {
@@ -159,12 +168,13 @@ export class Veterinario extends React.Component {
                 try {
                     api.post('/prestadores/veterinarios/', vet).then(response => {
                         console.log(response, vet)
-                        this.setState(prevState => ({idAux: prevState.idAux +1}))
                         api.get(`/prestadores/veterinario/${this.state.vet.cpf_cnpj}/`).then((response) => {
                             this.setState({
                                 vet: response.data
                             })
-                            api.post(`/prestadores/prestadorveterinario/`, {"veterinario": this.state.vet.id})
+                            api.post(`/prestadores/prestadorveterinario/`, {"veterinario": this.state.vet.id}).then(response => {
+                                this.setState(prevState => ({id: prevState.id + 1}))
+                            })
                         })
                     })
                     this.setState({passwordconfirm: ''})
@@ -261,7 +271,7 @@ export class Veterinario extends React.Component {
                 '999.999.999-99',
                 '99.999.999/9999-99'
             ]);
-            vet[`${name}`] = valorMascarado;
+            vet[`${name}`] = unMask(valorMascarado);
             this.setState({ vet });
             return valorMascarado;
 
@@ -393,7 +403,7 @@ export class Veterinario extends React.Component {
                     <p>Digite o CPF ou CNPJ a ser cadastrado, se ele já existir em nossa base de dados traremos as informações preenchidas. =)</p>
                     <div className="col-12 md:col-12">
                         <div className="p-inputgroup">
-                            <InputText placeholder="CPF ou CNPJ" value={this.state.vet.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.cpf_cnpj })} />
+                            <InputText placeholder="CPF ou CNPJ" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.cpf_cnpjMascarado })} />
                             <Button label="Localizar Cadastro" onClick={this.findVet}/>
                         </div>
                     </div>
@@ -453,8 +463,8 @@ export class Veterinario extends React.Component {
                     </div>
                     <div className="field col">
                         <label htmlFor="cpf_cnpj">CPF-CNPJ</label>
-                        <InputText id="cpf_cnpj" value={this.state.vet.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.vet.cpf_cnpj })} disabled={this.state.isVetFind}/>
-                        {this.state.submitted && !this.state.vet.cpf_cnpj && <small className="p-error">CPF-CNPJ é obrigatório.</small>}
+                        <InputText id="cpf_cnpj" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onInputChange(e, 'cpf_cnpj')})} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.cpf_cnpjMascarado })} disabled={this.state.isVetFind}/>
+                        {this.state.submitted && !this.state.cpf_cnpjMascarado && <small className="p-error">CPF-CNPJ é obrigatório.</small>}
                     </div>
                 </div>
 

@@ -10,9 +10,9 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
 import { mask, unMask} from "remask";
 
-import { api } from './../../services/api';
+import { api } from '../../services/api';
 
-class PrestadorConfigCadastro extends Component {
+class VeterinarioConfigCadastro extends Component {
 
     constructor(props) {
         super(props);
@@ -25,7 +25,7 @@ class PrestadorConfigCadastro extends Component {
             cpf_cnpjMascarado: "",
             inicioAtendimento: "",
             fimAtendimento: "",
-            groupname: "prestador",
+            groupname: "veterinario",
             messageError: "",
         }
         this.onMask = this.onMask.bind(this);
@@ -40,7 +40,7 @@ class PrestadorConfigCadastro extends Component {
 
     onEnter = async e => {
         try {
-            api.get('/prestadores/detalhe/').then((response) => {
+            api.get('/prestadores/veterinario/').then((response) => {
                 console.log(response);
                 this.setState({
                     cpf_cnpj: response.data.cpf_cnpj,
@@ -51,7 +51,7 @@ class PrestadorConfigCadastro extends Component {
                     fimAtendimento: response.data.fimAtendimento,
                     inicioAtendimento: response.data.inicioAtendimento
                 });
-                this.onGetMask(this.state.cpf_cnpj)
+            this.onGetMask(this.state.cpf_cnpj)
             });
         } catch (err) {
             console.log(`Erro: ${err}`)
@@ -64,10 +64,11 @@ class PrestadorConfigCadastro extends Component {
         const cpfOrCnpj = require('js-cpf-cnpj-validation'); 
         if(cpfOrCnpj.isCPForCNPJ(cpf_cnpj)){
             try {
-                const response = await api.put("/prestadores/detalhe/", { cpf_cnpj, crmv, descricao });
+                const response = await api.put("/prestadores/veterinario/", { cpf_cnpj, crmv, descricao });
                 console.log(response)    
                 this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
             } catch (err) {
+
                 this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
             }
         }else{
@@ -97,6 +98,7 @@ class PrestadorConfigCadastro extends Component {
         return valorMascarado;
     };
 
+
     render(){
         return(
             <React.Fragment>
@@ -125,7 +127,7 @@ class PrestadorConfigCadastro extends Component {
                         </div>
                         <div className="field col-12 md:col-6">
                             <span className="p-float-label">
-                                <InputText id="cpf_cnpj" type="text"  className="w-full mb-3" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onMask(e)})}/>
+                                <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onMask(e)})}/>
                                 <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
                             </span>
                         </div>
@@ -163,4 +165,4 @@ class PrestadorConfigCadastro extends Component {
     }
 }
 
-export default PrestadorConfigCadastro;
+export default VeterinarioConfigCadastro;

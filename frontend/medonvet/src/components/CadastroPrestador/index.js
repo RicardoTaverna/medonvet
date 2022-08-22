@@ -48,6 +48,7 @@ export class CadastroPrestador extends Component {
             );
         } else if(cpfOrCnpj.isCPForCNPJ(cpf_cnpj)) {
             console.log(`username: ${username}| passsword: ${password}`)
+            
 
             const user = {
                 "username": username,

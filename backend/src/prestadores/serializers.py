@@ -38,6 +38,7 @@ class VeterinarioSerializer(serializers.ModelSerializer):
 
         return veterinario
 
+
 class VeterinarioUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Veterinario

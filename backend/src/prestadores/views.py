@@ -85,32 +85,28 @@ class VeterinarioDetail(APIView):
 
     permission_classes = [IsAuthenticated]
     
-    def __get_veterinario(self, id_vet, prestador):
+    def __get_veterinario(self, request):
         try:
-            return Veterinario.objects.get(id=id_vet, prestador=prestador)
-        except Prestador.DoesNotExist:
+            user = request.user
+            veterinario = Veterinario.objects.get(user=user.id)
+            return veterinario
+        except Veterinario.DoesNotExist:
             raise Http404
-
-    def __get_prestador(self, request):
-        user = request.user
-        prestador = Prestador.objects.get(user=user.id)
-        return prestador.id
     
-    def get(self, request, id_vet, format=None):
-        veterinario = self.__get_veterinario(id_vet=id_vet, prestador=self.__get_prestador(request=request))
+    def get(self, request, format=None):
+        veterinario = self.__get_veterinario(request)
         serializer = VeterinarioSerializer(veterinario)
         return Response(serializer.data)
 
-    def put(self, request, id_vet, format=None):
-        prestador = self.__get_prestador(request=request)
-        veterinario = self.__get_veterinario(id_vet=id_vet, prestador=prestador)
-        request.data['prestador'] = prestador
-        serializer = VeterinarioUpdateSerializer(veterinario, data=request.data)
-        print(request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, format=None):
+            veterinario = self.__get_veterinario(request)
+            print(request.data)
+            request.data['user'] = request.user.id
+            serializer = VeterinarioUpdateSerializer(veterinario, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, id_vet, format=None):
         veterinario = self.__get_veterinario(id_vet=id_vet, prestador=self.__get_prestador(request=request))
