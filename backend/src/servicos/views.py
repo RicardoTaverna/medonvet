@@ -49,16 +49,36 @@ class ServicoDetail(APIView):
         serializer = ServicoSerializer(servico)
         return Response(serializer.data)
 
-    def put(self, request, format=None):
-        prestador = self.__get_prestador(request)
-        request.data['user'] = request.user.id
-        serializer = PrestadorSerializer(prestador, data=request.data)
+    def put(self, request,id_servico, format=None):
+        servico = self.__get_servico(request, id_servico)
+        user = request.user
+        prestador = Prestador.objects.get(user=user.id)
+        request.data["prestador"] = prestador.id
+        serializer = ServicoSerializer(servico, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self, request,format=None):
-        prestador = self.__get_prestador(request)
-        prestador.delete()
+    def delete(self, request,id_servico,format=None):
+        servico = self.__get_servico(request, id_servico)
+        servico.delete()
         return Response(status.HTTP_204_NO_CONTENT)
+
+
+class ServicoPrestadorDetail(APIView):
+
+    permission_classes = [IsAuthenticated]
+    
+    def __get_servico(self, request):
+        try:
+            prestador = Prestador.objects.get(user=request.user.id)
+            servico = Servico.objects.filter(prestador=prestador.id)
+            return servico
+        except Servico.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, format=None):
+        servico = self.__get_servico(request)
+        serializer = ServicoSerializer(servico, many=True)
+        return Response(serializer.data)
