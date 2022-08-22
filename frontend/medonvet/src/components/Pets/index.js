@@ -16,6 +16,7 @@ import { ProgressBar } from 'primereact/progressbar';
 import './pets.css'
 
 import { api } from '../../services/api';
+import AplicacoesPetInfo from '../AplicacaoPetInfo';
 
 export class Pets extends React.Component {
 
@@ -39,6 +40,7 @@ export class Pets extends React.Component {
             pets: null,
             petDialog: false,
             deletePetDialog: false,
+            aplicacoesDialog: false,
             pet: this.emptyPet,
             selectedPets: null,
             submitted: false,
@@ -61,6 +63,7 @@ export class Pets extends React.Component {
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
+        this.aplicacoesPet = this.aplicacoesPet.bind(this);
         
     }     
 
@@ -165,6 +168,13 @@ export class Pets extends React.Component {
             this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet deletado', life: 3000 });
     }
 
+    aplicacoesPet(pet){
+        this.setState({
+            pet: { ...pet },
+            aplicacoesDialog: true
+        });
+    }
+
 
     findIndexById(id) {
         let index = -1;
@@ -189,7 +199,8 @@ export class Pets extends React.Component {
     hideDialog() {
         this.setState({
             submitted: false,
-            petDialog: false
+            petDialog: false,
+            aplicacoesDialog: false,
         });
     }
 
@@ -224,6 +235,7 @@ export class Pets extends React.Component {
     actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
+                <Button icon="pi pi-shield" className="p-button-rounded p-button-primary mr-2" onClick={() => this.aplicacoesPet(rowData)}/>
                 <Button icon="pi pi-pencil" className="p-button-rounded button-primary mr-2" onClick={() => this.editPet(rowData)} />
                 <Button icon="pi pi-trash" className="p-button-rounded p-button-secondary" onClick={() => this.confirmDeletePet(rowData)} />
             </React.Fragment>
@@ -374,6 +386,16 @@ export class Pets extends React.Component {
                         {this.state.pet && <span>Você tem certeza que deseja deletar esse pet? <b>{this.state.pet.nome}</b>?</span>}
                     </div>
                 </Dialog>
+
+                <Dialog visible={this.state.aplicacoesDialog} style={{ width: '750px' }} header="Aplicações Realizadas" modal className="p-fluid" onHide={this.hideDialog}>
+                    <AplicacoesPetInfo
+                        key={this.state.pet.id}
+                        id={this.state.pet.id}
+                    >
+
+                    </AplicacoesPetInfo>
+                </Dialog>
+
 
             </React.Fragment>
         )
