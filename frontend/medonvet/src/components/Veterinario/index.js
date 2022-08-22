@@ -175,9 +175,7 @@ export class Veterinario extends React.Component {
                             api.post(`/prestadores/prestadorveterinario/`, {"veterinario": this.state.vet.id}).then(response => {
                                 this.setState(prevState => ({id: prevState.id + 1}))
                             })
-                            this.setState(prevState => ({id: prevState.id + 1}))
                         })
-                        this.setState(prevState => ({id: prevState.id + 1}))
                     })
                     this.setState({passwordconfirm: ''})
                     this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Veterinario adicionado', life: 3000 });

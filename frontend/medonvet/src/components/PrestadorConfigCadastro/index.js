@@ -29,6 +29,7 @@ class PrestadorConfigCadastro extends Component {
             messageError: "",
         }
         this.onMask = this.onMask.bind(this);
+        this.onGetMask = this.onGetMask.bind(this);
         this.onEnter = this.onEnter.bind(this);
         this.onUpdate = this.onUpdate.bind(this);
     }
@@ -50,6 +51,7 @@ class PrestadorConfigCadastro extends Component {
                     fimAtendimento: response.data.fimAtendimento,
                     inicioAtendimento: response.data.inicioAtendimento
                 });
+                this.onGetMask(this.state.cpf_cnpj)
             });
         } catch (err) {
             console.log(`Erro: ${err}`)
@@ -59,15 +61,18 @@ class PrestadorConfigCadastro extends Component {
 
     onUpdate = async e => {
         const { cpf_cnpj, crmv, descricao } = this.state
-        
-        try {
-            const response = await api.put("/prestadores/detalhe/", { cpf_cnpj, crmv, descricao });
-            console.log(response)    
-            this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
-        } catch (err) {
-
-            this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
-            
+        const cpfOrCnpj = require('js-cpf-cnpj-validation'); 
+        if(cpfOrCnpj.isCPForCNPJ(cpf_cnpj)){
+            try {
+                const response = await api.put("/prestadores/detalhe/", { cpf_cnpj, crmv, descricao });
+                console.log(response)    
+                this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
+            } catch (err) {
+                this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
+            }
+        }else{
+            this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com seu cadastro. CPF ou CNPJ não existente. x.x", life: 3000 });
+                
         }
     }
 
@@ -81,6 +86,16 @@ class PrestadorConfigCadastro extends Component {
         return valorMascarado;
     };
 
+    onGetMask = async e => {
+        const valorOriginal = unMask(e)
+        console.log(valorOriginal)
+        const valorMascarado = mask(valorOriginal,[
+            '999.999.999-99', 
+            '99.999.999/9999-99'
+        ]);
+        this.setState({cpf_cnpjMascarado: valorMascarado})
+        return valorMascarado;
+    };
 
     render(){
         return(
@@ -110,7 +125,7 @@ class PrestadorConfigCadastro extends Component {
                         </div>
                         <div className="field col-12 md:col-6">
                             <span className="p-float-label">
-                                <InputText id="cpf_cnpj" type="text"  className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onMask(e)})}/>
+                                <InputText id="cpf_cnpj" type="text"  className="w-full mb-3" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onMask(e)})}/>
                                 <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
                             </span>
                         </div>
