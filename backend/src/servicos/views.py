@@ -8,7 +8,7 @@ from rest_framework import status
 
 from .serializers import ServicoSerializer
 
-from .models import Servico,Prestador
+from .models import Servico,Prestador,Veterinario
 
 # Create your views here.
 
@@ -23,8 +23,13 @@ class ServicoList(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        prestador = Prestador.objects.get(user=user.id)
-        request.data["prestador"] = prestador.id
+        grupo = user.groups.values_list('name',flat = True).first()
+        if grupo == 'prestador':
+            usuario = Prestador.objects.get(user=user.id)
+        else:
+            usuario = Veterinario.objects.get(user=user.id)
+
+        request.data[grupo] = usuario.id
         serializer = ServicoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -38,8 +43,13 @@ class ServicoDetail(APIView):
     
     def __get_servico(self, request, id_servico):
         try:
-            prestador = Prestador.objects.get(user=request.user.id)
-            servico = Servico.objects.get(prestador=prestador.id, id=id_servico)
+            grupo = request.user.groups.values_list('name',flat = True).first()
+            if grupo == 'prestador':
+                prestador = Prestador.objects.get(user=request.user.id)
+                servico = Servico.objects.get(prestador=prestador.id, id=id_servico)
+            else:
+                veterinario = Veterinario.objects.get(user=request.user.id)
+                servico = Servico.objects.get(veterinario=veterinario.id, id=id_servico)
             return servico
         except Servico.DoesNotExist:
             raise Http404
@@ -50,10 +60,16 @@ class ServicoDetail(APIView):
         return Response(serializer.data)
 
     def put(self, request,id_servico, format=None):
+        grupo = request.user.groups.values_list('name',flat = True).first()
         servico = self.__get_servico(request, id_servico)
         user = request.user
-        prestador = Prestador.objects.get(user=user.id)
-        request.data["prestador"] = prestador.id
+        
+        if grupo == 'prestador':
+            usuario = Prestador.objects.get(user=user.id)
+        else:
+            usuario = Veterinario.objects.get(user=user.id)
+
+        request.data[grupo] = usuario.id
         serializer = ServicoSerializer(servico, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -72,8 +88,13 @@ class ServicoPrestadorDetail(APIView):
     
     def __get_servico(self, request):
         try:
-            prestador = Prestador.objects.get(user=request.user.id)
-            servico = Servico.objects.filter(prestador=prestador.id)
+            grupo = request.user.groups.values_list('name',flat = True).first()
+            if grupo == 'prestador':
+                prestador = Prestador.objects.get(user=request.user.id)
+                servico = Servico.objects.filter(prestador=prestador.id)
+            else:
+                veterinario = Veterinario.objects.get(user=request.user.id)
+                servico = Servico.objects.filter(veterinario=veterinario.id)
             return servico
         except Servico.DoesNotExist:
             raise Http404
