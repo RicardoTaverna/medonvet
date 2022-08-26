@@ -10,6 +10,7 @@ import { logout } from './../../services/auth'
 import PrestadorHome from '../../components/PrestadorHome';
 import PrestadorConfig from '../../components/PrestadorConfig';
 import Veterinario from '../../components/Veterinario';
+import ServicosVeterinario from '../../components/ServicosVeterinario';
 
 class PrestadorPage extends Component {
     constructor(props) {
@@ -31,9 +32,16 @@ class PrestadorPage extends Component {
             },
             {   
                 label: 'Veterinários',
-                icon: 'pi pi-fw pi-users',
+                icon: 'pi pi-fw pi-user-plus',
                 command: () => {
                     this.setState({childComponent: 'vet'})
+                }
+            },
+            {   
+                label: 'Serviços',
+                icon: 'pi pi-fw pi-briefcase',
+                command: () => {
+                    this.setState({childComponent: 'servico'})
                 }
             },
             {   
@@ -95,6 +103,8 @@ class PrestadorPage extends Component {
             renderChild = (<PrestadorConfig></PrestadorConfig>)
         } else if(this.state.childComponent === 'vet'){
             renderChild = (<Veterinario></Veterinario>)
+        } else if(this.state.childComponent === 'servico'){
+            renderChild = (<ServicosVeterinario></ServicosVeterinario>)
         }
 
         return (

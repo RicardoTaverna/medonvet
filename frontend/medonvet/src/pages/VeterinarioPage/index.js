@@ -9,7 +9,7 @@ import { api } from '../../services/api';
 import { logout } from '../../services/auth'
 import VeterinarioHome from '../../components/VeterinarioHome';
 import VeterinarioConfig from '../../components/VeterinarioConfig';
-import Veterinario from '../../components/Veterinario';
+import ServicosVeterinario from '../../components/ServicosVeterinario';
 
 class VeterinarioPage extends Component {
     constructor(props) {
@@ -31,9 +31,9 @@ class VeterinarioPage extends Component {
             },
             {   
                 label: 'Serviços',
-                icon: 'pi pi-fw pi-users',
+                icon: 'pi pi-fw pi-briefcase',
                 command: () => {
-                    this.setState({childComponent: 'vet'})
+                    this.setState({childComponent: 'servico'})
                 }
             },
             {   
@@ -93,8 +93,8 @@ class VeterinarioPage extends Component {
             renderChild = (<VeterinarioHome></VeterinarioHome>)
         } else if(this.state.childComponent === 'config'){
             renderChild = (<VeterinarioConfig></VeterinarioConfig>)
-        } else if(this.state.childComponent === 'vet'){
-            renderChild = (<Veterinario></Veterinario>)
+        } else if(this.state.childComponent === 'servico'){
+            renderChild = (<ServicosVeterinario></ServicosVeterinario>)
         }
 
         return (
