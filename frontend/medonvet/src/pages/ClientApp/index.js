@@ -8,6 +8,8 @@ import { api } from './../../services/api';
 import NavbarApp from './../../components/NavbarApp';
 import Footer from './../../components/Footer';
 import Pets from '../../components/Pets';
+import ClienteServicos from '../../components/ClienteServicos';
+import ClientePrestadores from '../../components/ClientePrestadores'
 
 
 class ClientApp extends React.Component {
@@ -22,6 +24,7 @@ class ClientApp extends React.Component {
             email: '',
         };
         this.menuItens =  [
+            {label: 'Vets/Clinicas', icon: 'pi pi-fw pi-users'},
             {label: 'Serviços', icon: 'pi pi-fw pi-home'},
             {label: 'Pets', icon: 'pi pi-fw pi-pencil'},
             {label: 'Calendário', icon: 'pi pi-fw pi-calendar'},
@@ -88,84 +91,7 @@ class ClientApp extends React.Component {
         )
 
         const servicos = (
-            <div className='p-6'>
-                <div className="card">
-                    <div className="grid formgrid">
-                        <div className="field col-12 md:col-6 md:pr-6 pr-0">
-                            <h4>Card</h4>
-                            <div className="custom-skeleton p-4">
-                                <div className="flex mb-3">
-                                    <Skeleton shape="circle" size="4rem" className="mr-2"></Skeleton>
-                                    <div>
-                                        <Skeleton width="10rem" className="mb-2"></Skeleton>
-                                        <Skeleton width="5rem" className="mb-2"></Skeleton>
-                                        <Skeleton height=".5rem"></Skeleton>
-                                    </div>
-                                </div>
-                                <Skeleton width="100%" height="150px"></Skeleton>
-                                <div className="flex justify-content-between mt-3">
-                                    <Skeleton width="4rem" height="2rem"></Skeleton>
-                                    <Skeleton width="4rem" height="2rem"></Skeleton>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="field col-12 md:col-6 md:pr-6 pr-0">
-                            <h4>Card</h4>
-                            <div className="custom-skeleton p-4">
-                                <div className="flex mb-3">
-                                    <Skeleton shape="circle" size="4rem" className="mr-2"></Skeleton>
-                                    <div>
-                                        <Skeleton width="10rem" className="mb-2"></Skeleton>
-                                        <Skeleton width="5rem" className="mb-2"></Skeleton>
-                                        <Skeleton height=".5rem"></Skeleton>
-                                    </div>
-                                </div>
-                                <Skeleton width="100%" height="150px"></Skeleton>
-                                <div className="flex justify-content-between mt-3">
-                                    <Skeleton width="4rem" height="2rem"></Skeleton>
-                                    <Skeleton width="4rem" height="2rem"></Skeleton>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="field col-12 md:col-6 md:pr-6 pr-0">
-                            <h4>Card</h4>
-                            <div className="custom-skeleton p-4">
-                                <div className="flex mb-3">
-                                    <Skeleton shape="circle" size="4rem" className="mr-2"></Skeleton>
-                                    <div>
-                                        <Skeleton width="10rem" className="mb-2"></Skeleton>
-                                        <Skeleton width="5rem" className="mb-2"></Skeleton>
-                                        <Skeleton height=".5rem"></Skeleton>
-                                    </div>
-                                </div>
-                                <Skeleton width="100%" height="150px"></Skeleton>
-                                <div className="flex justify-content-between mt-3">
-                                    <Skeleton width="4rem" height="2rem"></Skeleton>
-                                    <Skeleton width="4rem" height="2rem"></Skeleton>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="field col-12 md:col-6 md:pr-6 pr-0">
-                            <h4>Card</h4>
-                            <div className="custom-skeleton p-4">
-                                <div className="flex mb-3">
-                                    <Skeleton shape="circle" size="4rem" className="mr-2"></Skeleton>
-                                    <div>
-                                        <Skeleton width="10rem" className="mb-2"></Skeleton>
-                                        <Skeleton width="5rem" className="mb-2"></Skeleton>
-                                        <Skeleton height=".5rem"></Skeleton>
-                                    </div>
-                                </div>
-                                <Skeleton width="100%" height="150px"></Skeleton>
-                                <div className="flex justify-content-between mt-3">
-                                    <Skeleton width="4rem" height="2rem"></Skeleton>
-                                    <Skeleton width="4rem" height="2rem"></Skeleton>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ClienteServicos></ClienteServicos>
         ) 
         
         const pets = (
@@ -194,24 +120,31 @@ class ClientApp extends React.Component {
             </div>
         )
 
+        const vets_clinicas = (
+            <ClientePrestadores></ClientePrestadores>
+        )
+
 
         var render;
         
         switch(this.state.activeMenuIndex){
             case 0:
+                render = vets_clinicas;
+                break;
+            case 1:
                 render = servicos;
                 console.log(servicos.type)
                 break;
-            case 1:
+            case 2:
                 render = pets;
                 break;
-            case 2:
+            case 3:
                 render = calendario;
                 break;
-            case 3:
+            case 4:
                 render = perfil;
                 break;
-            case 4:
+            case 5:
                 render = configuracoes;
                 break;
             default:
@@ -223,13 +156,13 @@ class ClientApp extends React.Component {
             <React.Fragment>
             <NavbarApp></NavbarApp>
             <div>
-                <section className="perfil-background">
+                {/* <section className="perfil-background">
                     <div className="p-text-center px-6 text-200">   
                         <h1 className="p-mb-5">Bem Vindo {this.state.first_name} {this.state.last_name} </h1>
                         <p>Essa é sua home do app <b>MedOnVet</b></p>
                     </div>
-                </section>
-                <div className="card">
+                </section> */}
+                <div className="card shadow-2">
                     <TabMenu 
                         model={this.menuItens} 
                         activeIndex={this.state.activeMenuIndex}

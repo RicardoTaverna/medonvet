@@ -54,6 +54,20 @@ class PrestadorDetail(APIView):
         prestador.delete()
         return Response(status.HTTP_204_NO_CONTENT)
 
+class PrestadorByIdDetail(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def __get_prestador(self, id_prestador):
+        try:
+            return Prestador.objects.get(id=id_prestador)
+        except Prestador.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, id_prestador, format=None):
+        prestador = self.__get_prestador(id_prestador=id_prestador)
+        serializer = PrestadorNestedSerializer(prestador)
+        return Response(serializer.data)
+
 class VeterinarioList(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -113,6 +127,22 @@ class VeterinarioDetail(APIView):
         veterinario.delete()
         return Response(status.HTTP_204_NO_CONTENT)
 
+
+class VeterinarioByIdDetail(APIView):
+
+    permission_classes = [IsAuthenticated]
+    
+    def __get_veterinario(self, id_veterinario):
+        try:
+            veterinario = Veterinario.objects.get(id=id_veterinario)
+            return veterinario
+        except Veterinario.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, id_veterinario, format=None):
+        veterinario = self.__get_veterinario(id_veterinario=id_veterinario)
+        serializer = VeterinarioSerializer(veterinario)
+        return Response(serializer.data)
 
 class VeterinarioFind(APIView):
     permission_classes = [IsAuthenticated]
