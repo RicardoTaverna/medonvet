@@ -15,7 +15,7 @@ from .models import Endereco, ResetPassword
 from .serializers import UserSerializer, EnderecoSerializer, UserPrestadorSerializer, ForgetPasswordFormSerializer
 
 from clientes.models import Cliente
-from prestadores.models import Prestador
+from prestadores.models import Prestador, Veterinario
 
 # Create your views here.
 
@@ -117,12 +117,23 @@ class UserPrestadorDetail(APIView):
         
 class EnderecoList(APIView):
     """Class based function para controlar get e post do objeto Endereco."""
+   
+
+    def __get_object(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+            return user.id
+        except User.DoesNotExist:
+            raise Http404
+
     def get(self, request, format=None):
         endereco = Endereco.objects.all()
         serializer = EnderecoSerializer(endereco, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        user = self.__get_object(request=request)
+        request.data['user'] = user
         serializer = EnderecoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -131,19 +142,23 @@ class EnderecoList(APIView):
 
 class EnderecoDetail(APIView):
     """Class based function para retornar, alterar e deletar u objeto Endereco."""
-    def _get_endereco(self, pk):
+
+    def __get_usuario(self, request):
         try:
-            return Endereco.objects.get(pk=pk)
-        except Endereco.DoesNotExist:
+            user = User.objects.get(id=request.user.id)
+            return user.id
+        except User.DoesNotExist:
             raise Http404
     
-    def get(self, request, pk, format=None):
-        endereco = self._get_endereco(pk=pk)
+    def get(self, request, format=None):
+        endereco = Endereco.objects.get(user=request.user.id)
         serializer = EnderecoSerializer(endereco)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        endereco = self._get_endereco(pk=pk)
+    def put(self, request, format=None):
+        user = self.__get_usuario(request=request)
+        endereco = Endereco.objects.get(user=user)
+        request.data['user'] = user
         serializer = EnderecoSerializer(endereco, data=request.data)
         if serializer.is_valid():
             serializer.save()

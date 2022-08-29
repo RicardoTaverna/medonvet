@@ -12,7 +12,7 @@ class Endereco(models.Model):
     bairro = models.CharField(max_length=100, blank=True, null=True)
     rua = models.CharField(max_length=100, blank=True, null=True)
     numero = models.IntegerField(blank=True, null=True)
-    completo = models.CharField(max_length=100, blank=True, null=True)
+    complemento = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.user.username
