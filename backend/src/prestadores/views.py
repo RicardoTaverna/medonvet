@@ -1,10 +1,12 @@
-from cmath import exp
-from django.shortcuts import render
+import collections
+from itertools import chain
+from django.contrib.auth.models import Group, User
 from django.http import Http404
+from django.shortcuts import render
 
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import status
 
 from .models import Prestador, Veterinario, PrestadorVeterinario
@@ -186,3 +188,26 @@ class PrestadorVeterianrioList(APIView):
         prestador_veterinario = PrestadorVeterinario.objects.get(veterinario=id_vet, prestador=prestador)
         prestador_veterinario.delete()
         return Response(status.HTTP_204_NO_CONTENT)
+
+
+class AllPrestadores(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        prestador_list = Prestador.objects.all()
+        veterinario_list = Veterinario.objects.all()
+        all_list = list(chain(prestador_list, veterinario_list))
+        serializer = PrestadorSerializer(all_list, many=True)
+        new_serializer_data = []
+        for dictionary in serializer.data:
+            user = User.objects.get(id=dictionary.get('user'))
+            grupo = user.groups.values_list('name',flat = True).first()
+            new_item = ('grupo', grupo)
+            items = list(dictionary.items())
+            items.append(new_item)
+            items.append(('first_name', user.first_name))
+            items.append(('last_name', user.last_name))
+            dictionary = collections.OrderedDict(items)
+            new_serializer_data.append(dictionary)
+        
+        return Response(new_serializer_data)

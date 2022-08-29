@@ -1,10 +1,8 @@
 import React from 'react';
 
-import { Divider } from 'primereact/divider';
 import { InputText } from 'primereact/inputtext';
-import { ScrollPanel } from 'primereact/scrollpanel';
 
-import ClientePrestadoresMapa from '../ClientePrestadoresMapa'
+import { api } from './../../services/api';
 import PrestadorCard from '../PrestadorCard';
 
 export class ClientePrestadores extends React.Component {
@@ -12,12 +10,36 @@ export class ClientePrestadores extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            prestadores: [],
             loading: true,
             search: "",
+        };
+        this.onLoad = this.onLoad.bind(this);
+    }
+
+    componentDidMount() {
+        this.onLoad();
+    }
+
+    onLoad = async e => {
+        try {
+            api.get("/prestadores/all/").then((response) => {
+                console.log(response)
+                this.setState({
+                    prestadores: response.data,
+                    loading: false,
+                    search: "",
+                })
+            });
+
+        } catch (err){
+            console.log("erro: ", err);
         };
     }
 
     render(){
+        let { prestadores } = this.state
+
         return(
             <React.Fragment>
                 <div className="card">
@@ -31,18 +53,25 @@ export class ClientePrestadores extends React.Component {
                                 </span>
                             </div>
                     
-                            <div className="col-6 flex align-items-center justify-content-center mt-6">
+                            <div className="col-12 justify-content-center mt-6">
                                 <div className="p-fluid">
-                                    <ScrollPanel style={{ width: '150%', height: '400px' }}>
-                                        <PrestadorCard></PrestadorCard>
-                                    </ScrollPanel>
+                                    
+                                        { prestadores.map(
+                                            prestador => <PrestadorCard
+                                                key={prestador.id}
+                                                id={prestador.id}
+                                                crmv={prestador.crmv}
+                                                descricao={prestador.descricao}
+                                                cpf_cnpj={prestador.cpf_cnpj}
+                                                user={prestador.user}
+                                                grupo={prestador.grupo}
+                                                first_name={prestador.first_name}
+                                                last_name={prestador.last_name}
+                                            ></PrestadorCard>
+                                        )}
+                                        
+                                    
                                 </div>
-                            </div>
-                            <div className="col-2">
-                                <Divider layout="vertical"></Divider>
-                            </div>
-                            <div className="col-4 flex align-items-center justify-content-center">
-                                <ClientePrestadoresMapa></ClientePrestadoresMapa>
                             </div>
                         </div>
                     </div>
