@@ -103,3 +103,23 @@ class ServicoPrestadorDetail(APIView):
         servico = self.__get_servico(request)
         serializer = ServicoSerializer(servico, many=True)
         return Response(serializer.data)
+
+
+class ServicoByIdPrestador(APIView):
+
+    permission_classes = [IsAuthenticated]
+    
+    def __get_servico(self, grupo, id):
+        try:
+            if grupo == 'prestador':
+                servico = Servico.objects.filter(prestador=id)
+            else:
+                servico = Servico.objects.filter(veterinario=id)
+            return servico
+        except Servico.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, groupname, id, format=None):
+        servico = self.__get_servico(grupo=groupname, id=id)
+        serializer = ServicoSerializer(servico, many=True)
+        return Response(serializer.data)
