@@ -1,0 +1,54 @@
+[
+    {
+      "model": "auth.group",
+      "pk": 1,
+      "fields": {
+        "name": "cliente",
+        "permissions": [
+          
+        ]
+      }
+    },
+    {
+      "model": "auth.group",
+      "pk": 2,
+      "fields": {
+        "name": "prestador",
+        "permissions": [
+          
+        ]
+      }
+    },
+    {
+      "model": "auth.group",
+      "pk": 3,
+      "fields": {
+        "name": "veterinario",
+        "permissions": [
+          
+        ]
+      }
+    },
+    {
+      "model": "auth.user",
+      "pk": 1,
+      "fields": {
+        "password": "pbkdf2_sha256$390000$PdzILMyQs3knuPgijsvxg4$gnUzqe8vgY4XUmzWWATG4M1/Y9pVKKU/iK9OVOotYRM=",
+        "last_login": "2022-08-26T19:25:42.311Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2022-08-26T18:20:27.232Z",
+        "groups": [
+          
+        ],
+        "user_permissions": [
+          
+        ]
+      }
+    }
+]
