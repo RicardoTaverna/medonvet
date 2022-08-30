@@ -10,6 +10,7 @@ import Footer from './../../components/Footer';
 import Pets from '../../components/Pets';
 import ClienteServicos from '../../components/ClienteServicos';
 import ClientePrestadores from '../../components/ClientePrestadores'
+import ClienteConfig from '../../components/ClienteConfig';
 
 
 class ClientApp extends React.Component {
@@ -103,21 +104,9 @@ class ClientApp extends React.Component {
             <div></div>
         )
 
+
         const configuracoes = (
-            <div className='p-6'>
-                <div className="card p-container">
-                    <div className="grid formgrid">
-                        <div className="field col-12 md:col-6">
-                            <h3>Configurações</h3>
-                            <Skeleton className="mb-2"></Skeleton>
-                            <Skeleton width="10rem" className="mb-2"></Skeleton>
-                            <Skeleton width="5rem" className="mb-2"></Skeleton>
-                            <Skeleton height="2rem" className="mb-2"></Skeleton>
-                            <Skeleton width="10rem" height="4rem"></Skeleton>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ClienteConfig></ClienteConfig>
         )
 
         const vets_clinicas = (

@@ -14,7 +14,7 @@ urlpatterns = format_suffix_patterns([
     path('prestadores/', UserPrestadorList.as_view()),
     path('prestador/', UserPrestadorDetail.as_view()),
     path('endereco/', EnderecoList.as_view()),
-    path('endereco/<int:pk>', EnderecoDetail.as_view()),
+    path('enderecos/', EnderecoDetail.as_view()),
     path('login/', views.obtain_auth_token),
     path('logout/', LogoutView.as_view()),
     path('reset-password/<str:token>/', ForgetPasswordValidateToken.as_view()),

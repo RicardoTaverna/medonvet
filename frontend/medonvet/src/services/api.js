@@ -5,6 +5,10 @@ export const api = axios.create({
   baseURL: "http://127.0.0.1:8000"
 });
 
+export const viaCEP = axios.create({
+  baseURL: "https://viacep.com.br/ws/"
+});
+
 api.interceptors.request.use(async config => {
   const token = getToken();
   if (token) {

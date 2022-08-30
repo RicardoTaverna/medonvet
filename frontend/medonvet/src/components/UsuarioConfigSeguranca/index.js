@@ -8,7 +8,7 @@ import { Toast } from 'primereact/toast';
 
 import { api } from './../../services/api';
 
-class PrestadorConfigSeguranca extends Component {
+class UsuarioConfigSeguranca extends Component {
 
     constructor(props) {
         super(props);
@@ -63,12 +63,8 @@ class PrestadorConfigSeguranca extends Component {
             console.log(response)    
             this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
         } catch (err) {
-
             this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
-            
-        }
-        
-
+        } 
     }
 
     onClick(name, position) {
@@ -82,7 +78,6 @@ class PrestadorConfigSeguranca extends Component {
                 position
             }
         }
-
         this.setState(state);
     }
 
@@ -185,4 +180,4 @@ class PrestadorConfigSeguranca extends Component {
     }
 }
 
-export default PrestadorConfigSeguranca;
+export default UsuarioConfigSeguranca;
