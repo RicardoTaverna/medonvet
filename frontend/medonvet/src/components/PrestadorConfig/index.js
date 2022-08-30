@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Toast } from 'primereact/toast';
 
-import PrestadorConfigSeguranca from '../PrestadorConfigSeguranca';
+import UsuarioConfigSeguranca from '../UsuarioConfigSeguranca';
 import PrestadorConfigCadastro from '../PrestadorConfigCadastro';
 import UsuarioEndereco from '../UsuarioEndereco';
 
@@ -15,7 +15,6 @@ class PrestadorConfig extends Component {
         }
     }
 
-
     render(){
         return(
             <React.Fragment>
@@ -23,16 +22,14 @@ class PrestadorConfig extends Component {
                 <div className="grid px-6 py-3">
                     <div className="col-12 md:col-6 lg:col-6">
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
-                            <PrestadorConfigSeguranca></PrestadorConfigSeguranca>     
+                            <UsuarioConfigSeguranca></UsuarioConfigSeguranca>     
                         </div>
                     </div>
-
                     <div className="col-12 md:col-6 lg:col-6">
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
                             <PrestadorConfigCadastro></PrestadorConfigCadastro>
                         </div>
                     </div>
-
                     <div className="col-12 md:col-12 lg:col-12">
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
                             <UsuarioEndereco></UsuarioEndereco>

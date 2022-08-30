@@ -91,7 +91,7 @@ class UsuarioEndereco extends Component {
                 const response = await api.put("/usuarios/enderecos/", {id, rua, numero, complemento, cep, cidade, estado, bairro });
                 console.log(response)    
                 console.log("passei pelo put")
-                this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
+                this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Endereço atualizado', life: 3000 });        
             } catch (err) {
                 this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
             }
@@ -100,7 +100,7 @@ class UsuarioEndereco extends Component {
                 const response = await api.post("/usuarios/endereco/", { rua, numero, complemento, cep, cidade, estado, bairro });
                 console.log(response)    
                 console.log("passei pelo post")
-                this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
+                this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Endereço atualizado', life: 3000 });        
             } catch (err) {
                 this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
             }
