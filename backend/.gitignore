@@ -133,3 +133,6 @@ src/fixtures
 
 # Docker
 mongodb_data_container/
+
+# estaticos
+static/
