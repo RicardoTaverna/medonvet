@@ -13,7 +13,9 @@
                 "runserver"
             ],
             "django": true,
-            "justMyCode": true
+            "justMyCode": true,
+            "cwd": "${fileDirname}",
+            "env": {"PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}"}
         }
     ]
 }
