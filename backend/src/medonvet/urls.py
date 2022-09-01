@@ -24,6 +24,7 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
+    path('agendamento/', include('agendamento.urls')),
     path('aplicacoes/', include('aplicacoes.urls')),
     path('clientes/', include('clientes.urls')),
     path('emailer/', include('emailer.urls')),
