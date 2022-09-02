@@ -1,4 +1,5 @@
 from django.urls import include, path
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import (
     HorarioAtendimentoList,
@@ -21,5 +22,5 @@ urlpatterns = format_suffix_patterns([
     path('cliente/', AgendamentoByClienteDetail.as_view()),
     path('horarioatendimento/', HorarioAtendimentoList.as_view()),
     path('horarioatendimento/veterinario/', HorarioByVetDetail.as_view()),
-    path('horarioatendimento/<int:id_horario>/', HorarioAtendimentoDetail.as_view()),
+    path('horarioatendimento/<int:id_horario>/', csrf_exempt(HorarioAtendimentoDetail.as_view())),
 ])

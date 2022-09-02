@@ -16,3 +16,7 @@ api.interceptors.request.use(async config => {
   }
   return config;
 });
+
+api.defaults.xsrfCookieName = "csrftoken"
+api.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
