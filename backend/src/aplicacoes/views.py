@@ -72,4 +72,3 @@ class AplicacaoPetDetail(APIView):
         aplicacao = self.__get_aplicacao_pet(id_pet=id_pet)
         serializer = AplicacaoSerializer(aplicacao, many=True)
         return Response(serializer.data)
-
