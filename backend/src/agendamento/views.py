@@ -73,14 +73,39 @@ class HorarioByVetDetail(APIView):
         return Response(serializer.data)
 
 
+class HorarioByVetIdDetail(APIView):
+    """Class based function para retornar, alterar e deletar um objeto Aplicacao."""
+    permission_classes = [IsAuthenticated]
+    
+    def __get_atendimento_by_vet(self, vet_id):
+        try:
+            veterinario = Veterinario.objects.get(id=vet_id)
+            return HorarioFuncionamento.objects.get(veterinario=veterinario)
+        except HorarioFuncionamento.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, vet_id, format=None):
+        horario = self.__get_atendimento_by_vet(vet_id=vet_id)
+        serializer = HorarioFuncionamentoSerializer(horario)
+        return Response(serializer.data)
+
+
 class AgendamentoList(APIView):
     """Class based function para controlar get e post do objeto Agendamento."""
+    permission_classes = [IsAuthenticated]
+
+    def __return_cliente_id(self, user):
+        cliente = Cliente.objects.get(user=user.id)
+        return cliente.id
+    
     def get(self, request, format=None):
         agendamento = Agendamento.objects.all()
         serializer = AgendamentoSerializer(agendamento, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        if request.data.get('cliente') is None:
+            request.data['cliente'] = self.__return_cliente_id(request.user)
         serializer = AgendamentoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

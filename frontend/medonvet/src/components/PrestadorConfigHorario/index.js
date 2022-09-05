@@ -19,13 +19,13 @@ class PrestadorConfigHorario extends Component {
             inicio: null,
             termino: null,
             intervalo: "",
-            domingo: false,
-            segunda_feira: false,
-            terca_feira: false,
-            quarta_feira: false,
-            quinta_feira: false,
-            sexta_feira: false,
-            sabado: false,
+            dia_0: false,
+            dia_1: false,
+            dia_2: false,
+            dia_3: false,
+            dia_4: false,
+            dia_5: false,
+            dia_6: false,
 
         }
         this.onLoad = this.onLoad.bind(this);
@@ -45,13 +45,13 @@ class PrestadorConfigHorario extends Component {
                     inicio: response.data.inicio,
                     termino: response.data.termino,
                     intervalo: response.data.intervalo,
-                    domingo: response.data.domingo,
-                    segunda_feira: response.data.segunda_feira,
-                    terca_feira: response.data.terca_feira,
-                    quarta_feira: response.data.quarta_feira,
-                    quinta_feira: response.data.quinta_feira,
-                    sexta_feira: response.data.sexta_feira,
-                    sabado: response.data.sabado,
+                    dia_0: response.data.dia_0,
+                    dia_1: response.data.dia_1,
+                    dia_2: response.data.dia_2,
+                    dia_3: response.data.dia_3,
+                    dia_4: response.data.dia_4,
+                    dia_5: response.data.dia_5,
+                    dia_6: response.data.dia_6,
                 })
                 console.log(response);
             });
@@ -61,31 +61,32 @@ class PrestadorConfigHorario extends Component {
     }
 
     onUpdate = async e => {
-        const { id, veterinario, inicio, termino, intervalo, domingo, segunda_feira, terca_feira, quarta_feira, quinta_feira, sexta_feira, sabado} = this.state
+        const { id, veterinario, inicio, termino, intervalo, dia_0, dia_1, dia_2, dia_3, dia_4, dia_5, dia_6} = this.state
         try {
             const response = await api.put(`/agendamento/horarioatendimento/${id}/`, { 
                 veterinario,
                 inicio,
                 termino,
                 intervalo,
-                domingo,
-                segunda_feira,
-                terca_feira,
-                quarta_feira,
-                quinta_feira,
-                sexta_feira,
-                sabado
+                dia_0,
+                dia_1,
+                dia_2,
+                dia_3,
+                dia_4,
+                dia_5,
+                dia_6
              });
             console.log(response)    
-            this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
+            this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Horário de funcionamento atualizado', life: 3000 });        
         } catch (err) {
-            this.toast.show({ severity: 'error', summary: 'Erro', detail: "Houve um problema com a atalização, verifique seus os dados inseridos. T.T", life: 3000 });
+            this.toast.show({ severity: 'error', summary: 'Erro', detail: `Houve um problema com a atualização, verifique seus os dados inseridos. T.T - ${err}`, life: 3000 });
         } 
     }
 
     render(){
 
         return(
+
             <React.Fragment>
                 <Toast ref={(el) => this.toast = el} />
                 
@@ -93,58 +94,57 @@ class PrestadorConfigHorario extends Component {
                 <div className="font-medium text-500 mb-3">Atualize suas informações de funcionamento para disponibilizar a agenda.</div>
 
                 <div className="p-fluid grid">
-                    <div className="field col-12 md:col-4">
+                    <div className="field col-12 md:col-5">
                         <span className="p-float-label">
-                            <InputMask id="inicio" mask="99:99" value={this.state.inicio} placeholder="00:00" slotChar="hh:mm" onChange={(e) => this.setState({inicio: e.value})}></InputMask>
+                            <InputNumber inputId="inicio" value={this.state.inicio} onValueChange={(e) => this.setState({inicio: e.value})} mode="decimal" showButtons min={0} max={23} />
                             <label htmlFor="inicio" className="font-medium mb-2">Horario de Inicio</label>
                         </span>
                     </div>
-                    <div className="field col-12 md:col-4">                                 
+                    <div className="field col-12 md:col-5">                                 
                         <span className="p-float-label">
-                            <InputMask id="termino" mask="99:99" value={this.state.termino} placeholder="00:00" slotChar="hh:mm" onChange={(e) => this.setState({termino: e.value})}></InputMask>
+                            <InputNumber inputId="termino" value={this.state.termino} onValueChange={(e) => this.setState({termino: e.value})} mode="decimal" showButtons min={1} max={24} />
                             <label htmlFor="termino" className="font-medium mb-2">Horario de Termino</label>
                         </span>
                     </div>
-                    <div className="field col-12 md:col-4">
+                    <div className="field col-12 md:col-10">
                         <span className="p-float-label">
                             <InputNumber inputId="intervalo" value={this.state.intervalo} onValueChange={(e) => this.setState({intervalo: e.value})} mode="decimal" showButtons min={0} max={720} />
                             <label htmlFor="intervalo" className="font-medium mb-2">Intervalo Atendimento</label>
                         </span>
                     </div>
-
-                    <div className="field col-4 md:col-3">
+                    <div className="field col-12 md:col-6">
                         <span className="p-float-label">
-                            <ToggleButton checked={this.state.domingo} onChange={(e) => this.setState({domingo: e.value})} onLabel="Domingo" offLabel="Domingo" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
+                            <ToggleButton checked={this.state.dia_0} onChange={(e) => this.setState({dia_0: e.value})} onLabel="Domingo" offLabel="Domingo" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
+                        </span>
+                    </div>
+                    <div className="field col-12 md:col-6">
+                        <span className="p-float-label">
+                            <ToggleButton checked={this.state.dia_1} onChange={(e) => this.setState({dia_1: e.value})} onLabel="Segunda-feira" offLabel="Segunda-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
+                        </span>
+                    </div>
+                    <div className="field col-12 md:col-6">
+                        <span className="p-float-label">
+                            <ToggleButton checked={this.state.dia_2} onChange={(e) => this.setState({dia_2: e.value})} onLabel="Terca-feira" offLabel="Terca-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
+                        </span>
+                    </div>
+                    <div className="field col-12 md:col-6">
+                        <span className="p-float-label">
+                            <ToggleButton checked={this.state.dia_3} onChange={(e) => this.setState({dia_3: e.value})} onLabel="Quarta-feira" offLabel="Quarta-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
+                        </span>
+                    </div>
+                    <div className="field col-12 md:col-6">
+                        <span className="p-float-label">
+                            <ToggleButton checked={this.state.dia_4} onChange={(e) => this.setState({dia_4: e.value})} onLabel="Quinta-feira" offLabel="Quinta-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
+                        </span>
+                    </div>
+                    <div className="field col-12 md:col-6">
+                        <span className="p-float-label">
+                            <ToggleButton checked={this.state.dia_5} onChange={(e) => this.setState({dia_5: e.value})} onLabel="Sexta-feira" offLabel="Sexta-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
                         </span>
                     </div>
                     <div className="field col-4 md:col-3">
                         <span className="p-float-label">
-                            <ToggleButton checked={this.state.segunda_feira} onChange={(e) => this.setState({segunda_feira: e.value})} onLabel="Segunda-feira" offLabel="Segunda-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
-                        </span>
-                    </div>
-                    <div className="field col-4 md:col-3">
-                        <span className="p-float-label">
-                            <ToggleButton checked={this.state.terca_feira} onChange={(e) => this.setState({terca_feira: e.value})} onLabel="Terca-feira" offLabel="Terca-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
-                        </span>
-                    </div>
-                    <div className="field col-4 md:col-3">
-                        <span className="p-float-label">
-                            <ToggleButton checked={this.state.quarta_feira} onChange={(e) => this.setState({quarta_feira: e.value})} onLabel="Quarta-feira" offLabel="Quarta-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
-                        </span>
-                    </div>
-                    <div className="field col-4 md:col-3">
-                        <span className="p-float-label">
-                            <ToggleButton checked={this.state.quinta_feira} onChange={(e) => this.setState({quinta_feira: e.value})} onLabel="Quinta-feira" offLabel="Quinta-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
-                        </span>
-                    </div>
-                    <div className="field col-4 md:col-3">
-                        <span className="p-float-label">
-                            <ToggleButton checked={this.state.sexta_feira} onChange={(e) => this.setState({sexta_feira: e.value})} onLabel="Sexta-feira" offLabel="Sexta-feira" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
-                        </span>
-                    </div>
-                    <div className="field col-4 md:col-3">
-                        <span className="p-float-label">
-                            <ToggleButton checked={this.state.sabado} onChange={(e) => this.setState({sabado: e.value})} onLabel="Sábado" offLabel="Sábado" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
+                            <ToggleButton checked={this.state.dia_6} onChange={(e) => this.setState({dia_6: e.value})} onLabel="Sábado" offLabel="Sábado" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem" aria-label="Confirmation" />
                         </span>
                     </div>
                 </div>
