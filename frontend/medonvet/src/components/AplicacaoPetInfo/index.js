@@ -8,7 +8,9 @@ export class AplicacoesPetInfo extends React.Component {
         id: null,
         tipo: "",
         nome_medicamento: "",
-        data_aplicacao: ""
+        data_aplicacao: "",
+        data_reaplicacao: "",
+        notificar: ""
     };
 
     constructor(props) {
@@ -46,6 +48,8 @@ export class AplicacoesPetInfo extends React.Component {
                         <Column field="tipo" header="Tipo"></Column>
                         <Column field="nome_medicamento" header="Nome Medicamento"></Column>
                         <Column field="data_aplicacao" header="Data Aplicação"></Column>
+                        <Column field="data_reaplicacao" header="Data Reaplicação"></Column>
+                        <Column field="notificar" header="Notificar"></Column>
                     </DataTable>
                 </div>
             </React.Fragment>
