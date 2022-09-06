@@ -9,6 +9,8 @@ class Aplicacao(models.Model):
     tipo = models.CharField(max_length=100, blank=True, null=True)
     nome_medicamento = models.CharField(max_length=100, blank=True, null=True)
     data_aplicacao = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    data_reaplicacao = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    notificar = models.BooleanField(default=False, blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.pet.nome} - {self.nome_medicamento} - {self.data_aplicacao}"
