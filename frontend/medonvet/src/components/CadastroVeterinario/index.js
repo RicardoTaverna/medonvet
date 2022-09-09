@@ -23,7 +23,7 @@ class CadastroVeterinario extends Component {
             password: "",
             passwordconfirm: "",
             descricao: "",
-            groupname: "prestador",
+            groupname: "veterinario",
             messageError: "",
         }
         this.onMask = this.onMask.bind(this);
@@ -53,7 +53,7 @@ class CadastroVeterinario extends Component {
     }
 
     onUpdate = async e => {
-        const { username, first_name, last_name, email, cpf_cnpj, crmv, descricao, password,passwordconfirm } = this.state
+        const { username, first_name, last_name, email, cpf_cnpj,groupname, crmv, descricao, password,passwordconfirm } = this.state
         const cpfOrCnpj = require('js-cpf-cnpj-validation'); 
         const user = {
             "username": username,
@@ -66,7 +66,7 @@ class CadastroVeterinario extends Component {
             this.toast.show({ severity: 'error', summary: 'Erro', detail: "As senhas não coincidem!", life: 3000 });
         }else if(cpfOrCnpj.isCPForCNPJ(cpf_cnpj)){
             try {
-                const response = await api.post("/prestadores/veterinario/", { cpf_cnpj, crmv, descricao, user });
+                const response = await api.post("/prestadores/veterinarios/", { cpf_cnpj, crmv, groupname, descricao, user });
                 console.log(response)    
                 this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Cadastro atualizado', life: 3000 });        
             } catch (err) {
@@ -88,6 +88,7 @@ class CadastroVeterinario extends Component {
             '999.999.999-99', 
             '99.999.999/9999-99'
         ]);
+        this.setState({cpf_cnpj: unMask(valorOriginal)});
         return valorMascarado;
     };
 
@@ -151,7 +152,7 @@ class CadastroVeterinario extends Component {
 
                                 <div className="field col-12 md:col-6">
                                     <span className="p-float-label">
-                                        <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpj} onChange={(e) => this.setState({cpf_cnpj: this.onMask(e)})}/>
+                                        <InputText id="cpf_cnpj" type="text" className="w-full mb-3" value={this.state.cpf_cnpjMascarado} onChange={(e) => this.setState({cpf_cnpjMascarado: this.onMask(e)})}/>
                                         <label htmlFor="cpf_cnpj" className="font-medium mb-2">CPF/CNPJ</label>
                                     </span>
                                 </div>

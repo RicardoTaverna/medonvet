@@ -32,6 +32,7 @@ export class Veterinario extends React.Component {
         cpf_cnpj: '',
         crmv: '',
         descricao: '',
+        groupname: 'veterinario',
     };
 
     constructor(props) {

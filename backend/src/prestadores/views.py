@@ -92,7 +92,10 @@ class VeterinarioList(APIView):
         request.data['prestador'] = prestador.id
         serializer = VeterinarioSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            veterinario =serializer.save()
+            user = veterinario.user.id
+            grupo=Group.objects.get(name=request.data['groupname'])
+            grupo.user_set.add(user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
