@@ -1,7 +1,7 @@
 from django.db import models
 
 from prestadores.models import Veterinario
-from clientes.models import Cliente
+from clientes.models import Cliente, Pet
 from servicos.models import Servico
 
 # Create your models here.
@@ -25,12 +25,13 @@ class HorarioFuncionamento(models.Model):
 
 
 class Agendamento(models.Model):
-    funcionamento = models.ForeignKey(HorarioFuncionamento, on_delete=models.CASCADE)
+    veterinario = models.ForeignKey(Veterinario, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     servico = models.ForeignKey(Servico, on_delete=models.CASCADE)
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE, null=True)
     data = models.DateField(blank=True, null=True)
-    horario_selecionado = models.TimeField(blank=True, null=True)
+    horario_selecionado = models.CharField(max_length=20 ,blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"{self.id} - Prestador:{self.funcionamento.veterinario.user.username} - Cliente:{self.cliente.user.first_name}"
+        return f"{self.id} - Prestador:{self.veterinario.user.username} - Cliente:{self.cliente.user.first_name} - Data:{self.data}"
 

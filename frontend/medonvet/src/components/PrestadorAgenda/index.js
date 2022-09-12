@@ -13,13 +13,15 @@ class PrestadorAgenda extends Component {
     
     today = new Date();
     day = this.today.getDay();
+    thisDay = this.today.getDate();
     month = this.today.getMonth();
     year = this.today.getFullYear();
 
     constructor(props) {
         super(props);
         this.state = {
-            today: "",
+            today: this.today,
+            weekday: "",
             monthName: "",
             dayName: this.today.toLocaleString("pt-br", { weekday: 'long' }),
             id: null,
@@ -64,15 +66,16 @@ class PrestadorAgenda extends Component {
                     inicio: response.data.inicio,
                     termino: response.data.termino,
                     intervalo: response.data.intervalo,
-                    domingo: response.data.domingo,
-                    segunda_feira: response.data.segunda_feira,
-                    terca_feira: response.data.terca_feira,
-                    quarta_feira: response.data.quarta_feira,
-                    quinta_feira: response.data.quinta_feira,
-                    sexta_feira: response.data.sexta_feira,
-                    sabado: response.data.sabado,
+                    dia_0: response.data.dia_0,
+                    dia_1: response.data.dia_1,
+                    dia_2: response.data.dia_2,
+                    dia_3: response.data.dia_3,
+                    dia_4: response.data.dia_4,
+                    dia_5: response.data.dia_5,
+                    dia_6: response.data.dia_6,
+                    weekday: this.day,
                 })
-                console.log(response);
+                console.log('vet = ', response.data.veterinario)
                 
             });
         } catch (err) {
@@ -101,11 +104,9 @@ class PrestadorAgenda extends Component {
                                 <div className='grid'>
                                     <div className='col-12 center-top-panel'>
                                         <div className='grid flex align-content-center flex-wrap'>
-                                            <div className='col-3 flex align-items-center justify-content-center'>
+                                            <div className='col-5 flex align-items-center justify-content-center'>
+                                                <p class="text-xl w-10 ml-2 mr-2 text-700">{this.state.dayName} - {this.state.today.getDate()}</p>
                                                 <p class="text-xl w-10 text-700">{this.state.monthName} {this.year}</p>
-                                            </div>
-                                            <div className='col-1 flex align-items-center justify-content-center'>
-                                                <Button label="Hoje" className="p-button-raised p-button-help p-button-text" />
                                             </div>
                                            
                                         </div>
@@ -113,12 +114,14 @@ class PrestadorAgenda extends Component {
                                             
                                     </div>
                                     <div className='col-12'>
-                                        <p class="text-xl w-10 ml-2 text-700">{this.state.dayName} {this.state.today}</p>
+                                        
                                         <VeterinarioAgendaDay
                                         key={1}
+                                        veterinario={this.state.veterinario}
                                         inicio={this.state.inicio}
                                         termino={this.state.termino}
-                                        intervalo={this.state.intervalo}>
+                                        intervalo={this.state.intervalo}
+                                        date={this.state.today.toISOString().slice(0, 10)}>
 
                                         </VeterinarioAgendaDay>
                                     </div>

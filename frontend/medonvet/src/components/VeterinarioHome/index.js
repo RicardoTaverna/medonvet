@@ -10,6 +10,7 @@ import { ScrollPanel } from 'primereact/scrollpanel';
 import VeterinariosCard from '../VeterinariosCard';
 import { api } from '../../services/api';
 import CadastroVeterinario from '../CadastroVeterinario';
+import VeterinarioAgendaCard from '../VeterinarioAgendaCard';
 
 class VeterinarioHome extends Component {
 
@@ -18,6 +19,7 @@ class VeterinarioHome extends Component {
         this.state = {
             veterinarios: [],
             visibleLeft: false,
+            agendamentos: [],
         }
         this.teamItens = [
             {   
@@ -35,22 +37,19 @@ class VeterinarioHome extends Component {
 
     onLoad = async e => {
         try {
-            api.get('/prestadores/veterinarios/').then((response) => {
+            await api.get('/agendamento/veterinario/').then((response) => {
                 console.log(response);
-                this.setState({ veterinarios: response.data })
-            });
+                this.setState({ agendamentos: response.data })
+            })
         } catch (err) {
             console.log(`Erro: ${err}`)
         }
     }
 
     render(){
-        let { veterinarios } = this.state 
+        let { agendamentos } = this.state 
         return (
             <React.Fragment>
-                <Sidebar visible={this.state.visibleLeft} className="p-sidebar-lg" onHide={() => this.setState({ visibleLeft: false })}>
-                        <CadastroVeterinario></CadastroVeterinario>
-                </Sidebar>
 
                 <div className="grid px-6 py-3">
                     <div className="col-12 md:col-6 lg:col-3">
@@ -120,23 +119,36 @@ class VeterinarioHome extends Component {
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
                             <div className="flex justify-content-between mb-3">
                                 <div>
-                                    <span className="text-900 mb-3">Veterinários</span>
+                                    <span className="text-900 mb-3">Proximos Atendimentos</span>
                                 </div>
                                 <div className="flex align-items-center justify-content-center">
                                     <Menu model={this.teamItens} popup ref={el => this.menu = el} id="popup_menu" />
-                                    <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-text p-button-plain" aria-label="Filter" onClick={(event) => this.menu.toggle(event)} aria-controls="popup_menu" aria-haspopup />
+                                    {/* <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-text p-button-plain" aria-label="Filter" onClick={(event) => this.menu.toggle(event)} aria-controls="popup_menu" aria-haspopup /> */}
                                 </div>
                             </div>
                             <ScrollPanel style={{width: '100%', height: '400px'}}>
 
-                                { veterinarios.map(
+                                { agendamentos.map(
+                                    agendamento => <VeterinarioAgendaCard
+                                        key={agendamento.id}
+                                        cliente={agendamento.cliente}
+                                        pet={agendamento.pet}
+                                        servico={agendamento.servico}
+                                        data={agendamento.data}
+                                        horario_selecionado={agendamento.horario_selecionado}
+                                    ></VeterinarioAgendaCard>
+                                )}
+
+
+                                
+                                {/* { veterinarios.map(
                                     veterinario =><VeterinariosCard
                                         key={veterinario.id}
                                         id={veterinario.id}
                                         first_name={veterinario.user.first_name}
                                         last_name={veterinario.user.last_name}>
                                     </VeterinariosCard>
-                                )}
+                                )} */}
                             </ScrollPanel>
 
                         </div>
@@ -146,7 +158,7 @@ class VeterinarioHome extends Component {
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
                             <div className="flex justify-content-between mb-3">
                                 <div>
-                                    <span className="text-900 mb-3">Ultimos Serviços</span>
+                                    <span className="text-900 mb-3">Ultimos Atendimentos</span>
                                 </div>
                                 <div className="flex align-items-center justify-content-center">
                                     <Menu model={this.teamItens} popup ref={el => this.menu = el} id="popup_menu" />

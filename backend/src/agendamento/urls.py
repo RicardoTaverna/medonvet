@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import (
+    AgendamentoByVetIdDetail,
     HorarioAtendimentoList,
     HorarioAtendimentoDetail,
     HorarioByVetDetail,
@@ -19,6 +20,7 @@ urlpatterns = format_suffix_patterns([
     path('', AgendamentoList.as_view()),
     path('<int:id_agendamento>/', AgendamentoDetail.as_view()),
     path('veterinario/', AgendamentoByVetDetail.as_view()),
+    path('veterinario/<int:id_vet>/<str:date>/', AgendamentoByVetIdDetail.as_view()),
     path('cliente/', AgendamentoByClienteDetail.as_view()),
     path('horarioatendimento/', HorarioAtendimentoList.as_view()),
     path('horarioatendimento/veterinario/', HorarioByVetDetail.as_view()),

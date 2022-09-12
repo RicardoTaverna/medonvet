@@ -6,7 +6,6 @@ import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
-import { OverlayPanel } from 'primereact/overlaypanel';
 import { Rating } from 'primereact/rating';
 
 import { api } from './../../services/api';
@@ -34,7 +33,8 @@ export class ServicoCard extends React.Component {
             id: null,
             last_name: "",
             username: "",
-        }
+        },
+        
     }
 
     empty_horario = {
@@ -60,14 +60,22 @@ export class ServicoCard extends React.Component {
             prestador: this.empty_prestador,
             horario: this.empty_horario,
             date: this.today,
+            displayAgenda: false,
+            agendamento: [],
+            timeArray: [],
         };
         this.onClick = this.onClick.bind(this);
         this.onHide = this.onHide.bind(this);
         this.openOverlayPanel = this.openOverlayPanel.bind(this);
+        this.findAgendamento = this.findAgendamento.bind(this);
     }
 
     componentDidMount() {
         this.onLoad();
+    }
+
+    componentWillUnmount(){
+        this.findAgendamento()
     }
 
     onLoad() {
@@ -111,16 +119,89 @@ export class ServicoCard extends React.Component {
         });
     }
 
-    openOverlayPanel(e){
-        this.op.toggle(e)
+    findAgendamento = async e => {
+        this.setState({ date: e.value })
+
+        let date  = this.state.date.toISOString().slice(0, 10)
 
         try {
-            api.get(`/agendamento/horarioatendimento/veterinario/${this.props.veterinario}/`).then((response) => {
-                this.setState({ horario: response.data })
+            await api.get(`/agendamento/veterinario/${this.props.veterinario}/${date}/`).then((response) => {
+                this.setState({ agendamento: response.data })
             })
         } catch (err){
             console.log("erro: ", err);
         };
+
+        let intervalo = this.state.horario.intervalo
+        let inicio = this.state.horario.inicio
+        let termino = this.state.horario.termino
+        let timeArray = [];
+        let d = new Date();
+        let m = Math.ceil(d.getMinutes() / intervalo) * intervalo;
+
+        for (let i = inicio-1; i <= termino-1; i++) {
+            for (let j = m; j <= 59; j += intervalo) {
+                let mf = j === 0 ? '00' : j;
+                let hf = i > 24 ? i : i;
+
+                let flag = false
+                for(let count = 0; count < this.state.agendamento.length; count ++){
+                    if(this.state.agendamento[count].horario_selecionado === hf + ':' + mf){
+                        flag = true;
+                    }
+                }
+                if(!flag){
+                    timeArray.push(hf + ':' + mf);
+                }
+            }
+            m = 0;
+        }
+        this.setState({ timeArray: timeArray })
+    }
+
+    openOverlayPanel = async e =>{
+        this.onClick('displayAgenda')
+        let date  = this.state.date.toISOString().slice(0, 10)
+        console.log(date)
+        try {
+            await api.get(`/agendamento/horarioatendimento/veterinario/${this.props.veterinario}/`).then((response) => {
+                this.setState({ horario: response.data })
+            })
+
+            await api.get(`/agendamento/veterinario/${this.props.veterinario}/${date}/`).then((response) => {
+                this.setState({ agendamento: response.data })
+            })
+            
+        } catch (err){
+            console.log("erro: ", err);
+        };
+
+        let intervalo = this.state.horario.intervalo
+        let inicio = this.state.horario.inicio
+        let termino = this.state.horario.termino
+        let timeArray = [];
+        let d = new Date();
+        let m = Math.ceil(d.getMinutes() / intervalo) * intervalo;
+
+        for (let i = inicio-1; i <= termino-1; i++) {
+            for (let j = m; j <= 59; j += intervalo) {
+                let mf = j === 0 ? '00' : j;
+                let hf = i > 24 ? i : i;
+
+                let flag = false
+                for(let count = 0; count < this.state.agendamento.length; count ++){
+                    if(this.state.agendamento[count].horario_selecionado === hf + ':' + mf){
+                        flag = true;
+                    }
+                }
+                if(!flag){
+                    timeArray.push(hf + ':' + mf);
+                }
+            }
+            m = 0;
+        }
+        this.setState({ timeArray: timeArray })
+
     }
 
     render() {
@@ -138,22 +219,7 @@ export class ServicoCard extends React.Component {
             img = medicamento_img
         }
 
-        let intervalo = this.state.horario.intervalo
-        let inicio = this.state.horario.inicio
-        let termino = this.state.horario.termino
-        let timeArray = [];
-        let d = new Date();
-        let m = Math.ceil(d.getMinutes() / intervalo) * intervalo;
-
-        for (let i = inicio-1; i <= termino-1; i++) {
-            for (let j = m; j <= 59; j += intervalo) {
-                let mf = j === 0 ? '00' : j;
-                let hf = i > 12 ? (i - 12) : i;
-                let amPm = i >= 12 && i < 24 ? 'PM' : 'AM';
-                timeArray.push(hf + ':' + mf + ' ' +  amPm);
-            }
-            m = 0;
-        }
+        let { timeArray } = this.state
 
         return(
             <React.Fragment>
@@ -208,7 +274,7 @@ export class ServicoCard extends React.Component {
                                             <p><span className='bg-green-100 border-round p-1'> R${this.props.valor}</span></p>
                                         </div>
                                         <div className='col-4 col-offset-4'>
-                                            <Button label="Agendar" className="p-button-raised" onClick={(e) => this.openOverlayPanel(e) } aria-haspopup aria-controls="overlay_panel"/>
+                                            <Button label="Agendar" className="p-button-raised" onClick={() => this.openOverlayPanel() }/>
                                         </div>
                                     </div>   
                                 </div>
@@ -217,24 +283,24 @@ export class ServicoCard extends React.Component {
                         
                     </div>
                 </Dialog>
-                <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel">
+                <Dialog header="Agenda" visible={(this.state.displayAgenda)} style={{ width: '70vw' }} onHide={() => this.onHide('displayAgenda')}>
                     <div className='grid'>
                         <div className='col-10'>
-                            <Calendar id="icon" value={this.state.date} onChange={(e) => this.setState({ date: e.value })} showIcon />
-
+                            <Calendar id="icon" value={this.state.date} onChange={(e) => this.findAgendamento(e)} showIcon />
+                            
                         </div>
                         {timeArray.map(
-                        time => <HorarioCard
-                        servicoId={this.props.servicoId}
-                        horario={time}
-                        veterinario={this.props.veterinario}
-                        horarioId={this.state.horario.id}
-                        date={this.state.date}
-                        ></HorarioCard>
-                    )}
+                            time => <HorarioCard
+                                servicoId={this.props.servicoId}
+                                horario={time}
+                                veterinario={this.props.veterinario}
+                                horarioId={this.state.horario.id}
+                                date={this.state.date.toISOString().slice(0, 10)}
+                            ></HorarioCard>
+                        )}
                     </div>
                     
-                </OverlayPanel>
+                </Dialog>
             </React.Fragment>
         )
     }

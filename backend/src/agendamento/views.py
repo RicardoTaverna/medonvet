@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import HorarioFuncionamento, Agendamento
-from .serializers import HorarioFuncionamentoSerializer, AgendamentoSerializer
+from .serializers import AgendamentoNestedSerializer, HorarioFuncionamentoSerializer, AgendamentoSerializer
 from prestadores.models import Veterinario
 from clientes.models import Cliente
 
@@ -149,14 +149,30 @@ class AgendamentoByVetDetail(APIView):
     def __get_atendimento_by_vet(self, request):
         try:
             veterinario = Veterinario.objects.get(user=request.user.id)
-            funcionamento = HorarioFuncionamento.objects.get(veterinario=veterinario)
-            return Agendamento.objects.filter(funcionamento=funcionamento)
+            return Agendamento.objects.filter(veterinario=veterinario)
         except Agendamento.DoesNotExist:
             raise Http404
     
     def get(self, request, format=None):
         Agendamento = self.__get_atendimento_by_vet(request=request)
-        serializer = AgendamentoSerializer(Agendamento, many=True   )
+        serializer = AgendamentoNestedSerializer(Agendamento, many=True   )
+        return Response(serializer.data)
+
+
+class AgendamentoByVetIdDetail(APIView):
+    """Class based function para retornar, alterar e deletar um objeto agendamento."""
+    permission_classes = [IsAuthenticated]
+    
+    def __get_atendimento_by_vet(self, id_vet, date):
+        try:
+            veterinario = Veterinario.objects.get(id=id_vet)
+            return Agendamento.objects.filter(veterinario=veterinario, data=date)
+        except Agendamento.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, id_vet, date, format=None):
+        Agendamento = self.__get_atendimento_by_vet(id_vet=id_vet, date=date)
+        serializer = AgendamentoSerializer(Agendamento, many=True)
         return Response(serializer.data)
 
 
