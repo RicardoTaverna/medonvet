@@ -56,6 +56,7 @@ export class ClienteServicos extends React.Component {
                         { servicos.map(
                             servico => <ServicoCard
                                 key={servico.id}
+                                servicoId={servico.id}
                                 nome={servico.nome}
                                 descricao={servico.descricao}
                                 valor={servico.valor}

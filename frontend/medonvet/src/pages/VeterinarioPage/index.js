@@ -10,7 +10,9 @@ import { logout } from '../../services/auth'
 import VeterinarioHome from '../../components/VeterinarioHome';
 import VeterinarioConfig from '../../components/VeterinarioConfig';
 import ServicosVeterinario from '../../components/ServicosVeterinario';
+import PrestadorAgenda from '../../components/PrestadorAgenda';
 import AplicacaoVeterinario from '../../components/AplicacaoVeterinario';
+
 
 class VeterinarioPage extends Component {
     constructor(props) {
@@ -38,6 +40,13 @@ class VeterinarioPage extends Component {
                 }
             },
             {   
+                label: 'Agenda',
+                icon: 'pi pi-fw pi-calendar',
+                command: () => {
+                    this.setState({childComponent: 'agenda'})
+                }
+            },
+            {
                 label: 'Aplicação',
                 icon: 'pi pi-fw pi-cog',
                 command: () => {
@@ -103,6 +112,8 @@ class VeterinarioPage extends Component {
             renderChild = (<VeterinarioConfig></VeterinarioConfig>)
         } else if(this.state.childComponent === 'servico'){
             renderChild = (<ServicosVeterinario></ServicosVeterinario>)
+        } else if(this.state.childComponent === 'agenda'){
+            renderChild = (<PrestadorAgenda></PrestadorAgenda>)
          } else if(this.state.childComponent === 'aplicacao'){
             renderChild = (<AplicacaoVeterinario></AplicacaoVeterinario>)
         }

@@ -1,7 +1,9 @@
 import React from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import './ServicoCard.css';
 
 import { Button } from 'primereact/button';
+import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import { Rating } from 'primereact/rating';
@@ -12,7 +14,10 @@ import aplicacao_img from '../../assets/images/aplicacao-sm.png'
 import cirurgia_img from '../../assets/images/cirurgia-sm.png'
 import medicamento_img from '../../assets/images/medicine-sm.png'
 
+import HorarioCard from '../HorarioCard'
+
 export class ServicoCard extends React.Component {
+    today = new Date();
 
     empty_prestador = {
         avatar: null,
@@ -28,7 +33,23 @@ export class ServicoCard extends React.Component {
             id: null,
             last_name: "",
             username: "",
-        }
+        },
+        
+    }
+
+    empty_horario = {
+        id: null,
+        veterinario: null,
+        inicio: 0,
+        termino: 0,
+        intervalo: 0,
+        dia_0: null,
+        dia_1: null,
+        dia_2: null,
+        dia_3: null,
+        dia_4: null,
+        dia_5: null,
+        dia_6: null,
     }
 
     constructor(props) {
@@ -37,13 +58,24 @@ export class ServicoCard extends React.Component {
             displayDialog: false,
             position: 'center',
             prestador: this.empty_prestador,
+            horario: this.empty_horario,
+            date: this.today,
+            displayAgenda: false,
+            agendamento: [],
+            timeArray: [],
         };
         this.onClick = this.onClick.bind(this);
         this.onHide = this.onHide.bind(this);
+        this.openOverlayPanel = this.openOverlayPanel.bind(this);
+        this.findAgendamento = this.findAgendamento.bind(this);
     }
 
     componentDidMount() {
         this.onLoad();
+    }
+
+    componentWillUnmount(){
+        this.findAgendamento()
     }
 
     onLoad() {
@@ -87,6 +119,91 @@ export class ServicoCard extends React.Component {
         });
     }
 
+    findAgendamento = async e => {
+        this.setState({ date: e.value })
+
+        let date  = this.state.date.toISOString().slice(0, 10)
+
+        try {
+            await api.get(`/agendamento/veterinario/${this.props.veterinario}/${date}/`).then((response) => {
+                this.setState({ agendamento: response.data })
+            })
+        } catch (err){
+            console.log("erro: ", err);
+        };
+
+        let intervalo = this.state.horario.intervalo
+        let inicio = this.state.horario.inicio
+        let termino = this.state.horario.termino
+        let timeArray = [];
+        let d = new Date();
+        let m = Math.ceil(d.getMinutes() / intervalo) * intervalo;
+
+        for (let i = inicio-1; i <= termino-1; i++) {
+            for (let j = m; j <= 59; j += intervalo) {
+                let mf = j === 0 ? '00' : j;
+                let hf = i > 24 ? i : i;
+
+                let flag = false
+                for(let count = 0; count < this.state.agendamento.length; count ++){
+                    if(this.state.agendamento[count].horario_selecionado === hf + ':' + mf){
+                        flag = true;
+                    }
+                }
+                if(!flag){
+                    timeArray.push(hf + ':' + mf);
+                }
+            }
+            m = 0;
+        }
+        this.setState({ timeArray: timeArray })
+    }
+
+    openOverlayPanel = async e =>{
+        this.onClick('displayAgenda')
+        let date  = this.state.date.toISOString().slice(0, 10)
+        console.log(date)
+        try {
+            await api.get(`/agendamento/horarioatendimento/veterinario/${this.props.veterinario}/`).then((response) => {
+                this.setState({ horario: response.data })
+            })
+
+            await api.get(`/agendamento/veterinario/${this.props.veterinario}/${date}/`).then((response) => {
+                this.setState({ agendamento: response.data })
+            })
+            
+        } catch (err){
+            console.log("erro: ", err);
+        };
+
+        let intervalo = this.state.horario.intervalo
+        let inicio = this.state.horario.inicio
+        let termino = this.state.horario.termino
+        let timeArray = [];
+        let d = new Date();
+        let m = Math.ceil(d.getMinutes() / intervalo) * intervalo;
+
+        for (let i = inicio-1; i <= termino-1; i++) {
+            for (let j = m; j <= 59; j += intervalo) {
+                let mf = j === 0 ? '00' : j;
+                let hf = i > 24 ? i : i;
+
+                let flag = false
+                for(let count = 0; count < this.state.agendamento.length; count ++){
+                    if(this.state.agendamento[count].horario_selecionado === hf + ':' + mf){
+                        flag = true;
+                    }
+                }
+                if(!flag){
+                    timeArray.push(hf + ':' + mf);
+                }
+            }
+            m = 0;
+        }
+        this.setState({ timeArray: timeArray })
+
+    }
+
     render() {
 
         let img;
@@ -102,6 +219,7 @@ export class ServicoCard extends React.Component {
             img = medicamento_img
         }
 
+        let { timeArray } = this.state
 
         return(
             <React.Fragment>
@@ -156,17 +274,32 @@ export class ServicoCard extends React.Component {
                                             <p><span className='bg-green-100 border-round p-1'> R${this.props.valor}</span></p>
                                         </div>
                                         <div className='col-4 col-offset-4'>
-                                            <Button label="Agendar" className="p-button-raised" />
+                                            <Button label="Agendar" className="p-button-raised" onClick={() => this.openOverlayPanel() }/>
                                         </div>
-                                    </div>
-                                        
-                                        
-                                    
+                                    </div>   
                                 </div>
                             </div>
                         </div>
                         
                     </div>
+                </Dialog>
+                <Dialog header="Agenda" visible={(this.state.displayAgenda)} style={{ width: '70vw' }} onHide={() => this.onHide('displayAgenda')}>
+                    <div className='grid'>
+                        <div className='col-10'>
+                            <Calendar id="icon" value={this.state.date} onChange={(e) => this.findAgendamento(e)} showIcon />
+                            
+                        </div>
+                        {timeArray.map(
+                            time => <HorarioCard
+                                servicoId={this.props.servicoId}
+                                horario={time}
+                                veterinario={this.props.veterinario}
+                                horarioId={this.state.horario.id}
+                                date={this.state.date.toISOString().slice(0, 10)}
+                            ></HorarioCard>
+                        )}
+                    </div>
+                    
                 </Dialog>
             </React.Fragment>
         )

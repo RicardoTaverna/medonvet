@@ -8,6 +8,7 @@ import HomePage from "../pages/HomePage";
 import Login from "../pages/Login";
 import Cadastro from "../pages/Cadastro";
 import RecuperarSenha from "../pages/RecuperarSenha";
+import ClienteAgendamento from "../pages/ClienteAgendamento";
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route
@@ -45,6 +46,7 @@ const Routes = () => (
             <Route exact path="/recuperar-senha/:token" component={RecuperarSenha}/>
             <AutorizedRoute exact path="/login" component={Login}/>
             <PrivateRoute exact path="/app" component={AppPage} />
+            <PrivateRoute exact path="/agendamento" component={ClienteAgendamento} />
         </Switch>
     </BrowserRouter>
 )
