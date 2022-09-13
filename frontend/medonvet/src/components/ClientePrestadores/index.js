@@ -13,8 +13,10 @@ export class ClientePrestadores extends React.Component {
             prestadores: [],
             loading: true,
             search: "",
+            filter: "",
         };
         this.onLoad = this.onLoad.bind(this);
+        this.filterChange = this.filterChange.bind(this);
     }
 
     componentDidMount() {
@@ -37,8 +39,21 @@ export class ClientePrestadores extends React.Component {
         };
     }
 
+    filterChange(e) {
+        this.setState(
+            {
+                filter: e.target.value
+            }
+        )
+    }
+
     render(){
-        let { prestadores } = this.state
+
+        let {prestadores, filter} = this.state;
+
+        if (filter) {
+            prestadores = prestadores.filter(({first_name=""}) => first_name.toLowerCase().includes(filter));
+        }
 
         return(
             <React.Fragment>
@@ -48,7 +63,7 @@ export class ClientePrestadores extends React.Component {
                             <div className="field col-12">
                                 <span className="p-float-label p-input-icon-left">
                                     <i className="pi pi-search" />
-                                    <InputText id="lefticon" value={this.state.value2} onChange={(e) => this.setState({ search: e.target.value })} />
+                                    <InputText id="lefticon" value={this.state.filter} onChange={this.filterChange} />
                                     <label htmlFor="lefticon">Procurar Veterinário ou Clínica</label>
                                 </span>
                             </div>

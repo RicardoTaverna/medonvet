@@ -3,11 +3,12 @@ import "./PrestadorAgenda.css"
 
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
+import { Fieldset } from 'primereact/fieldset';
+import { Chip } from 'primereact/chip';
 
 
 import { api } from './../../services/api';
 import PrestadorConfigHorario from '../PrestadorConfigHorario'
-import VeterinarioAgendaDay from '../VeterinarioAgendaDay';
 
 class PrestadorAgenda extends Component {
     
@@ -36,6 +37,8 @@ class PrestadorAgenda extends Component {
             dia_4: null,
             dia_5: null,
             dia_6: null,
+            timeArray: [],
+            agendamento: [],
 
 
         };
@@ -78,12 +81,44 @@ class PrestadorAgenda extends Component {
                 console.log('vet = ', response.data.veterinario)
                 
             });
+            await api.get(`/agendamento/veterinario/${this.state.veterinario}/${this.state.today.toISOString().slice(0, 10)}/`).then((response) => {
+                this.setState({ agendamento: response.data })
+            });
         } catch (err) {
             console.log(`Erro: ${err}`)
         }
+
+        let intervalo = this.state.intervalo
+        let inicio = this.state.inicio
+        let termino = this.state.termino
+        let timeArray = [];
+        let d = new Date();
+        let m = Math.ceil(d.getMinutes() / intervalo) * intervalo;
+
+        for (let i = inicio-1; i <= termino-1; i++) {
+            for (let j = m; j <= 59; j += intervalo) {
+                let mf = j === 0 ? '00' : j;
+                let hf = i > 24 ? i : i;
+
+                let flag = false
+                for(let count = 0; count < this.state.agendamento.length; count ++){
+                    if(this.state.agendamento[count].horario_selecionado === hf + ':' + mf){
+                        flag = true;
+                    }
+                }
+                if(flag){
+                    timeArray.push(hf + ':' + mf);
+                }
+            }
+            m = 0;
+        }
+        this.setState({ timeArray: timeArray })
+
     }
 
     render(){
+
+        let { timeArray } = this.state
 
         return(
             <React.Fragment>
@@ -115,15 +150,17 @@ class PrestadorAgenda extends Component {
                                     </div>
                                     <div className='col-12'>
                                         
-                                        <VeterinarioAgendaDay
-                                        key={1}
-                                        veterinario={this.state.veterinario}
-                                        inicio={this.state.inicio}
-                                        termino={this.state.termino}
-                                        intervalo={this.state.intervalo}
-                                        date={this.state.today.toISOString().slice(0, 10)}>
+                                        <div className='grid'>
 
-                                        </VeterinarioAgendaDay>
+                                            {timeArray.map(
+                                                time => <div className='col-4'>
+                                                            <Fieldset legend={time}>
+                                                                <Chip label="Nome" className="mr-2 mb-2 bg-primary" />
+                                                            </Fieldset>
+                                                        </div>
+                                            )}
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>

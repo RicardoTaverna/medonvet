@@ -12,8 +12,10 @@ export class ClienteServicos extends React.Component {
             servicos: [],
             loading: true,
             search: "",
+            filter: "",
         };
         this.onLoad = this.onLoad.bind(this);
+        this.filterChange = this.filterChange.bind(this);
     }
 
     componentDidMount() {
@@ -37,9 +39,21 @@ export class ClienteServicos extends React.Component {
         };
     }
 
+    filterChange(e) {
+        this.setState(
+            {
+                filter: e.target.value
+            }
+        )
+    }
+
     render() {
 
-        let { servicos } = this.state;
+        let {servicos, filter} = this.state;
+
+        if (filter) {
+            servicos = servicos.filter(({nome=""}) => nome.toLowerCase().includes(filter));
+        }
 
         return (
             <React.Fragment>
@@ -48,7 +62,7 @@ export class ClienteServicos extends React.Component {
                         <div className="field col-12">
                             <span className="p-float-label p-input-icon-left">
                                 <i className="pi pi-search" />
-                                <InputText id="lefticon" value={this.state.value2} onChange={(e) => this.setState({ search: e.target.value })} />
+                                <InputText id="lefticon" value={this.state.filter} onChange={this.filterChange} />
                                 <label htmlFor="lefticon">Procurar Serviço</label>
                             </span>
                         </div>
