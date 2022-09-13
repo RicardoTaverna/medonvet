@@ -8,3 +8,8 @@ class AplicacaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aplicacao
         fields = '__all__'
+
+    def create(self, validated_data):
+        pet = validated_data.pop('pet')
+        aplicacao  = Aplicacao.objects.create(pet=pet, **validated_data)
+        return aplicacao
