@@ -22,6 +22,7 @@ class VeterinarioPage extends Component {
             first_name: '',
             last_name: '',
             email: '',
+            avatar: '',
             childComponent: 'home',
         };
         this.items = [
@@ -83,6 +84,7 @@ class VeterinarioPage extends Component {
                     username: response.data.user.username,
                     first_name: response.data.user.first_name,
                     last_name: response.data.user.last_name,
+                    avatar: response.data.avatar
                 });
             });
         } catch (err) {
@@ -101,7 +103,7 @@ class VeterinarioPage extends Component {
         const end = (
             <div>
                 <Button className='p-button-rounded p-button-text mr-4' icon="pi pi-power-off" onClick={this.onLogout} />
-                <a href='/login'><Avatar icon="pi pi-user" className="mr-2" size="large" shape="circle" style={{ color: '#c7c3b4' }} /></a>
+                <a href='/login'><Avatar image={this.state.avatar} className="mr-2" size="large" shape="circle" style={{ color: '#c7c3b4' }} /></a>
             </div>
         );
         
@@ -126,7 +128,7 @@ class VeterinarioPage extends Component {
                         <div class="p-card">
                             <div class="flex card-container overflow-hidden">
                                 <div class="flex-none flex align-items-center justify-content-center m-2 px-5 py-3">
-                                    <Avatar icon="pi pi-user" className="mr-2" size="xlarge" shape="circle"/>
+                                    <Avatar image={this.state.avatar} className="mr-2" size="xlarge" shape="circle"/>
                                 </div>
                                 <div class="flex-grow-1 flex align-items-right justify-content-right m-2 px-5 py-3">
                                     <div>

@@ -82,6 +82,7 @@ export class ClientePrestadores extends React.Component {
                                                 grupo={prestador.grupo}
                                                 first_name={prestador.first_name}
                                                 last_name={prestador.last_name}
+                                                avatar={prestador.avatar}
                                             ></PrestadorCard>
                                         )}
                                         

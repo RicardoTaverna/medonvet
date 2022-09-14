@@ -125,9 +125,8 @@ export class ServicoCard extends React.Component {
         let date  = this.state.date.toISOString().slice(0, 10)
 
         try {
-            await api.get(`/agendamento/veterinario/${this.props.veterinario}/${date}/`).then((response) => {
-                this.setState({ agendamento: response.data })
-            })
+            let response = await api.get(`/agendamento/veterinario/${this.props.veterinario}/${date}/`);
+            this.setState({ agendamento: response.data })
         } catch (err){
             console.log("erro: ", err);
         };

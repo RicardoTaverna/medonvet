@@ -62,7 +62,7 @@ export class PrestadorCard extends React.Component {
                     <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
                         <div className="flex align-items-end justify-content-start mb-3">
                             <div className="">
-                                <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="150" preview />
+                                <Image src={this.props.avatar} alt="Image" width="150" preview />
                             </div>
                             <div className="ml-6">
                                 <div className="text-900 font-medium text-xl mb-3">{this.props.first_name} {this.props.last_name}</div>

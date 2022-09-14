@@ -5,6 +5,10 @@ export const api = axios.create({
   baseURL: "http://127.0.0.1:8000"
 });
 
+export const imgApi = axios.create({
+  baseURL: "http://127.0.0.1:8001"
+})
+
 export const viaCEP = axios.create({
   baseURL: "https://viacep.com.br/ws/"
 });
