@@ -57,18 +57,34 @@ export class CadastroPrestador extends Component {
                 "email": email,
                 "password": password,
             }
-            try {
-                const response = await api.post("/usuarios/prestadores/", { cpf_cnpj,crmv, groupname, user });
-                console.log(response)
-                console.log(cpf_cnpj)
-                this.props.history.push('/login')
-                
-            } catch (err) {
-                console.log(cpf_cnpj)
-                this.setState(
-                    {messageError: "Houve um problema com o cadastro, verifique suas credenciais. T.T"},
-                    () => this.showError()
-                );
+            if(groupname === "prestador"){
+                try {
+                    const response = await api.post("/usuarios/prestadores/", { cpf_cnpj,crmv, groupname, user });
+                    console.log(response)
+                    console.log(cpf_cnpj)
+                    this.props.history.push('/login')
+                    
+                } catch (err) {
+                    console.log(cpf_cnpj)
+                    this.setState(
+                        {messageError: "Houve um problema com o cadastro, verifique suas credenciais. T.T"},
+                        () => this.showError()
+                    );
+                }
+            }else if(groupname ==="veterinario"){
+                try {
+                    const response = await api.post("/usuarios/veterinarios/", { cpf_cnpj,crmv, groupname, user });
+                    console.log(response)
+                    console.log(cpf_cnpj)
+                    this.props.history.push('/login')
+                    
+                } catch (err) {
+                    console.log(cpf_cnpj)
+                    this.setState(
+                        {messageError: "Houve um problema com o cadastro, verifique suas credenciais. T.T"},
+                        () => this.showError()
+                    );
+                }
             }
         }else{
             this.setState(

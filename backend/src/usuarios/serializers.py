@@ -1,5 +1,7 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
+
+from prestadores.models import Veterinario
 from .models import Endereco
 
 from prestadores.models import Prestador
@@ -53,6 +55,23 @@ class UserPrestadorSerializer(serializers.ModelSerializer):
 
         return prestador
 
+class UserVeterinarioSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Veterinario
+        fields = ('crmv', 'cpf_cnpj', 'user', 'descricao')
+
+    def create(self, validated_data):
+        user_payload = validated_data.pop('user')
+        password = user_payload.pop('password')
+        user = User(**user_payload)
+        user.set_password(password)
+        user.save()
+
+        veterinario = Veterinario.objects.create(user=user, **validated_data)
+
+        return veterinario
 
 class EnderecoSerializer(serializers.ModelSerializer):
     class Meta:
