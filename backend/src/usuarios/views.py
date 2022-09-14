@@ -11,8 +11,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from agendamento.models import HorarioFuncionamento
+
 from .models import Endereco, ResetPassword
-from .serializers import UserSerializer, EnderecoSerializer, UserPrestadorSerializer, ForgetPasswordFormSerializer
+from .serializers import UserSerializer, EnderecoSerializer, UserPrestadorSerializer, ForgetPasswordFormSerializer, UserVeterinarioSerializer
 
 from clientes.models import Cliente
 from prestadores.models import Prestador, Veterinario
@@ -80,10 +82,10 @@ class UserPrestadorList(APIView):
         serializer = UserPrestadorSerializer(data=request.data)
         if serializer.is_valid():
             prestador = serializer.save()
-            user = prestador.user.id
+            user = User.objects.get(id=prestador.user.id)
             grupo=Group.objects.get(name=request.data['groupname'])
-            grupo.user_set.add(user)
-
+            grupo.user_set.add(user.id)
+            Endereco.objects.create(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -246,4 +248,23 @@ class UserGroupDetail(APIView):
             
             return Response(serializer.data)
             
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserVeterinarioList(APIView):
+
+    def get(self, request, format=None):
+        user = User.objects.all()
+        serializer = UserSerializer(user, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = UserVeterinarioSerializer(data=request.data)
+        if serializer.is_valid():
+            veterinario = serializer.save()
+            user = User.objects.get(id=veterinario.user.id)
+            grupo=Group.objects.get(name=request.data['groupname'])
+            grupo.user_set.add(user.id)
+            Endereco.objects.create(user=user)
+            HorarioFuncionamento.objects.create(veterinario=veterinario)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

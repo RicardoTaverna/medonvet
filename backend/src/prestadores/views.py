@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
+from usuarios.models import Endereco
+from agendamento.models import HorarioFuncionamento
 from .models import Prestador, Veterinario, PrestadorVeterinario
 from .serializers import PrestadorSerializer, PrestadorNestedSerializer, VeterinarioFindSerializer, VeterinarioSerializer, VeterinarioUpdateSerializer, PrestadorVeterinarioSerializer
 
@@ -92,7 +94,12 @@ class VeterinarioList(APIView):
         request.data['prestador'] = prestador.id
         serializer = VeterinarioSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            veterinario =serializer.save()
+            user = User.objects.get(id=veterinario.user.id)
+            grupo=Group.objects.get(name=request.data['groupname'])
+            grupo.user_set.add(user.id)
+            Endereco.objects.create(user=user)
+            HorarioFuncionamento.objects.create(veterinario=veterinario)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

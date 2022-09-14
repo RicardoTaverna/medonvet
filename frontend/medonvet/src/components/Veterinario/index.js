@@ -32,6 +32,7 @@ export class Veterinario extends React.Component {
         cpf_cnpj: '',
         crmv: '',
         descricao: '',
+        groupname: 'veterinario',
     };
 
     constructor(props) {
@@ -168,6 +169,8 @@ export class Veterinario extends React.Component {
                 try {
                     api.post('/prestadores/veterinarios/', vet).then(response => {
                         console.log(response, vet)
+                        console.log(this.state.vet.cpf_cnpj)
+                        console.log("deu boa")
                         api.get(`/prestadores/veterinario/${this.state.vet.cpf_cnpj}/`).then((response) => {
                             this.setState({
                                 vet: response.data

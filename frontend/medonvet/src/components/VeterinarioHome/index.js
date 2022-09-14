@@ -7,9 +7,7 @@ import { Rating } from 'primereact/rating';
 import { Sidebar } from 'primereact/sidebar';
 import { ScrollPanel } from 'primereact/scrollpanel';
 
-import VeterinariosCard from '../VeterinariosCard';
 import { api } from '../../services/api';
-import CadastroVeterinario from '../CadastroVeterinario';
 import VeterinarioAgendaCard from '../VeterinarioAgendaCard';
 
 class VeterinarioHome extends Component {
@@ -21,13 +19,6 @@ class VeterinarioHome extends Component {
             visibleLeft: false,
             agendamentos: [],
         }
-        this.teamItens = [
-            {   
-                label: 'Adicionar Serviços',
-                icon: 'pi pi-fw pi-cog',
-                command:()=>{ this.setState({ visibleLeft: true });}
-            }
-        ];
         this.onLoad = this.onLoad.bind(this)
     }
 
@@ -121,10 +112,6 @@ class VeterinarioHome extends Component {
                                 <div>
                                     <span className="text-900 mb-3">Proximos Atendimentos</span>
                                 </div>
-                                <div className="flex align-items-center justify-content-center">
-                                    <Menu model={this.teamItens} popup ref={el => this.menu = el} id="popup_menu" />
-                                    {/* <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-text p-button-plain" aria-label="Filter" onClick={(event) => this.menu.toggle(event)} aria-controls="popup_menu" aria-haspopup /> */}
-                                </div>
                             </div>
                             <ScrollPanel style={{width: '100%', height: '400px'}}>
 
@@ -159,10 +146,6 @@ class VeterinarioHome extends Component {
                             <div className="flex justify-content-between mb-3">
                                 <div>
                                     <span className="text-900 mb-3">Ultimos Atendimentos</span>
-                                </div>
-                                <div className="flex align-items-center justify-content-center">
-                                    <Menu model={this.teamItens} popup ref={el => this.menu = el} id="popup_menu" />
-                                    <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-text p-button-plain" aria-label="Filter" onClick={(event) => this.menu.toggle(event)} aria-controls="popup_menu" aria-haspopup />
                                 </div>
                             </div>
                             <div class="card">
