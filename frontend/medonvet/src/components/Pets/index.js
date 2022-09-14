@@ -1,4 +1,6 @@
 import React from 'react';
+import {v4 as uuidv4} from 'uuid';
+
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -15,7 +17,7 @@ import { ProgressBar } from 'primereact/progressbar';
 
 import './pets.css'
 
-import { api } from '../../services/api';
+import { api, imgApi } from '../../services/api';
 import AplicacoesPetInfo from '../AplicacaoPetInfo';
 
 export class Pets extends React.Component {
@@ -24,6 +26,7 @@ export class Pets extends React.Component {
 
     emptyPet = {
         id: null,
+        imagem:"",
         nome: '',
         peso: 0,
         raca: '',
@@ -64,7 +67,7 @@ export class Pets extends React.Component {
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
         this.aplicacoesPet = this.aplicacoesPet.bind(this);
-        
+        this.onUploadImage = this.onUploadImage.bind(this);
     }     
 
     componentDidMount() {
@@ -243,7 +246,34 @@ export class Pets extends React.Component {
     }
 
     imageBodyTemplate(rowData) {
-        return <img src={`http://127.0.0.1:8000${rowData.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.imagem} className="product-image" />
+        return <img src={rowData.imagem} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.imagem} className="product-image" />
+    }
+
+    async onUploadImage(event){
+        const file = event.files[0];
+        let blob = await fetch(file.objectURL).then(r => r.blob()); //blob:url
+        let in_file = blob
+        let userid = this.state.pet.id
+        let uid = uuidv4()
+
+        const formData = new FormData()
+        formData.append('userid', userid)
+        formData.append('in_file', in_file)
+        formData.append('uid', uid)
+
+        try{
+            await imgApi.post('/image/', formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }).then((response) => {
+                console.log(response)
+                let imagem = `http://127.0.0.1:8001${response.data.data[0].image_url}`
+                api.put(`/clientes/pet/${userid}/`, { imagem })
+            })
+        } catch (err) {
+            console.log(`Erro: ${err}`)
+        }
     }
 
     render() {
@@ -337,7 +367,10 @@ export class Pets extends React.Component {
 
                 <Dialog visible={this.state.petDialog} style={{ width: '750px' }} header="Pet Detalhes" modal className="p-fluid" footer={petDialogFooter} onHide={this.hideDialog}>
                     {/* {this.state.pet.imagem && <img src={`http://127.0.0.1:8000${this.state.pet.imagem}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image block m-auto pb-3" />} */}
-                    
+                    <div className="field">
+                        <FileUpload chooseLabel="Imagem do Pet" mode="basic" name="demo[]" accept="image/*" maxFileSize={1000000} customUpload uploadHandler={this.onUploadImage} />
+                    </div>
+
                     <div className="field">
                         <label htmlFor="nome">Nome</label>
                         <InputText id="nome" value={this.state.pet.nome} onChange={(e) => this.onInputChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.pet.nome })} />

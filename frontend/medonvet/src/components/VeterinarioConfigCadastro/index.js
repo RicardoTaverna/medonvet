@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
+import {v4 as uuidv4} from 'uuid';
 
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Divider } from 'primereact/divider';
+import { FileUpload } from 'primereact/fileupload';
 import { Image } from 'primereact/image';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
 import { mask, unMask} from "remask";
 
-import { api } from '../../services/api';
+import { api, imgApi } from '../../services/api';
 
 class VeterinarioConfigCadastro extends Component {
 
@@ -98,6 +100,33 @@ class VeterinarioConfigCadastro extends Component {
         return valorMascarado;
     };
 
+    async onUploadImage(event){
+        const file = event.files[0];
+        let blob = await fetch(file.objectURL).then(r => r.blob()); //blob:url
+        let in_file = blob
+        let userid = 1
+        let uid = uuidv4()
+
+        const formData = new FormData()
+        formData.append('userid', userid)
+        formData.append('in_file', in_file)
+        formData.append('uid', uid)
+
+        try{
+            await imgApi.post('/image/', formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }).then((response) => {
+                console.log(response)
+                let avatar = `http://127.0.0.1:8001${response.data.data[0].image_url}`
+                api.put(`/prestadores/veterinario/`, { avatar })
+            })
+        } catch (err) {
+            console.log(`Erro: ${err}`)
+        }
+    }
+
 
     render(){
         return(
@@ -109,17 +138,16 @@ class VeterinarioConfigCadastro extends Component {
                     <div className="p-fluid grid">
                         <div className="field col-12 md:col-6">
                             <div className="font-medium text-500 mb-3">Alterar foto de perfil.</div>
-                            <a href=''>
-                                <Avatar icon="pi pi-user" className="mr-2" size="xlarge" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
-                            </a>
+                            
+                            <Avatar image={this.state.avatar} className="mr-2" size="xlarge" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
+                            
+                            <FileUpload chooseLabel="Imagem" mode="basic" name="demo[]" accept="image/*" maxFileSize={1000000} customUpload uploadHandler={this.onUploadImage} />
                         </div>
                         <Divider></Divider>
 
                         <div className="field col-12 md:col-6">
                             <div className="font-medium text-500 mb-3">Alterar foto da capa.</div>
-                            <a href=''>
                                 <Image src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Image" width="200" height="100" />
-                            </a>
                         </div>
                         <Divider></Divider>
                         <div className="field col-12 md:col-12">
