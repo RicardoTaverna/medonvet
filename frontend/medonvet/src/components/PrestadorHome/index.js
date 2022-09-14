@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 
-import { Button } from 'primereact/button';
-import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Rating } from 'primereact/rating';
-import { Sidebar } from 'primereact/sidebar';
 import { ScrollPanel } from 'primereact/scrollpanel';
 
 import VeterinariosCard from '../VeterinariosCard';
 import { api } from './../../services/api';
-import CadastroVeterinario from '../CadastroVeterinario';
 
 class PrestadorHome extends Component {
 
@@ -19,13 +15,6 @@ class PrestadorHome extends Component {
             veterinarios: [],
             visibleLeft: false,
         }
-        this.teamItens = [
-            {   
-                label: 'Adicionar Veterinário',
-                icon: 'pi pi-fw pi-cog',
-                command:()=>{ this.setState({ visibleLeft: true });}
-            }
-        ];
         this.onLoad = this.onLoad.bind(this)
     }
 
@@ -48,9 +37,7 @@ class PrestadorHome extends Component {
         let { veterinarios } = this.state 
         return (
             <React.Fragment>
-                <Sidebar visible={this.state.visibleLeft} className="p-sidebar-lg" onHide={() => this.setState({ visibleLeft: false })}>
-                        <CadastroVeterinario></CadastroVeterinario>
-                </Sidebar>
+
 
                 <div className="grid px-6 py-3">
                     <div className="col-12 md:col-6 lg:col-3">
@@ -122,10 +109,6 @@ class PrestadorHome extends Component {
                                 <div>
                                     <span className="text-900 mb-3">Veterinários</span>
                                 </div>
-                                <div className="flex align-items-center justify-content-center">
-                                    <Menu model={this.teamItens} popup ref={el => this.menu = el} id="popup_menu" />
-                                    <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-text p-button-plain" aria-label="Filter" onClick={(event) => this.menu.toggle(event)} aria-controls="popup_menu" aria-haspopup />
-                                </div>
                             </div>
                             <ScrollPanel style={{width: '100%', height: '400px'}}>
 
@@ -147,10 +130,6 @@ class PrestadorHome extends Component {
                             <div className="flex justify-content-between mb-3">
                                 <div>
                                     <span className="text-900 mb-3">Ultimos Serviços</span>
-                                </div>
-                                <div className="flex align-items-center justify-content-center">
-                                    <Menu model={this.teamItens} popup ref={el => this.menu = el} id="popup_menu" />
-                                    <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-text p-button-plain" aria-label="Filter" onClick={(event) => this.menu.toggle(event)} aria-controls="popup_menu" aria-haspopup />
                                 </div>
                             </div>
                             <div class="card">

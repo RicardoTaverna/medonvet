@@ -27,7 +27,6 @@ export class CadastroCliente extends Component {
     }
     onCadastro = async e => {
         
-        
         const { username,first_name, last_name,email,password,passwordconfirm, groupname } = this.state
         if (!username || !first_name || !last_name || !email || !password || !passwordconfirm) {
             this.setState(

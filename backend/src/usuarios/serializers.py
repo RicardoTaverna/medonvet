@@ -50,7 +50,6 @@ class UserPrestadorSerializer(serializers.ModelSerializer):
         user.save()
 
         prestador = Prestador.objects.create(user=user, **validated_data)
-        Endereco.objects.create(user=user)
 
         return prestador
 

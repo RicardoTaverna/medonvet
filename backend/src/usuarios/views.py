@@ -80,10 +80,10 @@ class UserPrestadorList(APIView):
         serializer = UserPrestadorSerializer(data=request.data)
         if serializer.is_valid():
             prestador = serializer.save()
-            user = prestador.user.id
+            user = User.objects.get(id=prestador.user.id)
             grupo=Group.objects.get(name=request.data['groupname'])
-            grupo.user_set.add(user)
-
+            grupo.user_set.add(user.id)
+            Endereco.objects.create(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

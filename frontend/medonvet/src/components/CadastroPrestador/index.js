@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { Button } from 'primereact/button';
+import { RadioButton } from 'primereact/radiobutton';
 import { InputText } from 'primereact/inputtext';
 import { api } from './../../services/api';
 import { Toast } from 'primereact/toast';
@@ -23,7 +24,7 @@ export class CadastroPrestador extends Component {
             crmv:"",
             password: "",
             passwordconfirm: "",
-            groupname: "prestador",
+            groupname: "",
             messageError: "",
          }
          this.onCadastro = this.onCadastro.bind(this);
@@ -35,7 +36,6 @@ export class CadastroPrestador extends Component {
         
         const { username,first_name, last_name,email,cpf_cnpj,crmv,password,passwordconfirm, groupname } = this.state
         const cpfOrCnpj = require('js-cpf-cnpj-validation');  
-    
         if (!username || !first_name || !last_name || !email || !cpf_cnpj || !crmv || !password || !passwordconfirm) {
             this.setState(
                 {messageError: "Preencha todos os campos para conlcuir seu cadastro!"},
@@ -148,6 +148,14 @@ export class CadastroPrestador extends Component {
                                     <InputText id="passwordconfirm" type="password" className="w-full mb-3" value={this.state.passwordconfirm} onChange={(e) => this.setState({passwordconfirm: e.target.value})} toggleMask feedback={false} />
                                     <label htmlFor="passwordconfirm" className="font-medium mb-2">Confirmar Senha</label>
                                 </span>
+                            </div>
+                            <div className="field-radiobutton col-12 md:col-6">
+                                <RadioButton inputId="groupname1" name="groupname" value="veterinario" required onChange={(e) => this.setState({groupname: e.value})} checked={this.state.groupname === 'veterinario'} />
+                                <label htmlFor="groupname1">Veterinario</label>
+                            </div>
+                            <div className="field-radiobutton col-12 md:col-6">
+                                <RadioButton inputId="groupname2" name="groupname" value="prestador" required onChange={(e) => this.setState({groupname: e.value})} checked={this.state.groupname === 'prestador'} />
+                                <label htmlFor="groupname2">Clinica</label>
                             </div>
 
                             <div className="flex align-items-center justify-content-between mb-6">
