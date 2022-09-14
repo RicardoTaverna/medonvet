@@ -6,9 +6,10 @@ import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
+import { ToggleButton } from 'primereact/togglebutton';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputNumber } from 'primereact/inputnumber';
+import { Dropdown } from 'primereact/dropdown';
 import { Skeleton } from 'primereact/skeleton';
 
 
@@ -43,6 +44,15 @@ export class ServicosVeterinario extends React.Component {
             loading: true,
             id: 0,
         };
+
+        this.servicoNome = [
+            { name: 'Aplicação' },
+            { name: 'Consulta' },
+            { name: 'Cirurgia' },
+            { name: 'Medicamento' },
+            { name: 'Vacina' }
+        ];
+
         this.onLoad = this.onLoad.bind(this); 
         this.openNew = this.openNew.bind(this);
         this.saveServico = this.saveServico.bind(this);
@@ -58,6 +68,7 @@ export class ServicosVeterinario extends React.Component {
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
         this.onInputUserChange = this.onInputUserChange.bind(this);
         this.showError = this.showError.bind(this);
+        this.onNomeServicoChange = this.onNomeServicoChange.bind(this);
     }
 
     componentDidMount() {
@@ -91,9 +102,9 @@ export class ServicosVeterinario extends React.Component {
         let servicos = [...this.state.servicos];
         let servico = {...this.state.servico};
         
-        const { nome, descricao, valor, status_servico } = this.state.servico
+        const { nome, descricao, valor } = this.state.servico
         
-        if( !nome || !descricao || !valor || !status_servico ){
+        if( !nome || !descricao || !valor ){
             this.setState(
                 {messageError: "Preencha todos os campos para cadastrar o servico!"},
                 () => this.showError()
@@ -210,6 +221,28 @@ export class ServicosVeterinario extends React.Component {
         this.setState({ servico });
     }
 
+    onInputSwitch(e, name) {
+        let val = e.value || 0;
+        let servico = {...this.state.servico};
+
+        if(val === true){
+            val = 1;
+        } else {
+            val = 0;
+        }
+
+        servico[`${name}`] = val;
+
+        this.setState({ servico });
+    }
+
+    onNomeServicoChange(e, name){
+        const val = e.value.name || 0;
+        let servico = {...this.state.servico};
+        servico[`${name}`] = val;
+        this.setState({ servico });
+    }  
+
     leftToolbarTemplate() {
         return (
             <React.Fragment>
@@ -233,7 +266,8 @@ export class ServicosVeterinario extends React.Component {
 
     showError() {
         this.toast.show({severity:'error', summary: 'Error', detail: this.state.messageError , life: 3000});
-    }
+    }  
+
     render() {
 
         const servicoDialogFooter = (
@@ -249,6 +283,15 @@ export class ServicosVeterinario extends React.Component {
                 <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteServico} />
             </React.Fragment>
         );
+        
+        const statusBodyTemplate = rowData => {
+            if(rowData.status_servico === 1){
+                return <span className='text-green-700 bg-green-100 p-2'>Ativo</span>
+            } else {
+                return <span className='text-yellow-700 bg-yellow-100 p-2'>Inativo</span>
+            }
+            
+        }
 
         const table = (
             <React.Fragment>
@@ -263,7 +306,7 @@ export class ServicosVeterinario extends React.Component {
                     <Column field="nome" header="Nome" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="descricao" header="Descricao" sortable style={{ minWidth: '8rem' }}></Column>
                     <Column field="valor" header="Valor" sortable style={{ minWidth: '10rem' }}></Column>
-                    <Column field="status_servico" header="Status" sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
                     <Column body={this.actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
             </React.Fragment>
@@ -305,24 +348,24 @@ export class ServicosVeterinario extends React.Component {
             <Dialog visible={this.state.servicoDialog} style={{ width: '750px' }} header="Cadastrar Novo Serviço" modal className="p-fluid" footer={servicoDialogFooter} onHide={this.hideDialog}>
 
                 <div className="field">
-                    <label htmlFor="nome">Nome</label>
-                    <InputText id="nome" value={this.state.servico.nome} onChange={(e) => this.onInputUserChange(e, 'nome')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.servico.nome })} />
+                    <label htmlFor="nome" className="font-medium mb-2">Nome</label>
+                    <Dropdown id="nome" value={this.state.servico.nome} options={this.servicoNome} onChange={(e) => this.onNomeServicoChange(e, 'nome')} optionLabel="name" placeholder="Escolha o Serviço" />
                     {this.state.submitted && !this.state.servico.nome && <small className="p-error">Nome é obrigatório.</small>}
                 </div>
 
-                <div className="formgrid grid">
-                    <div className="field col">
-                        <label htmlFor="valor">Valor</label>
-                        <InputNumber id="valor" value={this.state.servico.valor} onValueChange={(e) => this.onInputNumberChange(e, 'valor')} showButtons  mode="currency" currency="BRL" required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.servico.valor })}  />
-                        {this.state.submitted && !this.state.servico.valor && <small className="p-error">Valor é obrigatória.</small>}
-                    </div>
-                    <div className="field col">
-                        <label htmlFor="status_servico">Status</label>
-                        <InputNumber id="status_servico" value={this.state.servico.status_servico} onValueChange={(e) => this.onInputNumberChange(e, 'status_servico')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.servico.status_servico })}   />
+                <div className="field">
+                    <label htmlFor="valor" className="font-medium mb-2">Valor</label>
+                    <InputNumber id="valor" value={this.state.servico.valor} onValueChange={(e) => this.onInputNumberChange(e, 'valor')} showButtons  mode="currency" currency="BRL" required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.servico.valor })}  />
+                    {this.state.submitted && !this.state.servico.valor && <small className="p-error">Valor é obrigatória.</small>}
+                </div>
+
+                <div className="field mt-6 ml-3">
+                    <div className='grid'>
+                        <label htmlFor="status_servico" className="font-medium mb-2">Status do Serviço</label>
+                        <ToggleButton checked={this.state.servico.status_servico} onChange={(e) => this.onInputSwitch(e, 'status_servico')} onLabel="Ativado" offLabel="Desativado" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem ml-3" aria-label="Confirmation" />
                         {this.state.submitted && !this.state.servico.status_servico && <small className="p-error">Status é obrigatório.</small>}
                     </div>
                 </div>
-
 
                 <div className="field col-12 md:col-12" >
                     <label htmlFor="descricao" className="font-medium mb-2">Descrição</label>
