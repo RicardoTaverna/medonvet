@@ -22,3 +22,34 @@ class AnamnesesList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AnamnesesDetail(APIView):
+    """Class based function para retornar, alterar e deletar um objeto Aplicacao."""
+    permission_classes = [IsAuthenticated]
+    
+    def __get_aplicacao(self, id):
+        try:
+            return Anamneses.objects.get(id=id)
+        except Anamneses.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, id_anamneses, format=None):
+        anamneses = self.__get_anamneses(id=id_anamneses)
+        serializer = AnamnesesSerializer(anamneses)
+        return Response(serializer.data)
+
+    def put(self, request, id_anamneses, format=None):
+        anamneses = self.__get_anamneses(id=id_anamneses)
+        print(anamneses)
+        request.data['pet'] = anamneses.pet.id
+        serializer = AnamnesesSerializer(anamneses, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, id_anamneses, format=None):
+        anamneses = self.__get_anamneses(id=id_anamneses)
+        anamneses.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
