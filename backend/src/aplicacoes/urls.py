@@ -8,6 +8,6 @@ from .views import AplicacaoList, AplicacaoDetail, AplicacaoPetDetail
 
 urlpatterns = format_suffix_patterns([
     path('', AplicacaoList.as_view()),
-    path('<int:id_aplicacao>/', AplicacaoDetail.as_view()),
+    path('<int:aplicacoes>/', AplicacaoDetail.as_view()),
     path('pet/<int:id_pet>/', AplicacaoPetDetail.as_view())
 ])

@@ -118,6 +118,7 @@ class VeterinarioHome extends Component {
                                 { agendamentos.map(
                                     agendamento => <VeterinarioAgendaCard
                                         key={agendamento.id}
+                                        agendamento={agendamento.id}
                                         cliente={agendamento.cliente}
                                         pet={agendamento.pet}
                                         servico={agendamento.servico}

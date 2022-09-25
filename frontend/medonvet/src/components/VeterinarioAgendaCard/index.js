@@ -5,24 +5,25 @@ import './AgendamentoCard.css'
 import { Avatar } from 'primereact/avatar';
 import { classNames } from 'primereact/utils';
 import { Dialog } from 'primereact/dialog';
-import { ToggleButton } from 'primereact/togglebutton';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
-import { Dropdown } from 'primereact/dropdown';
+
 
 import { api } from '../../services/api';
+import VeterinarioAgendaAplicacaoCard from '../VeterinarioAgendaAplicacaoCard';
+import VeterinarioAgendaAnamneseCard from '../VeterinarioAgendaAnamneseCard';
 
 class VeterinarioAgendaCard extends Component {
 
-    emptyServico = {
-        prestador: null,
-        veterinario: null,
+    emptyAplicacao = {
+        pet: null,
         id: null,
-        nome: '',
-        descricao: '',
-        valor: '',
-        status_servico: '',
+        tipo: '',
+        nome_medicamento: '',
+        data_aplicacao: '',
+        data_reaplicacao: '',
+        notificar: true,
     };
     
     constructor(props){
@@ -32,7 +33,7 @@ class VeterinarioAgendaCard extends Component {
             servicos: null,
             servicoDialog: false,
             deleteServicoDialog: false,
-            servico: this.emptyServico,
+            aplicacao: this.emptyAplicacao,
             selectedServicos: null,
             submitted: false,
             globalFilter: null,
@@ -67,17 +68,17 @@ class VeterinarioAgendaCard extends Component {
     
     onNomeServicoChange(e, name){
         const val = e.value.name || 0;
-        let servico = {...this.state.servico};
-        servico[`${name}`] = val;
-        this.setState({ servico });
+        let aplicacao = {...this.state.aplicacao};
+        aplicacao[`${name}`] = val;
+        this.setState({ aplicacao });
     }  
 
     onInputNumberChange(e, name) {
         const val = e.value || 0;
-        let servico = {...this.state.servico};
-        servico[`${name}`] = val;
+        let aplicacao = {...this.state.aplicacao};
+        aplicacao[`${name}`] = val;
 
-        this.setState({ servico });
+        this.setState({ aplicacao });
     }
 
     render(){
@@ -94,11 +95,10 @@ class VeterinarioAgendaCard extends Component {
                                     <div className="flex align-items-center text-700 flex-wrap">
                                         <div className="mr-5">
                                             <div className='mt-3'>
-                                                <span>{this.props.servico.nome} </span>
-                                                <span className='bg-green-100 border-round p-1'> R${this.props.servico.valor}</span>
-
+                                               
+                              
                                             </div>
-                                            <p>{this.props.servico.descricao}</p>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -110,29 +110,13 @@ class VeterinarioAgendaCard extends Component {
                 </div>
                 <Dialog header="Header" visible={this.state.displayDialog} style={{ width: '750px' }} modal className="p-fluid" onHide={() => this.onHide('displayDialog')}>
                     <div className="field">
-                        <label htmlFor="tipo">Tipo</label>
-                        <InputText id="tipo" value={this.state.servico.tipo} onChange={(e) => this.onInputUserChange(e, 'tipo')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.servico.tipo })} />
-                        {this.state.submitted && !this.state.servico.tipo && <small className="p-error">Tipo é obrigatório.</small>}
+                        <VeterinarioAgendaAnamneseCard agendamento={this.props.agendamento}></VeterinarioAgendaAnamneseCard>    
+                    </div>
+                    <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
+                        <VeterinarioAgendaAplicacaoCard agendamento={this.props.agendamento} pet={this.props.pet}></VeterinarioAgendaAplicacaoCard>
+
                     </div>
 
-                    <div className="field">
-                        <label htmlFor="valor" className="font-medium mb-2">Valor</label>
-                        <InputNumber id="valor" value={this.state.servico.valor} onValueChange={(e) => this.onInputNumberChange(e, 'valor')} showButtons  mode="currency" currency="BRL" required autoFocus className={classNames({ 'p-invalid': this.state.submitted })}  />
-                        {this.state.submitted && !this.state.servico.valor && <small className="p-error">Valor é obrigatória.</small>}
-                    </div>
-
-                    <div className="field mt-6 ml-3">
-                        <div className='grid'>
-                            <label htmlFor="status_servico" className="font-medium mb-2">Status do Serviço</label>
-                            <ToggleButton checked={this.state.servico.status_servico} onChange={(e) => this.onInputSwitch(e, 'status_servico')} onLabel="Ativado" offLabel="Desativado" onIcon="pi pi-check" offIcon="pi pi-times" className="w-full sm:w-10rem ml-3" aria-label="Confirmation" />
-                            {this.state.submitted && !this.state.servico.status_servico && <small className="p-error">Status é obrigatório.</small>}
-                        </div>
-                    </div>
-
-                    <div className="field col-12 md:col-12" >
-                        <label htmlFor="descricao" className="font-medium mb-2">Descrição</label>
-                        <InputTextarea  id="descricao" rows={5} value={this.state.descricao} className={classNames({ 'p-invalid': this.state.submitted})} onChange={(e) => this.onInputUserChange(e, 'descricao')}/>
-                    </div>
                 </Dialog>
             </React.Fragment>
         )

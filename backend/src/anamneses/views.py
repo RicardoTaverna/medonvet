@@ -28,21 +28,28 @@ class AnamnesesDetail(APIView):
     """Class based function para retornar, alterar e deletar um objeto Aplicacao."""
     permission_classes = [IsAuthenticated]
     
-    def __get_aplicacao(self, id):
+    def __get_anamneses(self, agendamento):
         try:
-            return Anamneses.objects.get(id=id)
+            return Anamneses.objects.get(agendamento=agendamento)
         except Anamneses.DoesNotExist:
             raise Http404
     
-    def get(self, request, id_anamneses, format=None):
-        anamneses = self.__get_anamneses(id=id_anamneses)
+    def get(self, request,agendamento, format=None):
+        
+        print(agendamento)
+        anamneses = self.__get_anamneses(agendamento=agendamento)
         serializer = AnamnesesSerializer(anamneses)
         return Response(serializer.data)
 
-    def put(self, request, id_anamneses, format=None):
-        anamneses = self.__get_anamneses(id=id_anamneses)
-        print(anamneses)
-        request.data['pet'] = anamneses.pet.id
+    def put(self, request, format=None):
+
+        agendamento = request.data['agendamento']
+        aplicacao = request.data['aplicacao']
+        request.data['aplicacao'] = aplicacao
+        print(agendamento)
+        print(aplicacao)
+        anamneses = self.__get_anamneses(agendamento=agendamento)
+        
         serializer = AnamnesesSerializer(anamneses, data=request.data)
         if serializer.is_valid():
             serializer.save()

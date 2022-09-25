@@ -9,5 +9,6 @@ from .views import AnamnesesList, AnamnesesDetail
 urlpatterns = format_suffix_patterns([
     path('', AnamnesesList.as_view()),
     path('anamneses/', AnamnesesDetail.as_view()),
+    path('anamneses/<int:agendamento>/', AnamnesesDetail.as_view()),
 
 ])

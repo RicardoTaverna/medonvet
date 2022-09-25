@@ -79,7 +79,6 @@ export class AplicacaoVeterinario extends React.Component {
                     loading: false
                 })
             });
-
         } catch (err){
             console.log("erro: ", err);
         };
@@ -160,7 +159,6 @@ export class AplicacaoVeterinario extends React.Component {
         });
         this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Aplicacao deletado', life: 3000 });
     }
-
 
     findIndexById(id) {
         let index = - 1;

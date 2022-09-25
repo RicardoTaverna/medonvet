@@ -37,8 +37,10 @@ class AplicacaoDetail(APIView):
         except Aplicacao.DoesNotExist:
             raise Http404
     
-    def get(self, request, id_aplicacao, format=None):
-        aplicacao = self.__get_aplicacao(id=id_aplicacao)
+    def get(self, request, aplicacoes, format=None):
+        print(aplicacoes)
+        aplicacao = self.__get_aplicacao(id=aplicacoes)
+        print(aplicacoes)
         serializer = AplicacaoSerializer(aplicacao)
         return Response(serializer.data)
 
