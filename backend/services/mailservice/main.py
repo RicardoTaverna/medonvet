@@ -1,3 +1,4 @@
+import os
 import click, json, pika, sendgrid, time
 
 from datetime import datetime
@@ -50,8 +51,8 @@ def consumer(queue):
                 template_new = template_new.replace("$vet", context.get('veterinario'))
                 template_new = template_new.replace("$pet", context.get('pet'))
 
-
-            sg = sendgrid.SendGridAPIClient(api_key="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")
+            api_key = os.environ.get('SENDGRID_API_KEY')
+            sg = sendgrid.SendGridAPIClient(api_key=api_key)
             from_email = Email("taverna.ricardo@gmail.com")  # Change to your verified sender
             to_email = To(context.get('email'))  # Change to your recipient
             
