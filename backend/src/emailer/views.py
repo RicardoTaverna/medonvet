@@ -1,4 +1,4 @@
-import secrets, hashlib
+import pika, json, hashlib, secrets
 
 from uuid import uuid4
 
@@ -12,9 +12,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import ForgetPasswordSerializer
+from .serializers import ForgetPasswordSerializer, ApointmentSerializer
 
 from usuarios.models import ResetPassword
+from prestadores.models import Veterinario
 
 
 # Create your views here.
@@ -53,7 +54,6 @@ class ForgetPasswordSendMail(APIView):
         return hashlib.sha256(salt.encode('utf-8')).hexdigest()
 
     def post(self, request, format=None):
-        """Método para envio do email."""
         serializer = ForgetPasswordSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.data.get('email')
@@ -61,27 +61,73 @@ class ForgetPasswordSendMail(APIView):
             token = self.create_token(user=user)
             reset = ResetPassword.objects.create(user=user, token=token)
             reset.save()
-            
+
             context = {
-                "user": user,
+                "user": user.username,
                 "token": token,
-                "reset": reset
+                "email": email,
+                'reset_password': True
             }
 
-            send_mail(
-                subject='Reset de Senha MedOnVet',
-                message=None,
-                from_email='medonvet.contato@protonmail.com',
-                recipient_list=[email],
-                fail_silently=False,
-                html_message=render_to_string('reset_password.html', context)
-            ) 
+            url = ('amqp://guest:guest@localhost')
+            params = pika.URLParameters(url=url)
+            params.socket_timeout = 5
+
+            connection = pika.BlockingConnection(params)
+            channel = connection.channel()
+            channel.queue_declare(queue='mail')
+            channel.basic_publish(
+                exchange='',
+                routing_key='mail',
+                body=json.dumps(context)
+            )
+            connection.close()
 
             response = {
                 'status': 'success',
                 'code': status.HTTP_200_OK,
-                'message': f'Email enviado com sucesso para {email}'
+                'message': f'Mensagem adicionada a fila do Rabbitmq'
             }
 
             return Response(response)
     
+
+class AgendamentoSendMail(APIView):
+    def post(self, request, format=None):
+        user = User.objects.get(id=request.user.id)
+        serializer = ApointmentSerializer(data=request.data)
+        if serializer.is_valid():
+            veterinario = Veterinario.objects.get(id=serializer.data.get('veterinario'))
+            user_vet = User.objects.get(username=veterinario.user)
+
+            context = {
+                "user": user.first_name,
+                "pet": serializer.data.get('pet'),
+                "email": user.email,
+                'reset_password': False,
+                'data': serializer.data.get('data'),
+                'horario': serializer.data.get('horario'),
+                'veterinario': f'{user_vet.first_name} {user_vet.last_name}'
+            }
+
+            url = ('amqp://guest:guest@localhost')
+            params = pika.URLParameters(url=url)
+            params.socket_timeout = 5
+
+            connection = pika.BlockingConnection(params)
+            channel = connection.channel()
+            channel.queue_declare(queue='mail')
+            channel.basic_publish(
+                exchange='',
+                routing_key='mail',
+                body=json.dumps(context)
+            )
+            connection.close()
+
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': f'Mensagem adicionada a fila do Rabbitmq'
+            }
+
+            return Response(response)
