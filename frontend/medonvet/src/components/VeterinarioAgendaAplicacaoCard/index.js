@@ -5,8 +5,12 @@ import './AgendamentoCard.css'
 
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Button } from 'primereact/button';
+import { Column } from 'primereact/column';
 import { classNames } from 'primereact/utils';
+import { DataTable } from 'primereact/datatable';
+import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
+import { Toast } from 'primereact/toast';
 
 import { api } from '../../services/api';
 
@@ -14,12 +18,13 @@ class VeterinarioAgendaAplicacaoCard extends Component {
 
     emptyAplicacao = {
         pet: null,
+        anamneses: null,
         id: null,
         tipo: '',
         nome_medicamento: '',
         data_aplicacao: '',
         data_reaplicacao: '',
-        notificar: true,
+        notificar: null,
     };
     
     constructor(props){
@@ -34,12 +39,20 @@ class VeterinarioAgendaAplicacaoCard extends Component {
             globalFilter: null,
             loading: true,
             id: 0,
+            anamneses: null,
+            activeIndex: null,
         }
         this.onClick = this.onClick.bind(this);
+        this.onClickAccordion = this.onClickAccordion.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.saveAplicacao = this.saveAplicacao.bind(this);
         this.onLoad = this.onLoad.bind(this);
+        this.onNotificarChange = this.onNotificarChange.bind(this);
+        this.showError = this.showError.bind(this);
+
+
     }
+    
 
     onClick(name, position) {
         console.log("cliquei")
@@ -53,6 +66,23 @@ class VeterinarioAgendaAplicacaoCard extends Component {
             }
         }
         this.setState(state);
+    }
+
+    onClickAccordion(itemIndex) {
+        let activeIndex = this.state.activeIndex ? [...this.state.activeIndex] : [];
+
+        if (activeIndex.length === 0) {
+        activeIndex.push(itemIndex);
+        } else {
+        const index = activeIndex.indexOf(itemIndex);
+        if (index === -1) {
+            activeIndex.push(itemIndex);
+        } else {
+            activeIndex.splice(index, 1);
+        }
+        }
+
+        this.setState({ activeIndex });
     }
 
     componentDidMount() {
@@ -69,21 +99,20 @@ class VeterinarioAgendaAplicacaoCard extends Component {
     onLoad = async e => {
         let agendamento = this.props.agendamento
         let pet = this.props.pet.id
-        console.log("testando")
-        const { aplicacao, aplicacoes } = this.state
-
+        const { anamneses } = this.state
         try {
             await api.get(`/anamneses/anamneses/${agendamento}/`).then((response) => {
                 console.log(response);
-                this.setState({ aplicacoes: response.data.aplicacao })
-                console.log(this.state.aplicacoes)
-                
+                this.setState({ 
+                    anamneses: response.data.id
+                })  
+                api.get(`/aplicacoes/${response.data.id}/`).then((response) => {
+                    console.log(response);
+                    this.setState({ aplicacoes: response.data })
+                })  
             })
-            api.get(`/aplicacoes/${this.state.aplicacoes}/`).then((response) => {
-                console.log(response);
-                this.setState({ aplicacao: response.data })
-            })
-            console.log(this.state.aplicacao)
+           
+            console.log(this.state.aplicacoes)
             
         } catch (err) {
             console.log(`Erro: ${err}`)
@@ -92,12 +121,12 @@ class VeterinarioAgendaAplicacaoCard extends Component {
 
     saveAplicacao = async e => {
         let state = { submitted: true };
-        let aplicacao = {...this.state.aplicacao};
         let pet = this.props.pet.id
         let agendamento = this.props.agendamento;
 
         const { tipo, nome_medicamento, notificar } = this.state.aplicacao
-        console.log(pet)
+        const { anamneses } = this.state
+        console.log('anamneses ',anamneses)
         
         if( !tipo || !nome_medicamento || !notificar  ){
             this.setState(
@@ -106,10 +135,10 @@ class VeterinarioAgendaAplicacaoCard extends Component {
             );
         }else{
             try {
-                api.post(`/aplicacoes/`, {tipo, nome_medicamento, notificar, pet}).then(response =>{
+               await api.post(`/aplicacoes/`, {tipo, nome_medicamento, notificar, pet, anamneses}).then(response =>{
+                    console.log("response post")
+                    console.log(this.state.anamneses)
                     console.log(response)
-                    aplicacao = response.data.id;
-                    api.put(`/anamneses/anamneses/`, {agendamento, aplicacao})
                     this.setState(prevState => ({id: prevState.id + 1}))
                 })
                 this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Aplicação Adicionado', life: 3000 });
@@ -123,6 +152,7 @@ class VeterinarioAgendaAplicacaoCard extends Component {
         state = {
             ...state,
             aplicacaoDialog: false,
+            aplicacao: this.emptyAplicacao,
         };
 
         this.setState(state);
@@ -135,17 +165,36 @@ class VeterinarioAgendaAplicacaoCard extends Component {
         this.setState({ aplicacao: aplicacao });
     }
 
+    onNotificarChange(e) {
+        let aplicacao = {...this.state.aplicacao};
+        aplicacao[`notificar`] = e;
+        this.setState({ aplicacao: aplicacao });
+    }
+
+    showError() {
+        this.toast.show({severity:'error', summary: 'Error', detail: this.state.messageError , life: 3000});
+    } 
+
+    
     render(){
+        const status = [
+            { label: 'Sim', value: '1' },
+            { label: 'Não', value: '0' },
+        ];
         return(
+  
             <React.Fragment>
-
-
+            <Toast ref={(el) => this.toast = el} />
+                <div className="pt-2 pb-4">
+                    <Button icon={this.state.activeIndex && this.state.activeIndex.some((index) => index === 0) ? 'pi pi-minus' : 'pi pi-plus'} label="Adicionar Aplicação" onClick={() => this.onClickAccordion(0)} className="p-button-text" />
+                </div>
+                <Accordion multiple activeIndex={this.state.activeIndex} onTabChange={(e) => this.setState({ activeIndex: e.index })}>
+                    <AccordionTab header="Nova Aplicação">
                         <div className="field">
                             <label htmlFor="tipo">Tipo</label>
                             <InputText id="tipo" value={this.state.aplicacao.tipo} onChange={(e) => this.onInputChange(e, 'tipo')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.aplicacao.tipo })} />
                             {this.state.submitted && !this.state.aplicacao.tipo && <small className="p-error">Tipo é obrigatório.</small>}
                         </div>
-
                         <div className="formgrid grid">
                             <div className="field col">
                                 <label htmlFor="nome_medicamento">Nome Medicamento</label>
@@ -154,23 +203,20 @@ class VeterinarioAgendaAplicacaoCard extends Component {
                             </div>
                             <div className="field col">
                                 <label htmlFor="notificar">Status</label>
-                                <InputText id="notificar" value={this.state.aplicacao.notificar} onValueChange={(e) => this.onInputChange(e, 'notificar')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.aplicacao.notificar })}   />
-                                {this.state.submitted && !this.state.aplicacao.notificar && <small className="p-error">Status é obrigatório.</small>}
+                                <Dropdown value={this.state.aplicacao.notificar} options={status} onChange={(e) => this.onNotificarChange(e.value)} placeholder="Deseja ser Notificado?"/>           
                             </div>
                         </div>   
-                        <Button label="Atualizar" onClick={this.saveAplicacao}  />
-
-                        <div className="pt-2 pb-4">
-                            <Button icon={this.state.activeIndex && this.state.activeIndex.some((index) => index === 0) ? 'pi pi-minus' : 'pi pi-plus'} label="Toggle 1st" onClick={() => this.onClick(0)} className="p-button-text" />
-                        </div>
-                        <Accordion multiple activeIndex={this.state.activeIndex} onTabChange={(e) => this.setState({ activeIndex: e.index })}>
-                        <AccordionTab header="Header I">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                                ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                        </AccordionTab>
-                    </Accordion>
-
+                        <Button label="Atualizar" onClick={this.saveAplicacao}  />   
+                    </AccordionTab>
+                </Accordion>
+                <div className="card">
+                    <DataTable value={this.state.aplicacoes} stripedRows responsiveLayout="scroll">
+                        <Column field="id" header="Codigo"></Column>
+                        <Column field="tipo" header="Tipo"></Column>
+                        <Column field="nome_medicamento" header="Nome Medicamento"></Column>
+                        <Column field="data_aplicacao" header="Data Aplicação"></Column>
+                    </DataTable>
+                </div>
 
             </React.Fragment>
         )

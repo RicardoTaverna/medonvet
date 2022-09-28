@@ -11,5 +11,6 @@ class AplicacaoSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         pet = validated_data.pop('pet')
-        aplicacao  = Aplicacao.objects.create(pet=pet, **validated_data)
+        anamneses = validated_data.pop('anamneses')
+        aplicacao  = Aplicacao.objects.create(pet=pet,anamneses=anamneses, **validated_data)
         return aplicacao

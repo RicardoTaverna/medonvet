@@ -6,7 +6,7 @@ import './AgendamentoCard.css'
 import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
-import { InputNumber } from 'primereact/inputnumber';
+import { Toast } from 'primereact/toast';
 
 
 import { api } from '../../services/api';
@@ -69,7 +69,6 @@ class VeterinarioAgendaAnamneseCard extends Component {
     
     onLoad = async e => {
         let agendamento = this.props.agendamento
-        console.log("testando")
 
         try {
             await api.get(`/anamneses/anamneses/${agendamento}/`).then((response) => {
@@ -90,7 +89,6 @@ class VeterinarioAgendaAnamneseCard extends Component {
         let agendamento = this.props.agendamento
 
         const { queixa_principal, frequencia_cardiaca, frequencia_respiratoria, linfonodo, cor_mucosa, tpc,hidratacao  } = this.state.anamnese
-        console.log(agendamento)
         
         if( !queixa_principal || !frequencia_cardiaca || !frequencia_respiratoria || !linfonodo || !cor_mucosa || !tpc || !hidratacao  ){
             this.setState(
@@ -125,6 +123,7 @@ class VeterinarioAgendaAnamneseCard extends Component {
     render(){
         return(
             <React.Fragment>
+            <Toast ref={(el) => this.toast = el} />
             <div className="field">
                 <label htmlFor="queixa_principal">Queixa Principal</label>
                 <InputText id="queixa_principal" value={this.state.anamnese.queixa_principal} onChange={(e) => this.onInputChange(e, 'queixa_principal')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.anamnese.queixa_principal })} />

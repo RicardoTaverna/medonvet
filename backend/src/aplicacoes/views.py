@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
+from anamneses.models import Anamneses
+
 
 from .models import Aplicacao
 from .serializers import AplicacaoSerializer
@@ -20,6 +22,7 @@ class AplicacaoList(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
+
         serializer = AplicacaoSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -31,17 +34,15 @@ class AplicacaoDetail(APIView):
     """Class based function para retornar, alterar e deletar um objeto Aplicacao."""
     permission_classes = [IsAuthenticated]
     
-    def __get_aplicacao(self, id):
+    def __get_aplicacao(self, anamneses):
         try:
-            return Aplicacao.objects.get(id=id)
+            return Aplicacao.objects.filter(anamneses=anamneses)
         except Aplicacao.DoesNotExist:
             raise Http404
     
-    def get(self, request, aplicacoes, format=None):
-        print(aplicacoes)
-        aplicacao = self.__get_aplicacao(id=aplicacoes)
-        print(aplicacoes)
-        serializer = AplicacaoSerializer(aplicacao)
+    def get(self, request, anamneses, format=None):
+        aplicacao = self.__get_aplicacao(anamneses=anamneses)
+        serializer = AplicacaoSerializer(aplicacao, many=True)
         return Response(serializer.data)
 
     def put(self, request, id_aplicacao, format=None):

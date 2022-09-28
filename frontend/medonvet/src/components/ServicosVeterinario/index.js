@@ -45,14 +45,6 @@ export class ServicosVeterinario extends React.Component {
             id: 0,
         };
 
-        this.servicoNome = [
-            { name: 'Aplicação' },
-            { name: 'Consulta' },
-            { name: 'Cirurgia' },
-            { name: 'Medicamento' },
-            { name: 'Vacina' }
-        ];
-
         this.onLoad = this.onLoad.bind(this); 
         this.openNew = this.openNew.bind(this);
         this.saveServico = this.saveServico.bind(this);
@@ -236,10 +228,9 @@ export class ServicosVeterinario extends React.Component {
         this.setState({ servico });
     }
 
-    onNomeServicoChange(e, name){
-        const val = e.value.name || 0;
+    onNomeServicoChange(e){
         let servico = {...this.state.servico};
-        servico[`${name}`] = val;
+        servico[`nome`] = e;
         this.setState({ servico });
     }  
 
@@ -269,6 +260,13 @@ export class ServicosVeterinario extends React.Component {
     }  
 
     render() {
+        const servicoNome = [
+            { label: 'Aplicação', value: 'Aplicação' },
+            { label: 'Consulta', value: 'Consulta'  },
+            { label: 'Cirurgia', value: 'Cirurgia'  },
+            { label: 'Medicamento', value: 'Medicamento'  },
+            { label: 'Vacina', value: 'Vacina'  }
+        ];
 
         const servicoDialogFooter = (
             <React.Fragment>
@@ -349,8 +347,11 @@ export class ServicosVeterinario extends React.Component {
 
                 <div className="field">
                     <label htmlFor="nome" className="font-medium mb-2">Nome</label>
-                    <Dropdown id="nome" value={this.state.servico.nome} options={this.servicoNome} onChange={(e) => this.onNomeServicoChange(e, 'nome')} optionLabel="name" placeholder="Escolha o Serviço" />
+                    <Dropdown id="nome" value={this.state.servico.nome} options={servicoNome} onChange={(e) => this.onNomeServicoChange(e.value)} placeholder="Escolha o Serviço"/>   
+
                     {this.state.submitted && !this.state.servico.nome && <small className="p-error">Nome é obrigatório.</small>}
+                            
+                            
                 </div>
 
                 <div className="field">

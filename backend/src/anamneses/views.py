@@ -44,8 +44,6 @@ class AnamnesesDetail(APIView):
     def put(self, request, format=None):
 
         agendamento = request.data['agendamento']
-        aplicacao = request.data['aplicacao']
-        request.data['aplicacao'] = aplicacao
         print(agendamento)
         print(aplicacao)
         anamneses = self.__get_anamneses(agendamento=agendamento)
