@@ -18,7 +18,7 @@ class ClientApp extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            activeMenuIndex: 3,
+            activeMenuIndex: 1,
             username: '',
             first_name: '',
             last_name: '',
