@@ -94,8 +94,8 @@ class VeterinarioAgendaDayCard extends Component {
         return(
            <React.Fragment>
                <Toast ref={(el) => this.toast = el}/>
-                <div className='col-4 m-2 p-2'>
-                    <Button label={this.props.horario} className="p-button-outlined p-button-plain p-button-lg" onClick={(e) => this.onOverlay(e)} />
+                <div className='col-4'>
+                    <Button label={this.props.horario} className="p-button-raised" onClick={(e) => this.onOverlay(e)} />
                 </div>
                 
                 <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel" style={{width: '450px'}} className="overlaypanel-demo">
