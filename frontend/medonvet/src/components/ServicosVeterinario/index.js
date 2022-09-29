@@ -288,7 +288,6 @@ export class ServicosVeterinario extends React.Component {
             } else {
                 return <span className='text-yellow-700 bg-yellow-100 p-2'>Inativo</span>
             }
-            
         }
 
         const table = (

@@ -108,7 +108,7 @@ class VeterinarioAgendaCard extends Component {
                         </div>
                     </div>                    
                 </div>
-                <Dialog header="Preencha" visible={this.state.displayDialog} style={{ width: '750px' }} modal className="p-fluid" onHide={() => this.onHide('displayDialog')}>
+                <Dialog header="Preencha" visible={this.state.displayDialog} style={{ width: '800px' }} modal className="p-fluid" onHide={() => this.onHide('displayDialog')}>
                     <div className="field">
                         <VeterinarioAgendaAnamneseCard agendamento={this.props.agendamento}></VeterinarioAgendaAnamneseCard>    
                     </div>

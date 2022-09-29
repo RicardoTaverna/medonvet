@@ -43,14 +43,14 @@ class VeterinarioAgendaAplicacaoCard extends Component {
             activeIndex: null,
         }
         this.onClick = this.onClick.bind(this);
+        this.textEditor = this.textEditor.bind(this);
+        this.onRowEditComplete1 = this.onRowEditComplete1.bind(this);
         this.onClickAccordion = this.onClickAccordion.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.saveAplicacao = this.saveAplicacao.bind(this);
         this.onLoad = this.onLoad.bind(this);
         this.onNotificarChange = this.onNotificarChange.bind(this);
         this.showError = this.showError.bind(this);
-
-
     }
     
 
@@ -175,12 +175,38 @@ class VeterinarioAgendaAplicacaoCard extends Component {
         this.toast.show({severity:'error', summary: 'Error', detail: this.state.messageError , life: 3000});
     } 
 
-    
+    onRowEditComplete1(e) {
+        let aplicacoes = [...this.state.aplicacoes];
+        let { newData, index } = e;
+        console.log(newData, index);
+        aplicacoes[index] = newData;
+
+        this.setState({ aplicacoes });
+
+        let id = aplicacoes[index].id;
+        let tipo = aplicacoes[index].tipo;
+        let nome_medicamento = aplicacoes[index].nome_medicamento;
+        let pet = aplicacoes[index].pet;
+
+        console.log('aplicacao',aplicacoes)
+        api.put(`/aplicacoes/aplicacao/${id}/`, {tipo, nome_medicamento,pet}).then(response =>{
+            console.log("response PUT")
+            console.log(this.state.anamneses)
+            console.log(response)
+            this.setState(prevState => ({id: prevState.id + 1}))
+        })
+    }
+
+    textEditor(options) {    
+        return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
+    }
+
     render(){
         const status = [
             { label: 'Sim', value: '1' },
             { label: 'Não', value: '0' },
         ];
+
         return(
   
             <React.Fragment>
@@ -209,12 +235,14 @@ class VeterinarioAgendaAplicacaoCard extends Component {
                         <Button label="Atualizar" onClick={this.saveAplicacao}  />   
                     </AccordionTab>
                 </Accordion>
-                <div className="card">
-                    <DataTable value={this.state.aplicacoes} stripedRows responsiveLayout="scroll">
+                <div className="card p-fluid">
+                    <h5>Aplicações</h5>
+                    <DataTable value={this.state.aplicacoes} editMode="row" dataKey="id" onRowEditComplete={this.onRowEditComplete1} stripedRows responsiveLayout="scroll">
                         <Column field="id" header="Codigo"></Column>
-                        <Column field="tipo" header="Tipo"></Column>
-                        <Column field="nome_medicamento" header="Nome Medicamento"></Column>
-                        <Column field="data_aplicacao" header="Data Aplicação"></Column>
+                        <Column field="tipo" header="Tipo"  editor={(options) => this.textEditor(options)} style={{ width: '50%' }}></Column>
+                        <Column field="nome_medicamento" header="Nome Medicamento" editor={(options) => this.textEditor(options)} style={{ width: '20%' }}></Column>
+                        <Column field="data_aplicacao" header="Data Aplicação" style={{ width: '50%' }}></Column>
+                        <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                     </DataTable>
                 </div>
 
