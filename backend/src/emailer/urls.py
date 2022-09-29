@@ -1,6 +1,6 @@
 from django.urls import include, path
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import ForgetPasswordSendMail
+from .views import ForgetPasswordSendMail, AgendamentoSendMail
 
 
 # Wire up our API using automatic URL routing.
@@ -8,4 +8,5 @@ from .views import ForgetPasswordSendMail
 
 urlpatterns = format_suffix_patterns([
     path('forgetpassword/', ForgetPasswordSendMail.as_view()),
+    path('apointment/', AgendamentoSendMail.as_view()),
 ])

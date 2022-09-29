@@ -6,6 +6,7 @@ import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
+import { Fieldset } from 'primereact/fieldset';
 import { Rating } from 'primereact/rating';
 
 import { api } from './../../services/api';
@@ -284,19 +285,30 @@ export class ServicoCard extends React.Component {
                 </Dialog>
                 <Dialog header="Agenda" visible={(this.state.displayAgenda)} style={{ width: '70vw' }} onHide={() => this.onHide('displayAgenda')}>
                     <div className='grid'>
-                        <div className='col-10'>
-                            <Calendar id="icon" value={this.state.date} onChange={(e) => this.findAgendamento(e)} showIcon />
+                        <div className='flex align-items-stretch flex-wrap'>
+
+                            <div className='col flex align-items-center justify-content-center'>
+                                <Calendar value={this.state.date}  onChange={(e) => this.findAgendamento(e)} inline showWeek />
+                            </div>
+                            <div className='col align-self-start flex align-items-center justify-content'>
+                                <Fieldset legend={this.state.date.toISOString().slice(0, 10)}>
+                                    <div className='grid'>
+                                        {timeArray.map(
+                                            time => <HorarioCard
+                                                servicoId={this.props.servicoId}
+                                                horario={time}
+                                                veterinario={this.props.veterinario}
+                                                horarioId={this.state.horario.id}
+                                                date={this.state.date.toISOString().slice(0, 10)}
+                                            ></HorarioCard>
+                                            
+                                        )}
+                                    </div>
+                                    
+                                </Fieldset>
+                            </div>
                             
                         </div>
-                        {timeArray.map(
-                            time => <HorarioCard
-                                servicoId={this.props.servicoId}
-                                horario={time}
-                                veterinario={this.props.veterinario}
-                                horarioId={this.state.horario.id}
-                                date={this.state.date.toISOString().slice(0, 10)}
-                            ></HorarioCard>
-                        )}
                     </div>
                     
                 </Dialog>

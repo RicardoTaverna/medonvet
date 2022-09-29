@@ -56,12 +56,16 @@ class VeterinarioAgendaDayCard extends Component {
     onAgendamento = async e => {
         let horarioList = this.props.horario.split(' ')
         let horario_selecionado = horarioList[0]
+        let horario = horario_selecionado
         let data = this.props.date
         let veterinario = this.props.veterinario
         let servico = this.props.servicoId
         let pet = e.value.id
         try {
-            api.post('/agendamento/', {data, horario_selecionado, veterinario, servico, pet})
+            await api.post('/agendamento/', {data, horario_selecionado, veterinario, servico, pet}).then(
+                pet = e.value.nome,
+                api.post('/emailer/apointment/', { data, horario, veterinario, pet })
+            )
             this.toast.show({ severity: 'info', summary: 'Successful', detail: 'Agendamento Realizado', life: 3000 });
         } catch (err){
             console.log("erro: ", err);
@@ -90,8 +94,8 @@ class VeterinarioAgendaDayCard extends Component {
         return(
            <React.Fragment>
                <Toast ref={(el) => this.toast = el}/>
-                <div className='col-4 m-2 p-2'>
-                    <Button label={this.props.horario} className="p-button-outlined p-button-plain p-button-lg" onClick={(e) => this.onOverlay(e)} />
+                <div className='col-4'>
+                    <Button label={this.props.horario} className="p-button-raised" onClick={(e) => this.onOverlay(e)} />
                 </div>
                 
                 <OverlayPanel ref={(el) => this.op = el} showCloseIcon id="overlay_panel" style={{width: '450px'}} className="overlaypanel-demo">
