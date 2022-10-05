@@ -45,7 +45,6 @@ class AnamnesesDetail(APIView):
 
         agendamento = request.data['agendamento']
         print(agendamento)
-        print(aplicacao)
         anamneses = self.__get_anamneses(agendamento=agendamento)
         
         serializer = AnamnesesSerializer(anamneses, data=request.data)

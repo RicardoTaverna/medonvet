@@ -11,7 +11,7 @@ import VeterinarioHome from '../../components/VeterinarioHome';
 import VeterinarioConfig from '../../components/VeterinarioConfig';
 import ServicosVeterinario from '../../components/ServicosVeterinario';
 import PrestadorAgenda from '../../components/PrestadorAgenda';
-import AplicacaoVeterinario from '../../components/AplicacaoVeterinario';
+import AnamneseseAplicaVeterinario from '../../components/AnamneseseAplicaVeterinario';
 
 
 class VeterinarioPage extends Component {
@@ -48,10 +48,10 @@ class VeterinarioPage extends Component {
                 }
             },
             {
-                label: 'Aplicação',
-                icon: 'pi pi-fw pi-cog',
+                label: 'Anamneses',
+                icon: 'pi pi-fw pi-book',
                 command: () => {
-                    this.setState({childComponent: 'aplicacao'})
+                    this.setState({childComponent: 'anamneses'})
                 }
             },
             {   
@@ -116,8 +116,8 @@ class VeterinarioPage extends Component {
             renderChild = (<ServicosVeterinario></ServicosVeterinario>)
         } else if(this.state.childComponent === 'agenda'){
             renderChild = (<PrestadorAgenda></PrestadorAgenda>)
-         } else if(this.state.childComponent === 'aplicacao'){
-            renderChild = (<AplicacaoVeterinario></AplicacaoVeterinario>)
+         } else if(this.state.childComponent === 'anamneses'){
+            renderChild = (<AnamneseseAplicaVeterinario></AnamneseseAplicaVeterinario>)
         }
 
         return (

@@ -110,6 +110,7 @@ class VeterinarioAgendaAplicacaoCard extends Component {
                 this.setState({ 
                     anamneses: response.data.id
                 })  
+                console.log("id",response.data.id)
                 api.get(`/aplicacoes/${response.data.id}/`).then((response) => {
                     console.log(response);
                     this.setState({ aplicacoes: response.data })
