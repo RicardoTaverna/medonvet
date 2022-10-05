@@ -51,7 +51,7 @@ def consumer(queue):
                 template_new = template_new.replace("$vet", context.get('veterinario'))
                 template_new = template_new.replace("$pet", context.get('pet'))
 
-            api_key = os.environ.get('SENDGRID_API_KEY')
+            api_key = os.environ.get("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")
             sg = sendgrid.SendGridAPIClient(api_key=api_key)
             from_email = Email("taverna.ricardo@gmail.com")  # Change to your verified sender
             to_email = To(context.get('email'))  # Change to your recipient

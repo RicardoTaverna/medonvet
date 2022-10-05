@@ -18,6 +18,7 @@ class VeterinarioHome extends Component {
             veterinarios: [],
             visibleLeft: false,
             agendamentos: [],
+            agendamentos_status: []
         }
         this.onLoad = this.onLoad.bind(this)
     }
@@ -148,27 +149,33 @@ class VeterinarioHome extends Component {
                                     <span className="text-900 mb-3">Ultimos Atendimentos</span>
                                 </div>
                             </div>
-                            <div class="card">
-                                <div class="flex card-container blue-container overflow-hidden">
-                                    <div class="flex-none flex align-items-center justify-content-center border-round">
-                                        <Avatar icon="pi pi-user" className="mr-2" size="large" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
-                                    </div>
-                                    <div class="flex-grow-1 flex align-items-right justify-content-right m-2 px-5 py-3 border-round">
-                                        <div>
-                                            <div className="font-medium text-xl text-900">Nome do Pet</div>
-                                                <div className="flex align-items-center text-700 flex-wrap">
-                                                    <div className="mr-5">
-                                                        <span>Serviço prestado </span>
-                                                        <span className='bg-green-100 border-round p-1'> R$250.00</span>
+                            <ScrollPanel style={{width: '100%', height: '400px'}}>
+
+                                <div class="card">
+                                    <div class="flex card-container blue-container overflow-hidden">
+                                        <div class="flex-none flex align-items-center justify-content-center border-round">
+                                            <Avatar icon="pi pi-user" className="mr-2" size="large" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
+                                        </div>
+                                        <div class="flex-grow-1 flex align-items-right justify-content-right m-2 px-5 py-3 border-round">
+                                            <div>
+                                                <div className="font-medium text-xl text-900">Nome do Pet</div>
+                                                    <div className="flex align-items-center text-700 flex-wrap">
+                                                        <div className="mr-5">
+                                                            <span>Serviço prestado </span>
+                                                            <span className='bg-green-100 border-round p-1'> R$250.00</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        <div class="flex-none flex align-items-center justify-content-center m-2 px-5 py-3">
+                                            <Rating value={4} readOnly stars={5} cancel={false} />
                                         </div>
-                                    <div class="flex-none flex align-items-center justify-content-center m-2 px-5 py-3">
-                                        <Rating value={4} readOnly stars={5} cancel={false} />
                                     </div>
                                 </div>
-                            </div>
+
+
+                            </ScrollPanel>
+                            
                         </div>
                     </div>
                 </div>

@@ -213,7 +213,7 @@ export class ServicoCard extends React.Component {
             img = consulta_img
         } else if(nome_string.includes('Cirurgia')){
             img = cirurgia_img
-        } else if(nome_string.includes('Vacina')){
+        } else if(nome_string.includes('Aplicação')){
             img = aplicacao_img
         } else {
             img = medicamento_img
@@ -288,7 +288,7 @@ export class ServicoCard extends React.Component {
                         <div className='flex align-items-stretch flex-wrap'>
 
                             <div className='col flex align-items-center justify-content-center'>
-                                <Calendar value={this.state.date}  onChange={(e) => this.findAgendamento(e)} inline showWeek />
+                                <Calendar minDate={this.today} value={this.state.date}  onChange={(e) => this.findAgendamento(e)} inline showWeek />
                             </div>
                             <div className='col align-self-start flex align-items-center justify-content'>
                                 <Fieldset legend={this.state.date.toISOString().slice(0, 10)}>
