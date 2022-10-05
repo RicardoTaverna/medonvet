@@ -68,7 +68,7 @@ class AplicacaoDetail(APIView):
     
     def __get_aplicacao(self, id):
         try:
-            return Aplicacao.objects.filter(id=id).first()
+            return Aplicacao.objects.get(id=id)
         except Aplicacao.DoesNotExist:
             raise Http404
     

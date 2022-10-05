@@ -8,7 +8,9 @@ import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
+import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
+import { Fieldset } from 'primereact/fieldset';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 
@@ -51,6 +53,10 @@ class VeterinarioAgendaAplicacaoCard extends Component {
         this.onLoad = this.onLoad.bind(this);
         this.onNotificarChange = this.onNotificarChange.bind(this);
         this.showError = this.showError.bind(this);
+        this.dateBodyTemplate = this.dateBodyTemplate.bind(this);
+        this.deleteBodyTemplate = this.deleteBodyTemplate.bind(this);
+        this.hidedeleteAplicacaoDialog = this.hidedeleteAplicacaoDialog.bind(this);
+        this.confirmDeleteAplicacao = this.confirmDeleteAplicacao.bind(this);
     }
     
 
@@ -72,16 +78,15 @@ class VeterinarioAgendaAplicacaoCard extends Component {
         let activeIndex = this.state.activeIndex ? [...this.state.activeIndex] : [];
 
         if (activeIndex.length === 0) {
-        activeIndex.push(itemIndex);
-        } else {
-        const index = activeIndex.indexOf(itemIndex);
-        if (index === -1) {
             activeIndex.push(itemIndex);
         } else {
-            activeIndex.splice(index, 1);
+            const index = activeIndex.indexOf(itemIndex);
+            if (index === -1) {
+                activeIndex.push(itemIndex);
+            } else {
+                activeIndex.splice(index, 1);
+            }
         }
-        }
-
         this.setState({ activeIndex });
     }
 
@@ -90,7 +95,6 @@ class VeterinarioAgendaAplicacaoCard extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-
         if(this.state.id !== prevState.id) {
             this.onLoad();
         }
@@ -201,11 +205,60 @@ class VeterinarioAgendaAplicacaoCard extends Component {
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     }
 
+    
+    dateBodyTemplate(rowData) {
+        var date = new Date(rowData.data_aplicacao)
+        return <span>{date.toUTCString().slice(6, 22)}</span>;
+    }
+
+    deleteBodyTemplate(rowData) {
+        return (
+            <React.Fragment>
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-secondary" onClick={() => this.confirmDeleteAplicacao(rowData)} />
+            </React.Fragment>
+        );
+    }
+
+    confirmDeleteAplicacao(aplicacao) {
+        console.log('applicacao',aplicacao)
+        this.setState({
+            aplicacao,
+            deleteAplicacaoDialog: true
+        });
+        console.log('teste2',this.state.aplicacao)
+    }
+
+    hidedeleteAplicacaoDialog() {
+        this.setState({ deleteAplicacaoDialog: false });
+    }
+
+    deleteAplicacao() {
+        console.log("entrei")
+        console.log('nome', this.state.aplicacoes.nome_medicamento)
+        let aplicacoes = this.state.aplicacoes.filter(val => val.id !== this.state.aplicacao.id);
+        console.log("consegui passar")
+        console.log(this.state.aplicacoes.id)
+        api.delete(`/aplicacoes/aplicacao/${this.state.aplicacao.id}/`)
+        this.setState({
+            aplicacoes,
+            deleteAplicacaoDialog: false,
+            aplicacao: this.emptyAplicacao
+        });
+        this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Aplicacao deletado', life: 3000 });
+    }
+
     render(){
         const status = [
             { label: 'Sim', value: '1' },
             { label: 'Não', value: '0' },
         ];
+
+        const deleteAplicacaoDialogFooter = (
+            <React.Fragment>
+                <Button label="No" icon="pi pi-times" className="p-button-text" onClick={this.hidedeleteAplicacaoDialog} />
+                <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={this.deleteAplicacao} />
+            </React.Fragment>
+        );
 
         return(
   
@@ -237,14 +290,24 @@ class VeterinarioAgendaAplicacaoCard extends Component {
                 </Accordion>
                 <div className="card p-fluid">
                     <h5>Aplicações</h5>
+                    
                     <DataTable value={this.state.aplicacoes} editMode="row" dataKey="id" onRowEditComplete={this.onRowEditComplete1} stripedRows responsiveLayout="scroll">
-                        <Column field="id" header="Codigo"></Column>
-                        <Column field="tipo" header="Tipo"  editor={(options) => this.textEditor(options)} style={{ width: '50%' }}></Column>
-                        <Column field="nome_medicamento" header="Nome Medicamento" editor={(options) => this.textEditor(options)} style={{ width: '20%' }}></Column>
-                        <Column field="data_aplicacao" header="Data Aplicação" style={{ width: '50%' }}></Column>
+                        <Column field="id" header="Codigo" bodyStyle={{ textAlign: 'center' }}></Column>
+                        <Column field="tipo" header="Tipo"  editor={(options) => this.textEditor(options)} ></Column>
+                        <Column field="nome_medicamento" header="Nome Medicamento" editor={(options) => this.textEditor(options)} ></Column>
+                        <Column field="data_aplicacao" body={this.dateBodyTemplate} header="Data Aplicação" ></Column>
                         <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                        <Column body={this.deleteBodyTemplate} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                     </DataTable>
+                    
                 </div>
+
+                <Dialog visible={this.state.deleteAplicacaoDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteAplicacaoDialogFooter} onHide={this.hidedeleteAplicacaoDialog}>
+                    <div className="confirmation-content">
+                        <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem'}} />
+                        {this.state.aplicacao && <span>Você tem certeza que deseja deletar essa Aplicacao? <b>{this.state.aplicacao.nome_medicamento}</b>?</span>}
+                    </div>
+                </Dialog>
 
             </React.Fragment>
         )
