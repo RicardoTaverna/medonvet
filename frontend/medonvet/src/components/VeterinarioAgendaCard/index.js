@@ -1,20 +1,49 @@
 import React, { Component } from 'react';
+
 import './AgendamentoCard.css'
 
 import { Avatar } from 'primereact/avatar';
+import { classNames } from 'primereact/utils';
 import { Dialog } from 'primereact/dialog';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
+
 
 import { api } from '../../services/api';
+import VeterinarioAgendaAplicacaoCard from '../VeterinarioAgendaAplicacaoCard';
+import VeterinarioAgendaAnamneseCard from '../VeterinarioAgendaAnamneseCard';
 
 class VeterinarioAgendaCard extends Component {
+
+    emptyAplicacao = {
+        pet: null,
+        id: null,
+        tipo: '',
+        nome_medicamento: '',
+        data_aplicacao: '',
+        data_reaplicacao: '',
+        notificar: true,
+    };
+    
     constructor(props){
         super(props);
         this.state = {
             displayDialog: false,
-
+            servicos: null,
+            servicoDialog: false,
+            deleteServicoDialog: false,
+            aplicacao: this.emptyAplicacao,
+            selectedServicos: null,
+            submitted: false,
+            globalFilter: null,
+            loading: true,
+            id: 0,
         }
         this.onClick = this.onClick.bind(this);
         this.onHide = this.onHide.bind(this);
+        this.onNomeServicoChange = this.onNomeServicoChange.bind(this);
+        this.onInputNumberChange = this.onInputNumberChange.bind(this);
     }
 
     onClick(name, position) {
@@ -36,6 +65,21 @@ class VeterinarioAgendaCard extends Component {
             [`${name}`]: false
         });
     }
+    
+    onNomeServicoChange(e, name){
+        const val = e.value.name || 0;
+        let aplicacao = {...this.state.aplicacao};
+        aplicacao[`${name}`] = val;
+        this.setState({ aplicacao });
+    }  
+
+    onInputNumberChange(e, name) {
+        const val = e.value || 0;
+        let aplicacao = {...this.state.aplicacao};
+        aplicacao[`${name}`] = val;
+
+        this.setState({ aplicacao });
+    }
 
     render(){
         return(
@@ -51,11 +95,10 @@ class VeterinarioAgendaCard extends Component {
                                     <div className="flex align-items-center text-700 flex-wrap">
                                         <div className="mr-5">
                                             <div className='mt-3'>
-                                                <span>{this.props.servico.nome} </span>
-                                                <span className='bg-green-100 border-round p-1'> R${this.props.servico.valor}</span>
-
+                                               
+                              
                                             </div>
-                                            <p>{this.props.servico.descricao}</p>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -65,11 +108,15 @@ class VeterinarioAgendaCard extends Component {
                         </div>
                     </div>                    
                 </div>
-                <Dialog header="Header" visible={this.state.displayDialog} style={{ width: '50vw' }} onHide={() => this.onHide('displayDialog')}>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <Dialog header="Preencha" visible={this.state.displayDialog} style={{ width: '800px' }} modal className="p-fluid" onHide={() => this.onHide('displayDialog')}>
+                    <div className="field">
+                        <VeterinarioAgendaAnamneseCard agendamento={this.props.agendamento}></VeterinarioAgendaAnamneseCard>    
+                    </div>
+                    <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
+                        <VeterinarioAgendaAplicacaoCard agendamento={this.props.agendamento} pet={this.props.pet}></VeterinarioAgendaAplicacaoCard>
+
+                    </div>
+
                 </Dialog>
             </React.Fragment>
         )

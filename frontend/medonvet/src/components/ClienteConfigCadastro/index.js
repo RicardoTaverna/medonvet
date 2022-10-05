@@ -142,9 +142,6 @@ class ClienteConfigCadastro extends Component {
                         </div>
                     </div>
                     <Button label="Atualizar" onClick={this.onUpdate}  />
-                    <Divider></Divider>
-                    <Divider></Divider>
-                    <Divider></Divider>
                         
             </React.Fragment>
         )
