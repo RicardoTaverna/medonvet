@@ -10,6 +10,11 @@ class AplicacaoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
+        print("antes")
         pet = validated_data.pop('pet')
-        aplicacao  = Aplicacao.objects.create(pet=pet, **validated_data)
+        print("antes 2")
+        anamneses = validated_data.pop('anamneses')
+        print("depois")
+        aplicacao  = Aplicacao.objects.create(pet=pet,anamneses=anamneses, **validated_data)
+        print("fudeu")
         return aplicacao

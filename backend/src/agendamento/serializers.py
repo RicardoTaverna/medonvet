@@ -26,4 +26,4 @@ class AgendamentoNestedSerializer(serializers.ModelSerializer):
     pet = PetSerializer()
     class Meta:
         model = Agendamento
-        fields = ['cliente', 'servico', 'veterinario', 'pet', 'data', 'horario_selecionado']
+        fields = ['id','cliente', 'servico', 'veterinario', 'pet', 'data', 'horario_selecionado']
