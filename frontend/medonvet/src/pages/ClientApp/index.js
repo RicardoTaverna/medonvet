@@ -28,8 +28,6 @@ class ClientApp extends React.Component {
             {label: 'Vets/Clinicas', icon: 'pi pi-fw pi-users'},
             {label: 'Serviços', icon: 'pi pi-fw pi-home'},
             {label: 'Pets', icon: 'pi pi-fw pi-pencil'},
-            {label: 'Calendário', icon: 'pi pi-fw pi-calendar'},
-            {label: 'Perfil', icon: 'pi pi-fw pi-file'},
             {label: 'Configurações', icon: 'pi pi-fw pi-cog'}
         ];
         this.onLogin = this.onLogin.bind(this);
@@ -67,30 +65,6 @@ class ClientApp extends React.Component {
 
     render(){
 
-        const perfil = (
-        
-            <div>
-                <div className="card-container p-d-flex p-6">
-                    <div className="surface-0">
-                        <ul className="list-none p-0 m-0 flex align-items-center font-medium mb-3">
-                            <li>
-                                <a className="text-500 no-underline line-height-3 cursor-pointer">Perfil Cliente</a>
-                            </li>
-                        </ul>
-                        <div className="flex align-items-start flex-column lg:justify-content-between lg:flex-row">
-                            <div>
-                                <div className="font-medium text-3xl text-900">{this.state.username}</div>
-                            </div>
-                            <div className="mt-3 lg:mt-0">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        )
-
         const servicos = (
             <ClienteServicos></ClienteServicos>
         ) 
@@ -98,10 +72,6 @@ class ClientApp extends React.Component {
         const pets = (
             <Pets></Pets>
             
-        )
-
-        const calendario = (
-            <div></div>
         )
 
 
@@ -128,12 +98,6 @@ class ClientApp extends React.Component {
                 render = pets;
                 break;
             case 3:
-                render = calendario;
-                break;
-            case 4:
-                render = perfil;
-                break;
-            case 5:
                 render = configuracoes;
                 break;
             default:

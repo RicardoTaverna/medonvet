@@ -7,18 +7,17 @@ import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
-import { Tag } from 'primereact/tag';
 import { Toolbar } from 'primereact/toolbar';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Skeleton } from 'primereact/skeleton';
-import { ProgressBar } from 'primereact/progressbar';
 
 import './pets.css'
 
 import { api, imgApi } from '../../services/api';
 import AplicacoesPetInfo from '../AplicacaoPetInfo';
+import PetsAgendamento from '../PetsAgendamentos';
 
 export class Pets extends React.Component {
 
@@ -43,6 +42,7 @@ export class Pets extends React.Component {
             pets: null,
             petDialog: false,
             deletePetDialog: false,
+            consultasDialog: false,
             aplicacoesDialog: false,
             pet: this.emptyPet,
             selectedPets: null,
@@ -66,6 +66,7 @@ export class Pets extends React.Component {
         this.leftToolbarTemplate = this.leftToolbarTemplate.bind(this);
         this.actionBodyTemplate = this.actionBodyTemplate.bind(this);
         this.imageBodyTemplate = this.imageBodyTemplate.bind(this);
+        this.consultasPet = this.consultasPet.bind(this);
         this.aplicacoesPet = this.aplicacoesPet.bind(this);
         this.onUploadImage = this.onUploadImage.bind(this);
     }     
@@ -171,6 +172,13 @@ export class Pets extends React.Component {
             this.toast.show({ severity: 'success', summary: 'Successful', detail: 'Pet deletado', life: 3000 });
     }
 
+    consultasPet(pet){
+        this.setState({
+            pet: { ...pet },
+            consultasDialog: true
+        });
+    }
+
     aplicacoesPet(pet){
         this.setState({
             pet: { ...pet },
@@ -204,6 +212,7 @@ export class Pets extends React.Component {
             submitted: false,
             petDialog: false,
             aplicacoesDialog: false,
+            consultasDialog: false, 
         });
     }
 
@@ -238,9 +247,10 @@ export class Pets extends React.Component {
     actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
-                <Button icon="pi pi-shield" className="p-button-rounded p-button-primary mr-2" onClick={() => this.aplicacoesPet(rowData)}/>
-                <Button icon="pi pi-pencil" className="p-button-rounded button-primary mr-2" onClick={() => this.editPet(rowData)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-secondary" onClick={() => this.confirmDeletePet(rowData)} />
+                <Button icon="pi pi-heart-fill" className="p-button-rounded p-button-primary mr-2" onClick={() => this.consultasPet(rowData)}/>
+                <Button icon="pi pi-shield" className="p-button-rounded p-button-success mr-2" onClick={() => this.aplicacoesPet(rowData)}/>
+                <Button icon="pi pi-pencil" className="p-button-rounded p-button-secondary mr-2" onClick={() => this.editPet(rowData)} />
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => this.confirmDeletePet(rowData)} />
             </React.Fragment>
         );
     }
@@ -308,8 +318,8 @@ export class Pets extends React.Component {
                     <Column field="raca" header="Raça" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="tipo" header="Tipo" sortable style={{ minWidth: '10rem' }}></Column>
                     <Column field="data_nascimento" header="Idade" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="sexo" header="Sexo" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column body={this.actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
+                    <Column field="sexo" header="Sexo" sortable style={{ minWidth: '8rem' }}></Column>
+                    <Column body={this.actionBodyTemplate} exportable={false} style={{ minWidth: '16rem' }}></Column>
                 </DataTable>
             </React.Fragment>
         )
@@ -420,13 +430,30 @@ export class Pets extends React.Component {
                     </div>
                 </Dialog>
 
-                <Dialog visible={this.state.aplicacoesDialog} style={{ width: '750px' }} header="Aplicações Realizadas" modal className="p-fluid" onHide={this.hideDialog}>
-                    <AplicacoesPetInfo
+                <Dialog visible={this.state.consultasDialog} style={{ width: '950px' }} header="Consultas Realizadas" modal className="p-fluid" onHide={this.hideDialog}>
+                    <PetsAgendamento
                         key={this.state.pet.id}
                         id={this.state.pet.id}
                     >
 
-                    </AplicacoesPetInfo>
+                    </PetsAgendamento>
+                </Dialog>
+
+                <Dialog visible={this.state.aplicacoesDialog} style={{ width: '950px' }} header="Carteirinha de Aplicações" modal className="p-fluid" onHide={this.hideDialog}>
+                    <div class="card">
+                        <div class="grid">
+                            <div class="col-4 sticky top-0">
+                               <img src={this.state.pet.imagem} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={this.state.pet.imagem} className="product-image" />
+                            </div>
+                            <div class="col-8">
+                                <AplicacoesPetInfo
+                                key={this.state.pet.id}
+                                id={this.state.pet.id}
+                                >
+                                </AplicacoesPetInfo>
+                            </div>
+                        </div>
+                    </div>
                 </Dialog>
 
 
