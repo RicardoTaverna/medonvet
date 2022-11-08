@@ -24,6 +24,14 @@ class AnamnesesList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AnamnesesById(APIView):
+    """Class based function para controlar get e post do objeto Aplicacao."""
+    def get(self, request, id_anamnese, format=None):
+        anamneses = Anamneses.objects.filter(id=id_anamnese)
+        serializer = AnamnesesSerializer(anamneses, many=True)
+        return Response(serializer.data)
+
+
 class AnamnesesDetail(APIView):
     """Class based function para retornar, alterar e deletar um objeto Aplicacao."""
     permission_classes = [IsAuthenticated]

@@ -6,6 +6,7 @@ import './AgendamentoCard.css'
 import { Button } from 'primereact/button';
 import { classNames } from 'primereact/utils';
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
 import { Toast } from 'primereact/toast';
 
 
@@ -126,7 +127,7 @@ class VeterinarioAgendaAnamneseCard extends Component {
             <Toast ref={(el) => this.toast = el} />
             <div className="field">
                 <label htmlFor="queixa_principal">Queixa Principal</label>
-                <InputText id="queixa_principal" value={this.state.anamnese.queixa_principal} onChange={(e) => this.onInputChange(e, 'queixa_principal')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.anamnese.queixa_principal })} />
+                <InputTextarea rows={8} id="queixa_principal" value={this.state.anamnese.queixa_principal} onChange={(e) => this.onInputChange(e, 'queixa_principal')} required autoFocus className={classNames({ 'p-invalid': this.state.submitted && !this.state.anamnese.queixa_principal })} />
                 {this.state.submitted && !this.state.anamnese.queixa_principal && <small className="p-error">Queixa é obrigatório.</small>}
             </div>
             <div className="formgrid grid">

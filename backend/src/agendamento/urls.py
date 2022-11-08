@@ -10,6 +10,9 @@ from .views import (
     AgendamentoDetail,
     AgendamentoByVetDetail,
     AgendamentoByClienteDetail,
+    AgendamentoByPetIdDetail,
+    AgendamentoByPetIdNested,
+    HorarioAtendimentoByIdDetail
 )
 
 
@@ -19,9 +22,12 @@ from .views import (
 urlpatterns = format_suffix_patterns([
     path('', AgendamentoList.as_view()),
     path('<int:id_agendamento>/', AgendamentoDetail.as_view()),
+    path('detalhe/<int:id_agendamento>/', HorarioAtendimentoByIdDetail.as_view()),
     path('veterinario/', AgendamentoByVetDetail.as_view()),
     path('veterinario/<int:id_vet>/<str:date>/', AgendamentoByVetIdDetail.as_view()),
     path('cliente/', AgendamentoByClienteDetail.as_view()),
+    path('pet/<int:id_pet>/', AgendamentoByPetIdDetail.as_view()),
+    path('pet/detalhe/<int:id_pet>/', AgendamentoByPetIdNested.as_view()),
     path('horarioatendimento/', HorarioAtendimentoList.as_view()),
     path('horarioatendimento/veterinario/', HorarioByVetDetail.as_view()),
     path('horarioatendimento/veterinario/<int:vet_id>/', HorarioByVetIdDetail.as_view()),
