@@ -11,7 +11,7 @@ from anamneses.models import Anamneses
 from .models import HorarioFuncionamento, Agendamento
 from .serializers import AgendamentoNestedSerializer, AgendamentoServicoNestedSerializer, HorarioFuncionamentoSerializer, AgendamentoSerializer
 from prestadores.models import Veterinario
-from clientes.models import Cliente
+from clientes.models import Cliente, Pet
 
 # Create your views here.
 
@@ -210,4 +210,53 @@ class AgendamentoByClienteDetail(APIView):
     def get(self, request, format=None):
         Agendamento = self.__get_atendimento_by_cliente(request=request)
         serializer = AgendamentoSerializer(Agendamento, many=True)
+        return Response(serializer.data)
+
+
+class AgendamentoByPetIdDetail(APIView):
+    """Class based function para retornar, alterar e deletar um objeto agendamento."""
+    permission_classes = [IsAuthenticated]
+    
+    def __get_atendimento_by_pet(self, id_pet):
+        try:
+            pet = Pet.objects.get(id=id_pet)
+            return Agendamento.objects.filter(pet=pet).order_by("-data")
+        except Agendamento.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, id_pet, format=None):
+        Agendamento = self.__get_atendimento_by_pet(id_pet=id_pet)
+        serializer = AgendamentoSerializer(Agendamento, many=True)
+        return Response(serializer.data)
+
+
+class AgendamentoByPetIdNested(APIView):
+    """Class based function para retornar, alterar e deletar um objeto agendamento."""
+    permission_classes = [IsAuthenticated]
+    
+    def __get_atendimento_by_pet(self, id_pet):
+        try:
+            pet = Pet.objects.get(id=id_pet)
+            return Agendamento.objects.filter(pet=pet).order_by("-data")
+        except Agendamento.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, id_pet, format=None):
+        Agendamento = self.__get_atendimento_by_pet(id_pet=id_pet)
+        serializer = AgendamentoNestedSerializer(Agendamento, many=True)
+        return Response(serializer.data)
+
+class HorarioAtendimentoByIdDetail(APIView):
+    """Class based function para retornar, alterar e deletar um objeto Horario de atendimento."""
+    permission_classes = [IsAuthenticated]
+    
+    def __get_horario_funcionamento(self, id):
+        try:
+            return Agendamento.objects.get(id=id)
+        except Agendamento.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, id_agendamento, format=None):
+        horario = self.__get_horario_funcionamento(id=id_agendamento)
+        serializer = AgendamentoNestedSerializer(horario)
         return Response(serializer.data)

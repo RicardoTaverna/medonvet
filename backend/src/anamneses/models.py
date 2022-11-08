@@ -5,7 +5,7 @@ from agendamento.models import Agendamento;
 # Create your models here.
 class Anamneses(models.Model):
     agendamento = models.ForeignKey(Agendamento, on_delete=models.CASCADE)
-    queixa_principal = models.CharField(max_length=100, blank=True, null=True)
+    queixa_principal = models.CharField(max_length=1000, blank=True, null=True)
     frequencia_cardiaca = models.CharField(max_length=100, blank=True, null=True)
     frequencia_respiratoria = models.CharField(max_length=100, blank=True, null=True)
     linfonodo = models.CharField(max_length=100, blank=True, null=True)
@@ -14,4 +14,4 @@ class Anamneses(models.Model):
     hidratacao = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"{self.aplicacao.pet.nome} "
+        return f"{self.agendamento.pet.nome} "

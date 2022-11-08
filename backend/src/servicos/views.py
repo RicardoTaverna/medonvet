@@ -17,7 +17,7 @@ class ServicoList(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self,request, format=None):
-        servico = Servico.objects.all()
+        servico = Servico.objects.all().order_by('nome')
         serializer = ServicoSerializer(servico, many=True)
         return Response(serializer.data)
 
@@ -35,7 +35,6 @@ class ServicoList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ServicoListFilter(APIView):
     permission_classes = [IsAuthenticated]

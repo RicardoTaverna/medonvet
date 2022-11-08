@@ -25,6 +25,7 @@ class VeterinarioHome extends Component {
             consulta: 0,
             medicamento: 0,
             vacina: 0,
+            agendamentos_status: []
         }
         this.onLoad = this.onLoad.bind(this)
         this.onServicoCount = this.onServicoCount.bind(this)
