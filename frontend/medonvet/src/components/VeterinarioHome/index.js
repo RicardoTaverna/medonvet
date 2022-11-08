@@ -25,6 +25,7 @@ class VeterinarioHome extends Component {
             consulta: 0,
             medicamento: 0,
             vacina: 0,
+            valorRecebido: 0,
             agendamentos_status: []
         }
         this.onLoad = this.onLoad.bind(this)
@@ -45,7 +46,10 @@ class VeterinarioHome extends Component {
     }
 
     onServicoCount(){
+        let valorTemp;
         for(let x = 0; x < this.state.servicos.length; x++){
+            valorTemp = this.state.servicos[x].servico.valor;
+            this.setState({valorRecebido: this.state.valorRecebido + valorTemp});
             if(this.state.servicos[x].servico.nome === "Consulta"){ 
                 this.setState({consulta: this.state.consulta + 1 })  
             }else if(this.state.servicos[x].servico.nome === "Aplicação"){
@@ -117,26 +121,22 @@ class VeterinarioHome extends Component {
                                     <div className="text-900 font-medium text-xl">{this.state.agendamentos.length}</div>
                                 </div>
                                 <div className="flex align-items-center justify-content-center bg-blue-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
-                                    <i className="pi pi-shopping-cart text-blue-500 text-xl"></i>
+                                    <i className="pi pi-users text-blue-500 text-xl"></i>
                                 </div>
                             </div>
-                            <span className="text-green-500 font-medium">24 new </span>
-                            <span className="text-500">since last visit</span>
                         </div>
                     </div>
                     <div className="col-12 md:col-6 lg:col-3">
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
                             <div className="flex justify-content-between mb-3">
                                 <div>
-                                    <span className="block text-500 font-medium mb-3">Revenue</span>
-                                    <div className="text-900 font-medium text-xl">$2.100</div>
+                                    <span className="block text-500 font-medium mb-3">Valor Previsto</span>
+                                    <div className="text-900 font-medium text-xl">R$ {this.state.valorRecebido},00</div>
                                 </div>
                                 <div className="flex align-items-center justify-content-center bg-orange-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
-                                    <i className="pi pi-map-marker text-orange-500 text-xl"></i>
+                                    <i className="pi pi-wallet text-orange-500 text-xl"></i>
                                 </div>
                             </div>
-                            <span className="text-green-500 font-medium">%52+ </span>
-                            <span className="text-500">since last week</span>
                         </div>
                     </div>
                     <div className="col-12 md:col-6 lg:col-3">
@@ -150,23 +150,19 @@ class VeterinarioHome extends Component {
                                     <i className="pi pi-inbox text-cyan-500 text-xl"></i>
                                 </div>
                             </div>
-                            <span className="text-green-500 font-medium">520  </span>
-                            <span className="text-500">newly registered</span>
                         </div>
                     </div>
                     <div className="col-12 md:col-6 lg:col-3">
                         <div className="surface-0 shadow-2 p-3 border-1 border-50 border-round">
                             <div className="flex justify-content-between mb-3">
                                 <div>
-                                    <span className="block text-500 font-medium mb-3">Comments</span>
-                                    <div className="text-900 font-medium text-xl">152 Unread</div>
+                                    <span className="block text-500 font-medium mb-3">Feedbacks</span>
+                                    <div className="text-900 font-medium text-xl">20</div>
                                 </div>
                                 <div className="flex align-items-center justify-content-center bg-purple-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
                                     <i className="pi pi-comment text-purple-500 text-xl"></i>
                                 </div>
                             </div>
-                            <span className="text-green-500 font-medium">85 </span>
-                            <span className="text-500">responded</span>
                         </div>
                     </div>
                 </div>
