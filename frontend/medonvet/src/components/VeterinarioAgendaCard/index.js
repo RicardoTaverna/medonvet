@@ -87,7 +87,8 @@ class VeterinarioAgendaCard extends Component {
                 <div class="card card-agendamento m-2" onClick={() => this.onClick('displayDialog')}>
                     <div class="flex card-container blue-container overflow-hidden">
                         <div class="flex-none flex align-items-center justify-content-center border-round">
-                            <Avatar icon="pi pi-user" className="mr-2" size="large" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
+                            <Avatar image={this.props.pet.imagem} className="mr-2" size="large" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
+                        
                         </div>
                         <div class="flex-grow-1 flex align-items-right justify-content-right m-2 px-5 py-3 border-round">
                             <div>

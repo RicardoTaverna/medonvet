@@ -27,3 +27,10 @@ class AgendamentoNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agendamento
         fields = ['id','cliente', 'servico', 'veterinario', 'pet', 'data', 'horario_selecionado']
+
+class AgendamentoServicoNestedSerializer(serializers.ModelSerializer):
+    servico = ServicoSerializer()
+    class Meta:
+        model = Agendamento
+        fields = [ 'servico' ]
+
