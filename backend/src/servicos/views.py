@@ -113,7 +113,6 @@ class ServicoPrestadorDetail(APIView):
         serializer = ServicoSerializer(servico, many=True)
         return Response(serializer.data)
 
-
 class ServicoByIdPrestador(APIView):
 
     permission_classes = [IsAuthenticated]

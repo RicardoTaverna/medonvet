@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from django.db.models import Count
 from django.http import Http404
+from django.db.models import Sum
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,7 +9,7 @@ from rest_framework import status
 
 from anamneses.models import Anamneses
 from .models import HorarioFuncionamento, Agendamento
-from .serializers import AgendamentoNestedSerializer, HorarioFuncionamentoSerializer, AgendamentoSerializer
+from .serializers import AgendamentoNestedSerializer, AgendamentoServicoNestedSerializer, HorarioFuncionamentoSerializer, AgendamentoSerializer
 from prestadores.models import Veterinario
 from clientes.models import Cliente
 
@@ -157,7 +159,23 @@ class AgendamentoByVetDetail(APIView):
     
     def get(self, request, format=None):
         Agendamento = self.__get_atendimento_by_vet(request=request)
-        serializer = AgendamentoNestedSerializer(Agendamento, many=True   )
+        serializer = AgendamentoNestedSerializer(Agendamento, many=True)
+        return Response(serializer.data)
+
+class AgendamentoByCountDetail(APIView):
+    """Class based function para retornar, alterar e deletar um objeto agendamento."""
+    permission_classes = [IsAuthenticated]
+    
+    def __get_atendimento_by_vet(self, request):
+        try:
+            veterinario = Veterinario.objects.get(user=request.user.id)
+            return Agendamento.objects.filter(veterinario=veterinario)
+        except Agendamento.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, format=None):
+        Agendamento = self.__get_atendimento_by_vet(request=request)
+        serializer = AgendamentoServicoNestedSerializer(Agendamento, many=True)
         return Response(serializer.data)
 
 

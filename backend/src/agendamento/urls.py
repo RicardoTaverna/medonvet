@@ -10,6 +10,7 @@ from .views import (
     AgendamentoDetail,
     AgendamentoByVetDetail,
     AgendamentoByClienteDetail,
+    AgendamentoByCountDetail,
 )
 
 
@@ -20,6 +21,7 @@ urlpatterns = format_suffix_patterns([
     path('', AgendamentoList.as_view()),
     path('<int:id_agendamento>/', AgendamentoDetail.as_view()),
     path('veterinario/', AgendamentoByVetDetail.as_view()),
+    path('vet/', AgendamentoByCountDetail.as_view()),
     path('veterinario/<int:id_vet>/<str:date>/', AgendamentoByVetIdDetail.as_view()),
     path('cliente/', AgendamentoByClienteDetail.as_view()),
     path('horarioatendimento/', HorarioAtendimentoList.as_view()),
